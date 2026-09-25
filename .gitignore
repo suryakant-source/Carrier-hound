@@ -23,3 +23,13 @@ next-env.d.ts
 # Misc
 .DS_Store
 *.pem
+
+# Separate external projects
+Bhagvatgita-Duolingo-App/
+ambient-design/
+sadhna-apology/
+
+# Knowledge graph & workspace caches
+graphify-out/
+.agents/
+.obsidian/
