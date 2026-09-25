@@ -8,21 +8,21 @@ export default function ProductScreenshotMock() {
   const [disliked, setDisliked] = useState(false);
 
   return (
-    <div className="w-full bg-[#F4F4F6] rounded-2xl sm:rounded-3xl border border-gray-200/80 p-5 sm:p-7 md:p-8 lg:p-9 shadow-[0_20px_50px_rgba(15,23,42,0.12)] overflow-hidden text-left">
-      <div className="flex flex-col md:flex-row items-stretch md:items-start gap-5 sm:gap-6 lg:gap-7">
+    <div className="w-full bg-[#F4F4F6] rounded-2xl sm:rounded-3xl border border-gray-200/80 p-3.5 sm:p-4 md:p-5 shadow-[0_20px_50px_rgba(15,23,42,0.12)] overflow-hidden text-left">
+      <div className="flex flex-col md:flex-row items-stretch md:items-start gap-3.5 sm:gap-4">
         {/* Left Side: Minimalist Filters Card */}
-        <div className="w-full md:w-[185px] lg:w-[195px] shrink-0 bg-white border border-[#E5E7EB] rounded-2xl p-4 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
-          <h3 className="text-sm sm:text-[15px] font-bold text-[#09090B] tracking-tight mb-3.5">
+        <div className="w-full md:w-[160px] lg:w-[168px] shrink-0 bg-white border border-[#E5E7EB] rounded-2xl p-3 sm:p-3.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+          <h3 className="text-sm sm:text-[15px] font-bold text-[#09090B] tracking-tight mb-2.5">
             Filters
           </h3>
 
-          <div className="grid grid-cols-2 md:grid-cols-1 gap-3 sm:gap-3.5">
+          <div className="grid grid-cols-2 md:grid-cols-1 gap-2 sm:gap-2.5">
             {/* Filter 1: Role */}
             <div>
               <label className="block text-[11px] font-semibold text-gray-700 mb-1">
                 Role
               </label>
-              <div className="w-full h-8 sm:h-8.5 px-3 rounded-lg border border-gray-200 bg-white flex items-center text-xs text-gray-400 select-none">
+              <div className="w-full h-7 sm:h-7.5 px-3 rounded-lg border border-gray-200 bg-white flex items-center text-xs text-gray-400 select-none">
                 Select...
               </div>
             </div>
@@ -32,7 +32,7 @@ export default function ProductScreenshotMock() {
               <label className="block text-[11px] font-semibold text-gray-700 mb-1">
                 Location
               </label>
-              <div className="w-full h-8 sm:h-8.5 px-3 rounded-lg border border-gray-200 bg-white flex items-center text-xs text-gray-400 select-none">
+              <div className="w-full h-7 sm:h-7.5 px-3 rounded-lg border border-gray-200 bg-white flex items-center text-xs text-gray-400 select-none">
                 Select...
               </div>
             </div>
@@ -42,7 +42,7 @@ export default function ProductScreenshotMock() {
               <label className="block text-[11px] font-semibold text-gray-700 mb-1">
                 Tools
               </label>
-              <div className="w-full h-8 sm:h-8.5 px-3 rounded-lg border border-gray-200 bg-white flex items-center text-xs text-gray-400 select-none">
+              <div className="w-full h-7 sm:h-7.5 px-3 rounded-lg border border-gray-200 bg-white flex items-center text-xs text-gray-400 select-none">
                 Select...
               </div>
             </div>
@@ -52,7 +52,7 @@ export default function ProductScreenshotMock() {
               <label className="block text-[11px] font-semibold text-gray-700 mb-1">
                 Remote
               </label>
-              <div className="w-full h-8 sm:h-8.5 px-3 rounded-lg border border-gray-200 bg-white flex items-center text-xs text-gray-400 select-none">
+              <div className="w-full h-7 sm:h-7.5 px-3 rounded-lg border border-gray-200 bg-white flex items-center text-xs text-gray-400 select-none">
                 Select...
               </div>
             </div>
@@ -63,7 +63,7 @@ export default function ProductScreenshotMock() {
         <div className="relative flex-1 min-w-0">
           {/* Card 3 (Back Layer - Top Right) */}
           <div
-            className="absolute z-0 top-0 left-[28px] sm:left-[56px] right-0 bottom-[84px] sm:bottom-[104px] bg-white border border-[#E5E7EB] rounded-2xl p-4 sm:p-5 md:p-6 shadow-[0_2px_6px_rgba(0,0,0,0.03)] pointer-events-none select-none overflow-hidden"
+            className="absolute z-0 top-0 left-[18px] sm:left-[36px] right-0 bottom-[50px] sm:bottom-[62px] bg-white border border-[#E5E7EB] rounded-2xl p-2.5 sm:p-3 shadow-[0_2px_6px_rgba(0,0,0,0.03)] pointer-events-none select-none overflow-hidden"
             aria-hidden="true"
           >
             <div className="space-y-0.5">
@@ -78,7 +78,7 @@ export default function ProductScreenshotMock() {
 
           {/* Card 2 (Middle Layer) */}
           <div
-            className="absolute z-10 top-[42px] sm:top-[52px] left-[14px] sm:left-[28px] right-[14px] sm:right-[28px] bottom-[42px] sm:bottom-[52px] bg-white border border-[#E5E7EB] rounded-2xl p-4 sm:p-5 md:p-6 shadow-[0_3px_10px_rgba(0,0,0,0.04)] pointer-events-none select-none overflow-hidden"
+            className="absolute z-10 top-[25px] sm:top-[31px] left-[9px] sm:left-[18px] right-[9px] sm:right-[18px] bottom-[25px] sm:bottom-[31px] bg-white border border-[#E5E7EB] rounded-2xl p-2.5 sm:p-3 shadow-[0_3px_10px_rgba(0,0,0,0.04)] pointer-events-none select-none overflow-hidden"
             aria-hidden="true"
           >
             <div className="space-y-0.5">
@@ -92,8 +92,8 @@ export default function ProductScreenshotMock() {
           </div>
 
           {/* Card 1 (Front Layer - Main Focus) */}
-          <div className="relative z-20 mt-[84px] sm:mt-[104px] mr-[28px] sm:mr-[56px] bg-white border border-[#E5E7EB] rounded-2xl p-4 sm:p-5 md:p-6 shadow-[0_6px_20px_rgba(0,0,0,0.06)]">
-            <div className="space-y-2.5 sm:space-y-3">
+          <div className="relative z-20 mt-[50px] sm:mt-[62px] mr-[18px] sm:mr-[36px] bg-white border border-[#E5E7EB] rounded-2xl p-3 sm:p-3.5 md:p-4 shadow-[0_6px_20px_rgba(0,0,0,0.06)]">
+            <div className="space-y-1.5 sm:space-y-2">
               {/* Job Title & Company */}
               <div>
                 <h4 className="font-bold text-[#09090B] text-base sm:text-lg md:text-xl tracking-tight">

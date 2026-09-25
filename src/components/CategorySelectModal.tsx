@@ -28,11 +28,10 @@ export default function CategorySelectModal({ open, onOpenChange }: CategorySele
       open={open}
       onOpenChange={onOpenChange}
       title="Select Job Category"
-      description="Choose an area of focus to filter verified unindexed roles and direct ATS requisitions."
     >
-      <div className="space-y-5 pt-2">
+      <div className="space-y-5 -mt-2">
         <div>
-          <label htmlFor="category-select" className="block text-sm font-semibold text-[#09090B] mb-2">
+          <label htmlFor="category-select" className="sr-only">
             Select Job Category
           </label>
           <select

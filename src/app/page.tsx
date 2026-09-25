@@ -30,12 +30,12 @@ export default function HomePage() {
       {/* ========================================================================= */}
       {/* 1. HERO SECTION (Blue #2563EB, centered) with overlay header              */}
       {/* ========================================================================= */}
-      <section className="relative bg-[#2563EB] text-white pt-6 pb-20 sm:pb-28 lg:pb-32 overflow-hidden">
+      <section className="relative bg-[#2563EB] text-white pt-6 overflow-hidden">
         {/* Background Subtle Gradient & Dots */}
         <div className="absolute inset-0 pointer-events-none opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]" />
 
         {/* Minimal Hero Header (no nav bar, sits directly on blue hero) */}
-        <div className="w-full max-w-[1340px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 pt-4 sm:pt-6 mb-16 sm:mb-20 lg:mb-24 flex items-center justify-between relative z-20">
+        <div className="w-full max-w-[1340px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 pt-4 sm:pt-6 mb-10 sm:mb-14 lg:mb-16 flex items-center justify-between relative z-20">
           {/* Left: Round white logo circle - enlarged */}
           <Link
             href="/"
@@ -90,8 +90,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Product Screenshot Mock nested inside hero on blue background */}
-        <div className="mt-10 sm:mt-14 max-w-[880px] mx-auto px-4 sm:px-6 relative z-20">
+        {/* Product Screenshot Mock nested inside hero on blue background, flush with section bottom */}
+        <div className="mt-6 sm:mt-8 max-w-[960px] mx-auto px-4 sm:px-6 relative z-20 pb-0">
           {/* Dotted grid pattern behind top-right corner */}
           <div className="absolute -top-6 -right-4 sm:-top-7 sm:-right-6 pointer-events-none hidden sm:block z-0">
             <DotPattern width={160} height={120} dotColor="rgba(255, 255, 255, 0.45)" rows={6} cols={8} />
@@ -205,7 +205,7 @@ export default function HomePage() {
             Free Preview: Explore Verified Hidden Requisitions
           </h2>
           <p className="text-white/90 text-base sm:text-lg max-w-[515px] mx-auto leading-relaxed">
-            Scan live feeds from 12,000+ top engineering employers. Filter by salary, timezone, and exact role criteria with zero commitment.
+            Scan live feeds from 12,000+ top employers. Filter by salary, timezone, and exact role criteria with zero commitment.
           </p>
           <div className="pt-2">
             <WhiteHeroButton onClick={() => setModalOpen(true)} className="px-8 min-w-[210px]">
