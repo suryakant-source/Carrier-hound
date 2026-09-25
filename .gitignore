@@ -1,0 +1,25 @@
+# Next.js
+.next/
+out/
+build/
+dist/
+.svelte-kit/
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Local env files
+.env*.local
+
+# Vercel & Netlify
+.vercel
+.netlify
+
+# TypeScript & Cache
+*.tsbuildinfo
+next-env.d.ts
+
+# Misc
+.DS_Store
+*.pem

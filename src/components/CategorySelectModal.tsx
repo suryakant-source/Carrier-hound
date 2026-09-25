@@ -1,0 +1,63 @@
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import Modal from "./Modal";
+import { CATEGORIES } from "@/data/categories";
+
+interface CategorySelectModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export default function CategorySelectModal({ open, onOpenChange }: CategorySelectModalProps) {
+  const router = useRouter();
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+
+  const handleContinue = () => {
+    onOpenChange(false);
+    if (selectedCategory) {
+      router.push(`/job-search/all?categories=${encodeURIComponent(selectedCategory)}`);
+    } else {
+      router.push(`/job-search/all`);
+    }
+  };
+
+  return (
+    <Modal
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Select Job Category"
+      description="Choose an area of focus to filter verified unindexed roles and direct ATS requisitions."
+    >
+      <div className="space-y-5 pt-2">
+        <div>
+          <label htmlFor="category-select" className="block text-sm font-semibold text-[#09090B] mb-2">
+            Select Job Category
+          </label>
+          <select
+            id="category-select"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="w-full h-12 px-3.5 bg-white border border-[#E4E4E7] rounded-lg text-base text-[#09090B] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent cursor-pointer shadow-sm"
+          >
+            <option value="">Select Job Category</option>
+            {CATEGORIES.map((cat) => (
+              <option key={cat.id} value={cat.slug}>
+                {cat.name} ({cat.count.toLocaleString()} jobs)
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleContinue}
+          className="w-full h-12 bg-black text-white font-semibold rounded-lg hover:bg-neutral-800 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 flex items-center justify-center cursor-pointer shadow-sm"
+        >
+          Continue to Job Search
+        </button>
+      </div>
+    </Modal>
+  );
+}

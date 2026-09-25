@@ -1,0 +1,6123 @@
+{
+  "nodes": [
+    {
+      "id": "g0",
+      "type": "group",
+      "label": "Community 0",
+      "x": 0,
+      "y": 0,
+      "width": 1980,
+      "height": 920,
+      "color": "1"
+    },
+    {
+      "id": "n_src_components_backtotop_backtotop",
+      "type": "file",
+      "file": "BackToTop().md",
+      "x": 20,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_backtotop",
+      "type": "file",
+      "file": "BackToTop.tsx.md",
+      "x": 220,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_brandicon_brandicon",
+      "type": "file",
+      "file": "BrandIcon().md",
+      "x": 420,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_brandicon",
+      "type": "file",
+      "file": "BrandIcon.tsx.md",
+      "x": 620,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_brandicon_brandiconprops",
+      "type": "file",
+      "file": "BrandIconProps.md",
+      "x": 820,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_jobs_category_page_categorylandingpage",
+      "type": "file",
+      "file": "CategoryLandingPage().md",
+      "x": 1020,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_chip_chip",
+      "type": "file",
+      "file": "Chip().md",
+      "x": 1220,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_chip",
+      "type": "file",
+      "file": "Chip.tsx.md",
+      "x": 1420,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_chip_chipprops",
+      "type": "file",
+      "file": "ChipProps.md",
+      "x": 1620,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_jobs_dummy_jobs",
+      "type": "file",
+      "file": "DUMMY_JOBS.md",
+      "x": 20,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_guideheader_guideheader",
+      "type": "file",
+      "file": "GuideHeader().md",
+      "x": 220,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_guideheader",
+      "type": "file",
+      "file": "GuideHeader.tsx.md",
+      "x": 420,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_jobs_job",
+      "type": "file",
+      "file": "Job.md",
+      "x": 620,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_jobpreview_jobpreview",
+      "type": "file",
+      "file": "JobPreview().md",
+      "x": 820,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_jobpreview",
+      "type": "file",
+      "file": "JobPreview.tsx.md",
+      "x": 1020,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_jobpreview_jobpreviewprops",
+      "type": "file",
+      "file": "JobPreviewProps.md",
+      "x": 1220,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_job_search_all_page_jobsearchcontent",
+      "type": "file",
+      "file": "JobSearchContent().md",
+      "x": 1420,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_job_search_all_page_jobsearchpage",
+      "type": "file",
+      "file": "JobSearchPage().md",
+      "x": 1620,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_login_page_loginpage",
+      "type": "file",
+      "file": "LoginPage().md",
+      "x": 20,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_megamenu_megamenu",
+      "type": "file",
+      "file": "MegaMenu().md",
+      "x": 220,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_megamenu",
+      "type": "file",
+      "file": "MegaMenu.tsx.md",
+      "x": 420,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_megamenu_megamenuprops",
+      "type": "file",
+      "file": "MegaMenuProps.md",
+      "x": 620,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_jobs_category_page_pageprops",
+      "type": "file",
+      "file": "PageProps.md",
+      "x": 820,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_slug_titles_page_pageprops",
+      "type": "file",
+      "file": "PageProps_1.md",
+      "x": 1020,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_paywallmodal_paywallmodal",
+      "type": "file",
+      "file": "PaywallModal().md",
+      "x": 1220,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_paywallmodal",
+      "type": "file",
+      "file": "PaywallModal.tsx.md",
+      "x": 1420,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_paywallmodal_paywallmodalprops",
+      "type": "file",
+      "file": "PaywallModalProps.md",
+      "x": 1620,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_privacy_policy_page_privacypolicypage",
+      "type": "file",
+      "file": "PrivacyPolicyPage().md",
+      "x": 20,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_radar_page_radarpage",
+      "type": "file",
+      "file": "RadarPage().md",
+      "x": 220,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_page_remotepage",
+      "type": "file",
+      "file": "RemotePage().md",
+      "x": 420,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_resume_page_resumepage",
+      "type": "file",
+      "file": "ResumePage().md",
+      "x": 620,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_slug_titles_page_roletitlespage",
+      "type": "file",
+      "file": "RoleTitlesPage().md",
+      "x": 820,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_layout_rootlayout",
+      "type": "file",
+      "file": "RootLayout().md",
+      "x": 1020,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_companies_rationale_1",
+      "type": "file",
+      "file": "TODO REPLACE WITH REAL CONTENT.md",
+      "x": 1220,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_jobs_rationale_1",
+      "type": "file",
+      "file": "TODO REPLACE WITH REAL CONTENT_1.md",
+      "x": 1420,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_terms_and_conditions_page_termspage",
+      "type": "file",
+      "file": "TermsPage().md",
+      "x": 1620,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_companies_worldwide_companies",
+      "type": "file",
+      "file": "WORLDWIDE_COMPANIES.md",
+      "x": 20,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_companies_worldwidecompany",
+      "type": "file",
+      "file": "WorldwideCompany.md",
+      "x": 220,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_worldwide_page_worldwidepage",
+      "type": "file",
+      "file": "WorldwidePage().md",
+      "x": 420,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_jobs_category_page",
+      "type": "file",
+      "file": "categorypage.tsx.md",
+      "x": 620,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_job_search_all_page",
+      "type": "file",
+      "file": "allpage.tsx.md",
+      "x": 820,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_companies",
+      "type": "file",
+      "file": "datacompanies.ts.md",
+      "x": 1020,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_jobs",
+      "type": "file",
+      "file": "datajobs.ts.md",
+      "x": 1220,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_jobs_category_page_generatemetadata",
+      "type": "file",
+      "file": "generateMetadata().md",
+      "x": 1420,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_slug_titles_page_generatemetadata",
+      "type": "file",
+      "file": "generateMetadata()_1.md",
+      "x": 1620,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_jobs_category_page_generatestaticparams",
+      "type": "file",
+      "file": "generateStaticParams().md",
+      "x": 20,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_slug_titles_page_generatestaticparams",
+      "type": "file",
+      "file": "generateStaticParams()_1.md",
+      "x": 220,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_layout_inter",
+      "type": "file",
+      "file": "inter.md",
+      "x": 420,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_layout",
+      "type": "file",
+      "file": "layout.tsx.md",
+      "x": 620,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_login_page",
+      "type": "file",
+      "file": "loginpage.tsx.md",
+      "x": 820,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_lucide_react",
+      "type": "file",
+      "file": "lucide-react.md",
+      "x": 1020,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_layout_metadata",
+      "type": "file",
+      "file": "metadata.md",
+      "x": 1220,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_privacy_policy_page_metadata",
+      "type": "file",
+      "file": "metadata_1.md",
+      "x": 1420,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_radar_page_metadata",
+      "type": "file",
+      "file": "metadata_2.md",
+      "x": 1620,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_terms_and_conditions_page_metadata",
+      "type": "file",
+      "file": "metadata_3.md",
+      "x": 20,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_worldwide_page_metadata",
+      "type": "file",
+      "file": "metadata_4.md",
+      "x": 220,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_next",
+      "type": "file",
+      "file": "next.md",
+      "x": 420,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_privacy_policy_page",
+      "type": "file",
+      "file": "privacy-policypage.tsx.md",
+      "x": 620,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_radar_page",
+      "type": "file",
+      "file": "radarpage.tsx.md",
+      "x": 820,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_react",
+      "type": "file",
+      "file": "react.md",
+      "x": 1020,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_react_toastify",
+      "type": "file",
+      "file": "react-toastify.md",
+      "x": 1220,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_page",
+      "type": "file",
+      "file": "remotepage.tsx.md",
+      "x": 1420,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_resume_page",
+      "type": "file",
+      "file": "resumepage.tsx.md",
+      "x": 1620,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_robots_robots",
+      "type": "file",
+      "file": "robots().md",
+      "x": 20,
+      "y": 640,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_robots",
+      "type": "file",
+      "file": "robots.ts.md",
+      "x": 220,
+      "y": 640,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_globals",
+      "type": "file",
+      "file": "src_app_globals.md",
+      "x": 420,
+      "y": 640,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_terms_and_conditions_page",
+      "type": "file",
+      "file": "terms-and-conditionspage.tsx.md",
+      "x": 620,
+      "y": 640,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_slug_titles_page",
+      "type": "file",
+      "file": "titlespage.tsx.md",
+      "x": 820,
+      "y": 640,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_worldwide_page",
+      "type": "file",
+      "file": "worldwidepage.tsx.md",
+      "x": 1020,
+      "y": 640,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g1",
+      "type": "group",
+      "label": "Community 1",
+      "x": 2060,
+      "y": 0,
+      "width": 1540,
+      "height": 820,
+      "color": "2"
+    },
+    {
+      "id": "n_src_components_avatarstack_avatar_urls",
+      "type": "file",
+      "file": "AVATAR_URLS.md",
+      "x": 2080,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_avatarstack_avatarstack",
+      "type": "file",
+      "file": "AvatarStack().md",
+      "x": 2280,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_avatarstack",
+      "type": "file",
+      "file": "AvatarStack.tsx.md",
+      "x": 2480,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_avatarstack_avatarstackprops",
+      "type": "file",
+      "file": "AvatarStackProps.md",
+      "x": 2680,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_buttons_buttonprops",
+      "type": "file",
+      "file": "ButtonProps.md",
+      "x": 2880,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_buttons",
+      "type": "file",
+      "file": "Buttons.tsx.md",
+      "x": 3080,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_reviewcards_color_classes",
+      "type": "file",
+      "file": "COLOR_CLASSES.md",
+      "x": 3280,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_cmptable_cmptable",
+      "type": "file",
+      "file": "CmpTable().md",
+      "x": 2080,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_cmptable",
+      "type": "file",
+      "file": "CmpTable.tsx.md",
+      "x": 2280,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_cmptable_cmptableprops",
+      "type": "file",
+      "file": "CmpTableProps.md",
+      "x": 2480,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_dotpattern_dotpattern",
+      "type": "file",
+      "file": "DotPattern().md",
+      "x": 2680,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_dotpattern",
+      "type": "file",
+      "file": "DotPattern.tsx.md",
+      "x": 2880,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_dotpattern_dotpatternprops",
+      "type": "file",
+      "file": "DotPatternProps.md",
+      "x": 3080,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_testimonials_full_reviews",
+      "type": "file",
+      "file": "FULL_REVIEWS.md",
+      "x": 3280,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_faqitems_faqguidesitem",
+      "type": "file",
+      "file": "FaqGuidesItem().md",
+      "x": 2080,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_faqitems_faqguidesitemprops",
+      "type": "file",
+      "file": "FaqGuidesItemProps.md",
+      "x": 2280,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_faqitems_faqhomeitem",
+      "type": "file",
+      "file": "FaqHomeItem().md",
+      "x": 2480,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_faqitems_faqhomeitemprops",
+      "type": "file",
+      "file": "FaqHomeItemProps.md",
+      "x": 2680,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_faqitems",
+      "type": "file",
+      "file": "FaqItems.tsx.md",
+      "x": 2880,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_footer_footer",
+      "type": "file",
+      "file": "Footer().md",
+      "x": 3080,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_footer",
+      "type": "file",
+      "file": "Footer.tsx.md",
+      "x": 3280,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_footer_footerprops",
+      "type": "file",
+      "file": "FooterProps.md",
+      "x": 2080,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_buttons_ghostbutton",
+      "type": "file",
+      "file": "GhostButton().md",
+      "x": 2280,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_slug_page_guidearticlepage",
+      "type": "file",
+      "file": "GuideArticlePage().md",
+      "x": 2480,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_page_homepage",
+      "type": "file",
+      "file": "HomePage().md",
+      "x": 2680,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_testimonials_mini_reviews",
+      "type": "file",
+      "file": "MINI_REVIEWS.md",
+      "x": 2880,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_testimonials_minireview",
+      "type": "file",
+      "file": "MiniReview.md",
+      "x": 3080,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_reviewcards_minireviewcard",
+      "type": "file",
+      "file": "MiniReviewCard().md",
+      "x": 3280,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_reviewcards_minireviewcardprops",
+      "type": "file",
+      "file": "MiniReviewCardProps.md",
+      "x": 2080,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_buttons_outlinesmallbutton",
+      "type": "file",
+      "file": "OutlineSmallButton().md",
+      "x": 2280,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_slug_page_pageprops",
+      "type": "file",
+      "file": "PageProps_2.md",
+      "x": 2480,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_buttons_primarybutton",
+      "type": "file",
+      "file": "PrimaryButton().md",
+      "x": 2680,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_productscreenshotmock_productscreenshotmock",
+      "type": "file",
+      "file": "ProductScreenshotMock().md",
+      "x": 2880,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_productscreenshotmock",
+      "type": "file",
+      "file": "ProductScreenshotMock.tsx.md",
+      "x": 3080,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_testimonials_review",
+      "type": "file",
+      "file": "Review.md",
+      "x": 3280,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_reviewcards_reviewcard",
+      "type": "file",
+      "file": "ReviewCard().md",
+      "x": 2080,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_reviewcards_reviewcardprops",
+      "type": "file",
+      "file": "ReviewCardProps.md",
+      "x": 2280,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_reviewcards",
+      "type": "file",
+      "file": "ReviewCards.tsx.md",
+      "x": 2480,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_buttons_whiteherobutton",
+      "type": "file",
+      "file": "WhiteHeroButton().md",
+      "x": 2680,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_slug_page",
+      "type": "file",
+      "file": "slugpage.tsx.md",
+      "x": 2880,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_page",
+      "type": "file",
+      "file": "apppage.tsx.md",
+      "x": 3080,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_clsx",
+      "type": "file",
+      "file": "clsx.md",
+      "x": 3280,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_lib_utils_cn",
+      "type": "file",
+      "file": "cn().md",
+      "x": 2080,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_testimonials",
+      "type": "file",
+      "file": "datatestimonials.ts.md",
+      "x": 2280,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_slug_page_generatemetadata",
+      "type": "file",
+      "file": "generateMetadata()_2.md",
+      "x": 2480,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_remote_slug_page_generatestaticparams",
+      "type": "file",
+      "file": "generateStaticParams()_2.md",
+      "x": 2680,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_tailwind_merge",
+      "type": "file",
+      "file": "tailwind-merge.md",
+      "x": 2880,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_lib_utils",
+      "type": "file",
+      "file": "utils.ts.md",
+      "x": 3080,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g2",
+      "type": "group",
+      "label": "Community 2",
+      "x": 3680,
+      "y": 0,
+      "width": 1320,
+      "height": 720,
+      "color": "3"
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_devdependencies_sveltejs_adapter_auto",
+      "type": "file",
+      "file": "@sveltejsadapter-auto.md",
+      "x": 3700,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_sveltejs_adapter_auto",
+      "type": "file",
+      "file": "@sveltejsadapter-auto_1.md",
+      "x": 3900,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_devdependencies_sveltejs_kit",
+      "type": "file",
+      "file": "@sveltejskit_1.md",
+      "x": 4100,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_kit",
+      "type": "file",
+      "file": "@sveltejskit.md",
+      "x": 4300,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_sveltejs_kit",
+      "type": "file",
+      "file": "@sveltejskit_2.md",
+      "x": 4500,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_devdependencies_sveltejs_vite_plugin_svelte",
+      "type": "file",
+      "file": "@sveltejsvite-plugin-svelte.md",
+      "x": 4700,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_sveltejs_vite_plugin_svelte",
+      "type": "file",
+      "file": "@sveltejsvite-plugin-svelte_1.md",
+      "x": 3700,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_dependencies_tailwindcss_vite",
+      "type": "file",
+      "file": "@tailwindcssvite.md",
+      "x": 3900,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_tailwindcss_vite",
+      "type": "file",
+      "file": "@tailwindcssvite_1.md",
+      "x": 4100,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package",
+      "type": "file",
+      "file": "Bhagvatgita-Duolingo-Apppackage.json.md",
+      "x": 4300,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_scripts_build",
+      "type": "file",
+      "file": "build.md",
+      "x": 4500,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_scripts_check",
+      "type": "file",
+      "file": "check.md",
+      "x": 4700,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_scripts_check_watch",
+      "type": "file",
+      "file": "checkwatch.md",
+      "x": 3700,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_svelte_config_config",
+      "type": "file",
+      "file": "config.md",
+      "x": 3900,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_dependencies",
+      "type": "file",
+      "file": "dependencies.md",
+      "x": 4100,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_scripts_dev",
+      "type": "file",
+      "file": "dev.md",
+      "x": 4300,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_devdependencies",
+      "type": "file",
+      "file": "devDependencies.md",
+      "x": 4500,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_name",
+      "type": "file",
+      "file": "name.md",
+      "x": 4700,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_scripts_preview",
+      "type": "file",
+      "file": "preview.md",
+      "x": 3700,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_scripts",
+      "type": "file",
+      "file": "scripts.md",
+      "x": 3900,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_devdependencies_svelte",
+      "type": "file",
+      "file": "svelte.md",
+      "x": 4100,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_svelte",
+      "type": "file",
+      "file": "svelte_1.md",
+      "x": 4300,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_devdependencies_svelte_check",
+      "type": "file",
+      "file": "svelte-check.md",
+      "x": 4500,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_svelte_check",
+      "type": "file",
+      "file": "svelte-check_1.md",
+      "x": 4700,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_svelte_config",
+      "type": "file",
+      "file": "svelte.config.js.md",
+      "x": 3700,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_dependencies_tailwindcss",
+      "type": "file",
+      "file": "tailwindcss.md",
+      "x": 3900,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_json_ref_tailwindcss",
+      "type": "file",
+      "file": "tailwindcss_1.md",
+      "x": 4100,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_type",
+      "type": "file",
+      "file": "type.md",
+      "x": 4300,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_devdependencies_typescript",
+      "type": "file",
+      "file": "typescript.md",
+      "x": 4500,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_json_ref_typescript",
+      "type": "file",
+      "file": "typescript_1.md",
+      "x": 4700,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_version",
+      "type": "file",
+      "file": "version.md",
+      "x": 3700,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_package_devdependencies_vite",
+      "type": "file",
+      "file": "vite.md",
+      "x": 3900,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_vite",
+      "type": "file",
+      "file": "vite_1.md",
+      "x": 4100,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_vite_config",
+      "type": "file",
+      "file": "vite.config.ts.md",
+      "x": 4300,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g3",
+      "type": "group",
+      "label": "Community 3",
+      "x": 5080,
+      "y": 0,
+      "width": 1320,
+      "height": 720,
+      "color": "4"
+    },
+    {
+      "id": "n_ref_radix_ui_react_slot",
+      "type": "file",
+      "file": "@radix-uireact-slot.md",
+      "x": 5100,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_types_mapbox_gl",
+      "type": "file",
+      "file": "@typesmapbox-gl.md",
+      "x": 5300,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_devdependencies_types_node",
+      "type": "file",
+      "file": "@typesnode.md",
+      "x": 5500,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_types_node",
+      "type": "file",
+      "file": "@typesnode_1.md",
+      "x": 5700,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_devdependencies_types_react",
+      "type": "file",
+      "file": "@typesreact.md",
+      "x": 5900,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_types_react",
+      "type": "file",
+      "file": "@typesreact_1.md",
+      "x": 6100,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_devdependencies_types_react_dom",
+      "type": "file",
+      "file": "@typesreact-dom.md",
+      "x": 5100,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_types_react_dom",
+      "type": "file",
+      "file": "@typesreact-dom_1.md",
+      "x": 5300,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_types_three",
+      "type": "file",
+      "file": "@typesthree.md",
+      "x": 5500,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_devdependencies_autoprefixer",
+      "type": "file",
+      "file": "autoprefixer.md",
+      "x": 5700,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_autoprefixer",
+      "type": "file",
+      "file": "autoprefixer_1.md",
+      "x": 5900,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_scripts_build",
+      "type": "file",
+      "file": "build_1.md",
+      "x": 6100,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_class_variance_authority",
+      "type": "file",
+      "file": "class-variance-authority.md",
+      "x": 5100,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_scripts_dev",
+      "type": "file",
+      "file": "dev_1.md",
+      "x": 5300,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_devdependencies",
+      "type": "file",
+      "file": "devDependencies_1.md",
+      "x": 5500,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_globe_gl",
+      "type": "file",
+      "file": "globe.gl.md",
+      "x": 5700,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_scripts_lint",
+      "type": "file",
+      "file": "lint.md",
+      "x": 5900,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_mapbox_gl",
+      "type": "file",
+      "file": "mapbox-gl.md",
+      "x": 6100,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_name",
+      "type": "file",
+      "file": "name_2.md",
+      "x": 5100,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package",
+      "type": "file",
+      "file": "package.json.md",
+      "x": 5300,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_devdependencies_postcss",
+      "type": "file",
+      "file": "postcss.md",
+      "x": 5500,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_postcss",
+      "type": "file",
+      "file": "postcss_1.md",
+      "x": 5700,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_private",
+      "type": "file",
+      "file": "private_1.md",
+      "x": 5900,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_devdependencies_puppeteer_core",
+      "type": "file",
+      "file": "puppeteer-core.md",
+      "x": 6100,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_puppeteer_core",
+      "type": "file",
+      "file": "puppeteer-core_1.md",
+      "x": 5100,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_react_dom",
+      "type": "file",
+      "file": "react-dom.md",
+      "x": 5300,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_react_select",
+      "type": "file",
+      "file": "react-select.md",
+      "x": 5500,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_scripts",
+      "type": "file",
+      "file": "scripts_1.md",
+      "x": 5700,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_scripts_start",
+      "type": "file",
+      "file": "start.md",
+      "x": 5900,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_devdependencies_tailwindcss",
+      "type": "file",
+      "file": "tailwindcss_2.md",
+      "x": 6100,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_json_ref_tailwindcss",
+      "type": "file",
+      "file": "tailwindcss_3.md",
+      "x": 5100,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_devdependencies_typescript",
+      "type": "file",
+      "file": "typescript_2.md",
+      "x": 5300,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_json_ref_typescript",
+      "type": "file",
+      "file": "typescript_3.md",
+      "x": 5500,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_version",
+      "type": "file",
+      "file": "version_2.md",
+      "x": 5700,
+      "y": 480,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g4",
+      "type": "group",
+      "label": "Community 4",
+      "x": 6480,
+      "y": 0,
+      "width": 1320,
+      "height": 620,
+      "color": "5"
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen",
+      "type": "file",
+      "file": "QuizScreen.svelte.md",
+      "x": 6500,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_activequestion",
+      "type": "file",
+      "file": "activeQuestion.md",
+      "x": 6700,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_cancheck",
+      "type": "file",
+      "file": "canCheck.md",
+      "x": 6900,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_checkanswer",
+      "type": "file",
+      "file": "checkAnswer().md",
+      "x": 7100,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_correctanswertext",
+      "type": "file",
+      "file": "correctAnswerText.md",
+      "x": 7300,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_explanationtext",
+      "type": "file",
+      "file": "explanationText.md",
+      "x": 7500,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_handlecontinue",
+      "type": "file",
+      "file": "handleContinue().md",
+      "x": 6500,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_handlematchincorrect",
+      "type": "file",
+      "file": "handleMatchIncorrect().md",
+      "x": 6700,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_handlepartplaycomplete",
+      "type": "file",
+      "file": "handlePartPlayComplete().md",
+      "x": 6900,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_handleselect",
+      "type": "file",
+      "file": "handleSelect().md",
+      "x": 7100,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_handleversehookcomplete",
+      "type": "file",
+      "file": "handleVerseHookComplete().md",
+      "x": 7300,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_handlewordchange",
+      "type": "file",
+      "file": "handleWordChange().md",
+      "x": 7500,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_handleworddiscoverycomplete",
+      "type": "file",
+      "file": "handleWordDiscoveryComplete().md",
+      "x": 6500,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_hasparts",
+      "type": "file",
+      "file": "hasParts.md",
+      "x": 6700,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_ischecked",
+      "type": "file",
+      "file": "isChecked.md",
+      "x": 6900,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_iscorrect",
+      "type": "file",
+      "file": "isCorrect.md",
+      "x": 7100,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_isgameover",
+      "type": "file",
+      "file": "isGameOver.md",
+      "x": 7300,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_islessoncompleted",
+      "type": "file",
+      "file": "isLessonCompleted.md",
+      "x": 7500,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_matchcomplete",
+      "type": "file",
+      "file": "matchComplete.md",
+      "x": 6500,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_partindex",
+      "type": "file",
+      "file": "partIndex.md",
+      "x": 6700,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_questionindex",
+      "type": "file",
+      "file": "questionIndex.md",
+      "x": 6900,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_resetexercisestate",
+      "type": "file",
+      "file": "resetExerciseState().md",
+      "x": 7100,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_restartlesson",
+      "type": "file",
+      "file": "restartLesson().md",
+      "x": 7300,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_showfeedback",
+      "type": "file",
+      "file": "showFeedback.md",
+      "x": 7500,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_showfloatingxp",
+      "type": "file",
+      "file": "showFloatingXP.md",
+      "x": 6500,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_quizscreen_startsynthesisplay",
+      "type": "file",
+      "file": "startSynthesisPlay().md",
+      "x": 6700,
+      "y": 400,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g5",
+      "type": "group",
+      "label": "Community 5",
+      "x": 7880,
+      "y": 0,
+      "width": 1100,
+      "height": 520,
+      "color": "6"
+    },
+    {
+      "id": "n_navigation",
+      "type": "file",
+      "file": "$appnavigation.md",
+      "x": 7900,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_stores",
+      "type": "file",
+      "file": "$appstores.md",
+      "x": 8100,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_s_curve_offsets",
+      "type": "file",
+      "file": "S_CURVE_OFFSETS.md",
+      "x": 8300,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_lesson_lessonid_page",
+      "type": "file",
+      "file": "lessonId+page.svelte.md",
+      "x": 8500,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_chapterstats",
+      "type": "file",
+      "file": "chapterStats.md",
+      "x": 8700,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_generatepathd",
+      "type": "file",
+      "file": "generatePathD().md",
+      "x": 7900,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_generatesegmentd",
+      "type": "file",
+      "file": "generateSegmentD().md",
+      "x": 8100,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_getnodeoffset",
+      "type": "file",
+      "file": "getNodeOffset().md",
+      "x": 8300,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_handlenodeclick",
+      "type": "file",
+      "file": "handleNodeClick().md",
+      "x": 8500,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_hasreflection",
+      "type": "file",
+      "file": "hasReflection.md",
+      "x": 8700,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_islessonunlocked",
+      "type": "file",
+      "file": "isLessonUnlocked().md",
+      "x": 7900,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_nextlesson",
+      "type": "file",
+      "file": "nextLesson.md",
+      "x": 8100,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_resetgame",
+      "type": "file",
+      "file": "resetGame().md",
+      "x": 8300,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page",
+      "type": "file",
+      "file": "routes+page.svelte.md",
+      "x": 8500,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_sadhanatask1done",
+      "type": "file",
+      "file": "sadhanaTask1Done.md",
+      "x": 8700,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_sadhanatask2done",
+      "type": "file",
+      "file": "sadhanaTask2Done.md",
+      "x": 7900,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_sadhanatask3done",
+      "type": "file",
+      "file": "sadhanaTask3Done.md",
+      "x": 8100,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_sadhanaxp",
+      "type": "file",
+      "file": "sadhanaXP.md",
+      "x": 8300,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_startlesson",
+      "type": "file",
+      "file": "startLesson().md",
+      "x": 8500,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_page_todaystr",
+      "type": "file",
+      "file": "todayStr.md",
+      "x": 8700,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g6",
+      "type": "group",
+      "label": "Community 6",
+      "x": 9060,
+      "y": 0,
+      "width": 1100,
+      "height": 520,
+      "color": "1"
+    },
+    {
+      "id": "n_data_guides_categories_category_landings",
+      "type": "file",
+      "file": "CATEGORY_LANDINGS_1.md",
+      "x": 9080,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_categories_categorylandingdata",
+      "type": "file",
+      "file": "CategoryLandingData_1.md",
+      "x": 9280,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_roles_certroute",
+      "type": "file",
+      "file": "CertRoute_1.md",
+      "x": 9480,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_articles_comparisonrow",
+      "type": "file",
+      "file": "ComparisonRow_1.md",
+      "x": 9680,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_articles_faqitem",
+      "type": "file",
+      "file": "FAQItem_1.md",
+      "x": 9880,
+      "y": 80,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_roles_fitmeter",
+      "type": "file",
+      "file": "FitMeter_1.md",
+      "x": 9080,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_articles_guide_articles",
+      "type": "file",
+      "file": "GUIDE_ARTICLES_1.md",
+      "x": 9280,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_articles_guidearticle",
+      "type": "file",
+      "file": "GuideArticle_1.md",
+      "x": 9480,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_roles_role_guides",
+      "type": "file",
+      "file": "ROLE_GUIDES_1.md",
+      "x": 9680,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_roles_roleguidedata",
+      "type": "file",
+      "file": "RoleGuideData_1.md",
+      "x": 9880,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_roles_roleladderrung",
+      "type": "file",
+      "file": "RoleLadderRung_1.md",
+      "x": 9080,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_articles_rationale_1",
+      "type": "file",
+      "file": "TODO REPLACE WITH REAL CONTENT_11.md",
+      "x": 9280,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_categories_rationale_1",
+      "type": "file",
+      "file": "TODO REPLACE WITH REAL CONTENT_12.md",
+      "x": 9480,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_roles_rationale_1",
+      "type": "file",
+      "file": "TODO REPLACE WITH REAL CONTENT_13.md",
+      "x": 9680,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_roles_titleband",
+      "type": "file",
+      "file": "TitleBand_1.md",
+      "x": 9880,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_articles",
+      "type": "file",
+      "file": "dataguidesarticles.ts.md",
+      "x": 9080,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_categories",
+      "type": "file",
+      "file": "dataguidescategories.ts.md",
+      "x": 9280,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_roles",
+      "type": "file",
+      "file": "dataguidesroles.ts.md",
+      "x": 9480,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_sitemap_sitemap",
+      "type": "file",
+      "file": "sitemap().md",
+      "x": 9680,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_sitemap",
+      "type": "file",
+      "file": "sitemap.ts.md",
+      "x": 9880,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g7",
+      "type": "group",
+      "label": "Community 7",
+      "x": 0,
+      "y": 1000,
+      "width": 1100,
+      "height": 520,
+      "color": "2"
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_chapter",
+      "type": "file",
+      "file": "Chapter.md",
+      "x": 20,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_commentary",
+      "type": "file",
+      "file": "Commentary.md",
+      "x": 220,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_layeredverseview",
+      "type": "file",
+      "file": "LayeredVerseView.svelte.md",
+      "x": 420,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_lesson",
+      "type": "file",
+      "file": "Lesson.md",
+      "x": 620,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_mcqoption",
+      "type": "file",
+      "file": "MCQOption.md",
+      "x": 820,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_phrasepair",
+      "type": "file",
+      "file": "PhrasePair.md",
+      "x": 20,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_question",
+      "type": "file",
+      "file": "Question.md",
+      "x": 220,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_section",
+      "type": "file",
+      "file": "Section.md",
+      "x": 420,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_teachingscreen",
+      "type": "file",
+      "file": "TeachingScreen.svelte.md",
+      "x": 620,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_teachingslide",
+      "type": "file",
+      "file": "TeachingSlide.md",
+      "x": 820,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_versepart",
+      "type": "file",
+      "file": "VersePart.md",
+      "x": 20,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_wordcard",
+      "type": "file",
+      "file": "WordCard.svelte.md",
+      "x": 220,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_worddiscoveryscreen",
+      "type": "file",
+      "file": "WordDiscoveryScreen.svelte.md",
+      "x": 420,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_wordmeaning",
+      "type": "file",
+      "file": "WordMeaning.md",
+      "x": 620,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_bg247teachingslides",
+      "type": "file",
+      "file": "bg247TeachingSlides.md",
+      "x": 820,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_bg247wordbreakdown",
+      "type": "file",
+      "file": "bg247WordBreakdown.md",
+      "x": 20,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_bg248teachingslides",
+      "type": "file",
+      "file": "bg248TeachingSlides.md",
+      "x": 220,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_gitadata",
+      "type": "file",
+      "file": "gitaData.md",
+      "x": 420,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "type": "file",
+      "file": "gitaData.ts.md",
+      "x": 620,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g8",
+      "type": "group",
+      "label": "Community 8",
+      "x": 2060,
+      "y": 1000,
+      "width": 1100,
+      "height": 520,
+      "color": "3"
+    },
+    {
+      "id": "n_tsconfig_paths_data",
+      "type": "file",
+      "file": "@data.md",
+      "x": 2080,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_allowjs",
+      "type": "file",
+      "file": "allowJs_1.md",
+      "x": 2280,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions",
+      "type": "file",
+      "file": "compilerOptions_1.md",
+      "x": 2480,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_esmoduleinterop",
+      "type": "file",
+      "file": "esModuleInterop_1.md",
+      "x": 2680,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_exclude",
+      "type": "file",
+      "file": "exclude.md",
+      "x": 2880,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_include",
+      "type": "file",
+      "file": "include.md",
+      "x": 2080,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_incremental",
+      "type": "file",
+      "file": "incremental.md",
+      "x": 2280,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_isolatedmodules",
+      "type": "file",
+      "file": "isolatedModules.md",
+      "x": 2480,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_jsx",
+      "type": "file",
+      "file": "jsx.md",
+      "x": 2680,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_lib",
+      "type": "file",
+      "file": "lib.md",
+      "x": 2880,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_module",
+      "type": "file",
+      "file": "module.md",
+      "x": 2080,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_moduleresolution",
+      "type": "file",
+      "file": "moduleResolution_1.md",
+      "x": 2280,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_noemit",
+      "type": "file",
+      "file": "noEmit.md",
+      "x": 2480,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_paths",
+      "type": "file",
+      "file": "paths.md",
+      "x": 2680,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_plugins",
+      "type": "file",
+      "file": "plugins.md",
+      "x": 2880,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_resolvejsonmodule",
+      "type": "file",
+      "file": "resolveJsonModule_1.md",
+      "x": 2080,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_skiplibcheck",
+      "type": "file",
+      "file": "skipLibCheck_1.md",
+      "x": 2280,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig_compileroptions_strict",
+      "type": "file",
+      "file": "strict_1.md",
+      "x": 2480,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tsconfig",
+      "type": "file",
+      "file": "tsconfig.json.md",
+      "x": 2680,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g9",
+      "type": "group",
+      "label": "Community 9",
+      "x": 3680,
+      "y": 1000,
+      "width": 1100,
+      "height": 520,
+      "color": "4"
+    },
+    {
+      "id": "n_package_dependencies_radix_ui_react_dialog",
+      "type": "file",
+      "file": "@radix-uireact-dialog_1.md",
+      "x": 3700,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_radix_ui_react_slot",
+      "type": "file",
+      "file": "@radix-uireact-slot_1.md",
+      "x": 3900,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_types_mapbox_gl",
+      "type": "file",
+      "file": "@typesmapbox-gl_1.md",
+      "x": 4100,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_types_three",
+      "type": "file",
+      "file": "@typesthree_1.md",
+      "x": 4300,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_class_variance_authority",
+      "type": "file",
+      "file": "class-variance-authority_1.md",
+      "x": 4500,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_clsx",
+      "type": "file",
+      "file": "clsx_1.md",
+      "x": 3700,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies",
+      "type": "file",
+      "file": "dependencies_1.md",
+      "x": 3900,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_globe_gl",
+      "type": "file",
+      "file": "globe.gl_1.md",
+      "x": 4100,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_lucide_react",
+      "type": "file",
+      "file": "lucide-react_1.md",
+      "x": 4300,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_mapbox_gl",
+      "type": "file",
+      "file": "mapbox-gl_1.md",
+      "x": 4500,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_next",
+      "type": "file",
+      "file": "next_2.md",
+      "x": 3700,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_react",
+      "type": "file",
+      "file": "react_1.md",
+      "x": 3900,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_react_dom",
+      "type": "file",
+      "file": "react-dom_1.md",
+      "x": 4100,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_react_select",
+      "type": "file",
+      "file": "react-select_1.md",
+      "x": 4300,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_react_toastify",
+      "type": "file",
+      "file": "react-toastify_1.md",
+      "x": 4500,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_tailwind_merge",
+      "type": "file",
+      "file": "tailwind-merge_1.md",
+      "x": 3700,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_package_dependencies_three",
+      "type": "file",
+      "file": "three_2.md",
+      "x": 3900,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g10",
+      "type": "group",
+      "label": "Community 10",
+      "x": 5080,
+      "y": 1000,
+      "width": 880,
+      "height": 520,
+      "color": "5"
+    },
+    {
+      "id": "n_ambient_design_main",
+      "type": "file",
+      "file": "ambient-designmain.js.md",
+      "x": 5100,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_animate",
+      "type": "file",
+      "file": "animate().md",
+      "x": 5300,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_createembertexture",
+      "type": "file",
+      "file": "createEmberTexture().md",
+      "x": 5500,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_createfloatinglanterns",
+      "type": "file",
+      "file": "createFloatingLanterns().md",
+      "x": 5700,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_createlanterntexture",
+      "type": "file",
+      "file": "createLanternTexture().md",
+      "x": 5100,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_createrisingembers",
+      "type": "file",
+      "file": "createRisingEmbers().md",
+      "x": 5300,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_initaudio",
+      "type": "file",
+      "file": "initAudio().md",
+      "x": 5500,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_initthree",
+      "type": "file",
+      "file": "initThree().md",
+      "x": 5700,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_onmousemove",
+      "type": "file",
+      "file": "onMouseMove().md",
+      "x": 5100,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_onscroll",
+      "type": "file",
+      "file": "onScroll().md",
+      "x": 5300,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_ontouchmove",
+      "type": "file",
+      "file": "onTouchMove().md",
+      "x": 5500,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_onwindowresize",
+      "type": "file",
+      "file": "onWindowResize().md",
+      "x": 5700,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_playsoftchord",
+      "type": "file",
+      "file": "playSoftChord().md",
+      "x": 5100,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_startambientscore",
+      "type": "file",
+      "file": "startAmbientScore().md",
+      "x": 5300,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_stopambientscore",
+      "type": "file",
+      "file": "stopAmbientScore().md",
+      "x": 5500,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_main_updatelinks",
+      "type": "file",
+      "file": "updateLinks().md",
+      "x": 5700,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g11",
+      "type": "group",
+      "label": "Community 11",
+      "x": 6480,
+      "y": 1000,
+      "width": 880,
+      "height": 520,
+      "color": "6"
+    },
+    {
+      "id": "n_sadhna_apology_main_animate",
+      "type": "file",
+      "file": "animate()_1.md",
+      "x": 6500,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main_createembertexture",
+      "type": "file",
+      "file": "createEmberTexture()_1.md",
+      "x": 6700,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main_createfloatinglanterns",
+      "type": "file",
+      "file": "createFloatingLanterns()_1.md",
+      "x": 6900,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main_createlanterntexture",
+      "type": "file",
+      "file": "createLanternTexture()_1.md",
+      "x": 7100,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main_createrisingembers",
+      "type": "file",
+      "file": "createRisingEmbers()_1.md",
+      "x": 6500,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main_initaudio",
+      "type": "file",
+      "file": "initAudio()_1.md",
+      "x": 6700,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main_initthree",
+      "type": "file",
+      "file": "initThree()_1.md",
+      "x": 6900,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main_onmousemove",
+      "type": "file",
+      "file": "onMouseMove()_1.md",
+      "x": 7100,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main_onscroll",
+      "type": "file",
+      "file": "onScroll()_1.md",
+      "x": 6500,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main_ontouchmove",
+      "type": "file",
+      "file": "onTouchMove()_1.md",
+      "x": 6700,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main_onwindowresize",
+      "type": "file",
+      "file": "onWindowResize()_1.md",
+      "x": 6900,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main_playsoftchord",
+      "type": "file",
+      "file": "playSoftChord()_1.md",
+      "x": 7100,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main",
+      "type": "file",
+      "file": "sadhna-apologymain.js.md",
+      "x": 6500,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main_startambientscore",
+      "type": "file",
+      "file": "startAmbientScore()_1.md",
+      "x": 6700,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main_stopambientscore",
+      "type": "file",
+      "file": "stopAmbientScore()_1.md",
+      "x": 6900,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_main_updatelinks",
+      "type": "file",
+      "file": "updateLinks()_1.md",
+      "x": 7100,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g12",
+      "type": "group",
+      "label": "Community 12",
+      "x": 7880,
+      "y": 1000,
+      "width": 880,
+      "height": 520,
+      "color": "1"
+    },
+    {
+      "id": "n_sadhna_apology_server_mime",
+      "type": "file",
+      "file": "MIME.md",
+      "x": 7900,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_verify_errors",
+      "type": "file",
+      "file": "errors.md",
+      "x": 8100,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_server_fs",
+      "type": "file",
+      "file": "fs.md",
+      "x": 8300,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_verify_fs",
+      "type": "file",
+      "file": "fs_1.md",
+      "x": 8500,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_verify_html",
+      "type": "file",
+      "file": "html.md",
+      "x": 7900,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_server_http",
+      "type": "file",
+      "file": "http.md",
+      "x": 8100,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_server_path",
+      "type": "file",
+      "file": "path.md",
+      "x": 8300,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_verify_path",
+      "type": "file",
+      "file": "path_1.md",
+      "x": 8500,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_fs",
+      "type": "file",
+      "file": "ref_fs.md",
+      "x": 7900,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_http",
+      "type": "file",
+      "file": "ref_http.md",
+      "x": 8100,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_path",
+      "type": "file",
+      "file": "ref_path.md",
+      "x": 8300,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_verify_requiredfiles",
+      "type": "file",
+      "file": "requiredFiles.md",
+      "x": 8500,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_server_server",
+      "type": "file",
+      "file": "server.md",
+      "x": 7900,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_server",
+      "type": "file",
+      "file": "server.js.md",
+      "x": 8100,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_verify",
+      "type": "file",
+      "file": "verify.js.md",
+      "x": 8300,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g13",
+      "type": "group",
+      "label": "Community 13",
+      "x": 9060,
+      "y": 1000,
+      "width": 880,
+      "height": 520,
+      "color": "2"
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_addxp",
+      "type": "file",
+      "file": "dot-addXP().md",
+      "x": 9080,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_completelesson",
+      "type": "file",
+      "file": "dot-completeLesson().md",
+      "x": 9280,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_constructor",
+      "type": "file",
+      "file": "dot-constructor().md",
+      "x": 9480,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_decrementheart",
+      "type": "file",
+      "file": "dot-decrementHeart().md",
+      "x": 9680,
+      "y": 1080,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_loadstate",
+      "type": "file",
+      "file": "dot-loadState().md",
+      "x": 9080,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_refillhearts",
+      "type": "file",
+      "file": "dot-refillHearts().md",
+      "x": 9280,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_resetstate",
+      "type": "file",
+      "file": "dot-resetState().md",
+      "x": 9480,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_savereflection",
+      "type": "file",
+      "file": "dot-saveReflection().md",
+      "x": 9680,
+      "y": 1160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_savestate",
+      "type": "file",
+      "file": "dot-saveState().md",
+      "x": 9080,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_setscriptmode",
+      "type": "file",
+      "file": "dot-setScriptMode().md",
+      "x": 9280,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_togglescriptmode",
+      "type": "file",
+      "file": "dot-toggleScriptMode().md",
+      "x": 9480,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_updatestreak",
+      "type": "file",
+      "file": "dot-updateStreak().md",
+      "x": 9680,
+      "y": 1240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate",
+      "type": "file",
+      "file": "gameState.md",
+      "x": 9080,
+      "y": 1320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g14",
+      "type": "group",
+      "label": "Community 14",
+      "x": 0,
+      "y": 1600,
+      "width": 880,
+      "height": 520,
+      "color": "3"
+    },
+    {
+      "id": "n_ref_svelte_kit_tsconfig_json",
+      "type": "file",
+      "file": "dot-svelte-kittsconfig.json.md",
+      "x": 20,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_tsconfig",
+      "type": "file",
+      "file": "Bhagvatgita-Duolingo-Apptsconfig.json.md",
+      "x": 220,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_tsconfig_compileroptions_allowjs",
+      "type": "file",
+      "file": "allowJs.md",
+      "x": 420,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_tsconfig_compileroptions_checkjs",
+      "type": "file",
+      "file": "checkJs.md",
+      "x": 620,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_tsconfig_compileroptions",
+      "type": "file",
+      "file": "compilerOptions.md",
+      "x": 20,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_tsconfig_compileroptions_esmoduleinterop",
+      "type": "file",
+      "file": "esModuleInterop.md",
+      "x": 220,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_tsconfig_extends",
+      "type": "file",
+      "file": "extends.md",
+      "x": 420,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_tsconfig_compileroptions_forceconsistentcasinginfilenames",
+      "type": "file",
+      "file": "forceConsistentCasingInFileNames.md",
+      "x": 620,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_tsconfig_compileroptions_moduleresolution",
+      "type": "file",
+      "file": "moduleResolution.md",
+      "x": 20,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_tsconfig_compileroptions_resolvejsonmodule",
+      "type": "file",
+      "file": "resolveJsonModule.md",
+      "x": 220,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_tsconfig_compileroptions_skiplibcheck",
+      "type": "file",
+      "file": "skipLibCheck.md",
+      "x": 420,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_tsconfig_compileroptions_sourcemap",
+      "type": "file",
+      "file": "sourceMap.md",
+      "x": 620,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_tsconfig_compileroptions_strict",
+      "type": "file",
+      "file": "strict.md",
+      "x": 20,
+      "y": 1920,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g15",
+      "type": "group",
+      "label": "Community 15",
+      "x": 2060,
+      "y": 1600,
+      "width": 880,
+      "height": 520,
+      "color": "4"
+    },
+    {
+      "id": "n_src_data_radarcities_countryregion",
+      "type": "file",
+      "file": "CountryRegion.md",
+      "x": 2080,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_app_radar_page_jobradarglobe",
+      "type": "file",
+      "file": "JobRadarGlobe.md",
+      "x": 2280,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_jobradarglobe_jobradarglobe",
+      "type": "file",
+      "file": "JobRadarGlobe().md",
+      "x": 2480,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_jobradarglobe",
+      "type": "file",
+      "file": "JobRadarGlobe.tsx.md",
+      "x": 2680,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_radarcities_radar_cities",
+      "type": "file",
+      "file": "RADAR_CITIES.md",
+      "x": 2080,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_radarcities_radar_countries",
+      "type": "file",
+      "file": "RADAR_COUNTRIES.md",
+      "x": 2280,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_radarcities_radarcity",
+      "type": "file",
+      "file": "RadarCity.md",
+      "x": 2480,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_radarcities_radarjob",
+      "type": "file",
+      "file": "RadarJob.md",
+      "x": 2680,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_jobradarglobe_latlngtovector3",
+      "type": "file",
+      "file": "latLngToVector3().md",
+      "x": 2080,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_radarcities",
+      "type": "file",
+      "file": "radarCities.ts.md",
+      "x": 2280,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_three",
+      "type": "file",
+      "file": "three_1.md",
+      "x": 2480,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_three",
+      "type": "file",
+      "file": "three.md",
+      "x": 2680,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_orbitcontrols_js",
+      "type": "file",
+      "file": "threeexamplesjsmcontrolsOrbitControls.js.md",
+      "x": 2080,
+      "y": 1920,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g16",
+      "type": "group",
+      "label": "Community 16",
+      "x": 3680,
+      "y": 1600,
+      "width": 880,
+      "height": 420,
+      "color": "5"
+    },
+    {
+      "id": "n_ref_radix_ui_react_dialog",
+      "type": "file",
+      "file": "@radix-uireact-dialog.md",
+      "x": 3700,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_categories_categories",
+      "type": "file",
+      "file": "CATEGORIES.md",
+      "x": 3900,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_categories_categoryitem",
+      "type": "file",
+      "file": "CategoryItem.md",
+      "x": 4100,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_categoryselectmodal_categoryselectmodal",
+      "type": "file",
+      "file": "CategorySelectModal().md",
+      "x": 4300,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_categoryselectmodal",
+      "type": "file",
+      "file": "CategorySelectModal.tsx.md",
+      "x": 3700,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_categoryselectmodal_categoryselectmodalprops",
+      "type": "file",
+      "file": "CategorySelectModalProps.md",
+      "x": 3900,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_modal_modal",
+      "type": "file",
+      "file": "Modal().md",
+      "x": 4100,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_modal",
+      "type": "file",
+      "file": "Modal.tsx.md",
+      "x": 4300,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_components_modal_modalprops",
+      "type": "file",
+      "file": "ModalProps.md",
+      "x": 3700,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_categories_rationale_1",
+      "type": "file",
+      "file": "TODO REPLACE WITH REAL CONTENT_2.md",
+      "x": 3900,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_categories",
+      "type": "file",
+      "file": "datacategories.ts.md",
+      "x": 4100,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g17",
+      "type": "group",
+      "label": "Community 17",
+      "x": 5080,
+      "y": 1600,
+      "width": 660,
+      "height": 420,
+      "color": "6"
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_wordtilepicker_each",
+      "type": "file",
+      "file": "each().md",
+      "x": 5100,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_fillinblank",
+      "type": "file",
+      "file": "FillInBlank.svelte.md",
+      "x": 5300,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_sanskrithelper_iast_to_devanagari",
+      "type": "file",
+      "file": "IAST_TO_DEVANAGARI.md",
+      "x": 5500,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_interactiveverse",
+      "type": "file",
+      "file": "InteractiveVerse.svelte.md",
+      "x": 5100,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_sanskrithelper_sanskrit_dict",
+      "type": "file",
+      "file": "SANSKRIT_DICT.md",
+      "x": 5300,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_sanskrithelper_sanskritdisplay",
+      "type": "file",
+      "file": "SanskritDisplay.md",
+      "x": 5500,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_wordtilepicker",
+      "type": "file",
+      "file": "WordTilePicker.svelte.md",
+      "x": 5100,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_sanskrithelper_getsanskritdisplay",
+      "type": "file",
+      "file": "getSanskritDisplay().md",
+      "x": 5300,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_data_sanskrithelper",
+      "type": "file",
+      "file": "sanskritHelper.ts.md",
+      "x": 5500,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g18",
+      "type": "group",
+      "label": "Community 18",
+      "x": 6480,
+      "y": 1600,
+      "width": 660,
+      "height": 420,
+      "color": "1"
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_lessonprogress",
+      "type": "file",
+      "file": "LessonProgress.svelte.md",
+      "x": 6500,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_reflectionprompt",
+      "type": "file",
+      "file": "ReflectionPrompt.svelte.md",
+      "x": 6700,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_scriptmode",
+      "type": "file",
+      "file": "ScriptMode.md",
+      "x": 6900,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_scripttoggle",
+      "type": "file",
+      "file": "ScriptToggle.svelte.md",
+      "x": 6500,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte",
+      "type": "file",
+      "file": "gameState.svelte.ts.md",
+      "x": 6700,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_lessonprogress_isheartdecreasing",
+      "type": "file",
+      "file": "isHeartDecreasing.md",
+      "x": 6900,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_lessonprogress_prevhearts",
+      "type": "file",
+      "file": "prevHearts.md",
+      "x": 6500,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_app",
+      "type": "file",
+      "file": "ref_app.md",
+      "x": 6700,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g19",
+      "type": "group",
+      "label": "Community 19",
+      "x": 7880,
+      "y": 1600,
+      "width": 660,
+      "height": 420,
+      "color": "2"
+    },
+    {
+      "id": "n_src_data_guides_roles_certroute",
+      "type": "file",
+      "file": "CertRoute.md",
+      "x": 7900,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_roles_fitmeter",
+      "type": "file",
+      "file": "FitMeter.md",
+      "x": 8100,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_roles_role_guides",
+      "type": "file",
+      "file": "ROLE_GUIDES.md",
+      "x": 8300,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_roles_roleguidedata",
+      "type": "file",
+      "file": "RoleGuideData.md",
+      "x": 7900,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_roles_roleladderrung",
+      "type": "file",
+      "file": "RoleLadderRung.md",
+      "x": 8100,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_roles_rationale_1",
+      "type": "file",
+      "file": "TODO REPLACE WITH REAL CONTENT_3.md",
+      "x": 8300,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_roles_titleband",
+      "type": "file",
+      "file": "TitleBand.md",
+      "x": 7900,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_roles",
+      "type": "file",
+      "file": "srcdataguidesroles.ts.md",
+      "x": 8100,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g20",
+      "type": "group",
+      "label": "Community 20",
+      "x": 9060,
+      "y": 1600,
+      "width": 660,
+      "height": 420,
+      "color": "3"
+    },
+    {
+      "id": "n_data_guides_hub_careerroute",
+      "type": "file",
+      "file": "CareerRoute.md",
+      "x": 9080,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_hub_hub_data",
+      "type": "file",
+      "file": "HUB_DATA.md",
+      "x": 9280,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_hub_hubguideitem",
+      "type": "file",
+      "file": "HubGuideItem.md",
+      "x": 9480,
+      "y": 1680,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_hub_rationale_1",
+      "type": "file",
+      "file": "TODO REPLACE WITH REAL CONTENT_4.md",
+      "x": 9080,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_hub_trailhead",
+      "type": "file",
+      "file": "Trailhead.md",
+      "x": 9280,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_hub_workstyleitem",
+      "type": "file",
+      "file": "WorkStyleItem.md",
+      "x": 9480,
+      "y": 1760,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_data_guides_hub",
+      "type": "file",
+      "file": "dataguideshub.ts.md",
+      "x": 9080,
+      "y": 1840,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g21",
+      "type": "group",
+      "label": "Community 21",
+      "x": 0,
+      "y": 2200,
+      "width": 660,
+      "height": 420,
+      "color": "4"
+    },
+    {
+      "id": "n_src_data_guides_hub_careerroute",
+      "type": "file",
+      "file": "CareerRoute_1.md",
+      "x": 20,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_hub_hub_data",
+      "type": "file",
+      "file": "HUB_DATA_1.md",
+      "x": 220,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_hub_hubguideitem",
+      "type": "file",
+      "file": "HubGuideItem_1.md",
+      "x": 420,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_hub_rationale_1",
+      "type": "file",
+      "file": "TODO REPLACE WITH REAL CONTENT_5.md",
+      "x": 20,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_hub_trailhead",
+      "type": "file",
+      "file": "Trailhead_1.md",
+      "x": 220,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_hub_workstyleitem",
+      "type": "file",
+      "file": "WorkStyleItem_1.md",
+      "x": 420,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_hub",
+      "type": "file",
+      "file": "srcdataguideshub.ts.md",
+      "x": 20,
+      "y": 2440,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g22",
+      "type": "group",
+      "label": "Community 22",
+      "x": 2060,
+      "y": 2200,
+      "width": 660,
+      "height": 400,
+      "color": "5"
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_feedbackmodal",
+      "type": "file",
+      "file": "FeedbackModal.svelte.md",
+      "x": 2080,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_mascot",
+      "type": "file",
+      "file": "Mascot.svelte.md",
+      "x": 2280,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_phrasematcher",
+      "type": "file",
+      "file": "PhraseMatcher.svelte.md",
+      "x": 2480,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_versehookscreen",
+      "type": "file",
+      "file": "VerseHookScreen.svelte.md",
+      "x": 2080,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_phrasematcher_playsuccesssound",
+      "type": "file",
+      "file": "playSuccessSound().md",
+      "x": 2280,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_svelte",
+      "type": "file",
+      "file": "svelte_2.md",
+      "x": 2480,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g23",
+      "type": "group",
+      "label": "Community 23",
+      "x": 3680,
+      "y": 2200,
+      "width": 660,
+      "height": 400,
+      "color": "6"
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_components_multiplechoice",
+      "type": "file",
+      "file": "MultipleChoice.svelte.md",
+      "x": 3700,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_utils_soundeffects_getaudiocontext",
+      "type": "file",
+      "file": "getAudioContext().md",
+      "x": 3900,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_utils_soundeffects_playerrorsound",
+      "type": "file",
+      "file": "playErrorSound().md",
+      "x": 4100,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_utils_soundeffects_playpopsound",
+      "type": "file",
+      "file": "playPopSound().md",
+      "x": 3700,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_utils_soundeffects_playsuccesssound",
+      "type": "file",
+      "file": "playSuccessSound()_1.md",
+      "x": 3900,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_utils_soundeffects",
+      "type": "file",
+      "file": "soundEffects.ts.md",
+      "x": 4100,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g24",
+      "type": "group",
+      "label": "Community 24",
+      "x": 5080,
+      "y": 2200,
+      "width": 660,
+      "height": 400,
+      "color": "1"
+    },
+    {
+      "id": "n_src_data_guides_articles_comparisonrow",
+      "type": "file",
+      "file": "ComparisonRow.md",
+      "x": 5100,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_articles_faqitem",
+      "type": "file",
+      "file": "FAQItem.md",
+      "x": 5300,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_articles_guide_articles",
+      "type": "file",
+      "file": "GUIDE_ARTICLES.md",
+      "x": 5500,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_articles_guidearticle",
+      "type": "file",
+      "file": "GuideArticle.md",
+      "x": 5100,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_articles_rationale_1",
+      "type": "file",
+      "file": "TODO REPLACE WITH REAL CONTENT_6.md",
+      "x": 5300,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_articles",
+      "type": "file",
+      "file": "srcdataguidesarticles.ts.md",
+      "x": 5500,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g25",
+      "type": "group",
+      "label": "Community 25",
+      "x": 6480,
+      "y": 2200,
+      "width": 660,
+      "height": 400,
+      "color": "2"
+    },
+    {
+      "id": "n_src_data_testimonials_full_reviews",
+      "type": "file",
+      "file": "FULL_REVIEWS_1.md",
+      "x": 6500,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_testimonials_mini_reviews",
+      "type": "file",
+      "file": "MINI_REVIEWS_1.md",
+      "x": 6700,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_testimonials_minireview",
+      "type": "file",
+      "file": "MiniReview_1.md",
+      "x": 6900,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_testimonials_review",
+      "type": "file",
+      "file": "Review_1.md",
+      "x": 6500,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_testimonials",
+      "type": "file",
+      "file": "srcdatatestimonials.ts.md",
+      "x": 6700,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g26",
+      "type": "group",
+      "label": "Community 26",
+      "x": 7880,
+      "y": 2200,
+      "width": 600,
+      "height": 400,
+      "color": "3"
+    },
+    {
+      "id": "n_sadhna_apology_package_name",
+      "type": "file",
+      "file": "name_1.md",
+      "x": 7900,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_package_private",
+      "type": "file",
+      "file": "private.md",
+      "x": 8100,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_package",
+      "type": "file",
+      "file": "sadhna-apologypackage.json.md",
+      "x": 7900,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_package_version",
+      "type": "file",
+      "file": "version_1.md",
+      "x": 8100,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g27",
+      "type": "group",
+      "label": "Community 27",
+      "x": 9060,
+      "y": 2200,
+      "width": 600,
+      "height": 400,
+      "color": "4"
+    },
+    {
+      "id": "n_src_data_categories_categories",
+      "type": "file",
+      "file": "CATEGORIES_1.md",
+      "x": 9080,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_categories_categoryitem",
+      "type": "file",
+      "file": "CategoryItem_1.md",
+      "x": 9280,
+      "y": 2280,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_categories_rationale_1",
+      "type": "file",
+      "file": "TODO REPLACE WITH REAL CONTENT_7.md",
+      "x": 9080,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_categories",
+      "type": "file",
+      "file": "srcdatacategories.ts.md",
+      "x": 9280,
+      "y": 2360,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g28",
+      "type": "group",
+      "label": "Community 28",
+      "x": 0,
+      "y": 2700,
+      "width": 600,
+      "height": 400,
+      "color": "5"
+    },
+    {
+      "id": "n_src_data_companies_rationale_1",
+      "type": "file",
+      "file": "TODO REPLACE WITH REAL CONTENT_8.md",
+      "x": 20,
+      "y": 2780,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_companies_worldwide_companies",
+      "type": "file",
+      "file": "WORLDWIDE_COMPANIES_1.md",
+      "x": 220,
+      "y": 2780,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_companies_worldwidecompany",
+      "type": "file",
+      "file": "WorldwideCompany_1.md",
+      "x": 20,
+      "y": 2860,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_companies",
+      "type": "file",
+      "file": "srcdatacompanies.ts.md",
+      "x": 220,
+      "y": 2860,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g29",
+      "type": "group",
+      "label": "Community 29",
+      "x": 2060,
+      "y": 2700,
+      "width": 600,
+      "height": 400,
+      "color": "6"
+    },
+    {
+      "id": "n_src_data_guides_categories_category_landings",
+      "type": "file",
+      "file": "CATEGORY_LANDINGS.md",
+      "x": 2080,
+      "y": 2780,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_categories_categorylandingdata",
+      "type": "file",
+      "file": "CategoryLandingData.md",
+      "x": 2280,
+      "y": 2780,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_categories_rationale_1",
+      "type": "file",
+      "file": "TODO REPLACE WITH REAL CONTENT_9.md",
+      "x": 2080,
+      "y": 2860,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_guides_categories",
+      "type": "file",
+      "file": "srcdataguidescategories.ts.md",
+      "x": 2280,
+      "y": 2860,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g30",
+      "type": "group",
+      "label": "Community 30",
+      "x": 3680,
+      "y": 2700,
+      "width": 600,
+      "height": 400,
+      "color": "1"
+    },
+    {
+      "id": "n_src_data_jobs_dummy_jobs",
+      "type": "file",
+      "file": "DUMMY_JOBS_1.md",
+      "x": 3700,
+      "y": 2780,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_jobs_job",
+      "type": "file",
+      "file": "Job_1.md",
+      "x": 3900,
+      "y": 2780,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_jobs_rationale_1",
+      "type": "file",
+      "file": "TODO REPLACE WITH REAL CONTENT_10.md",
+      "x": 3700,
+      "y": 2860,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_data_jobs",
+      "type": "file",
+      "file": "srcdatajobs.ts.md",
+      "x": 3900,
+      "y": 2860,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g31",
+      "type": "group",
+      "label": "Community 31",
+      "x": 5080,
+      "y": 2700,
+      "width": 600,
+      "height": 400,
+      "color": "2"
+    },
+    {
+      "id": "n_next",
+      "type": "file",
+      "file": "next_1.md",
+      "x": 5100,
+      "y": 2780,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_next_config",
+      "type": "file",
+      "file": "next.config.mjs.md",
+      "x": 5300,
+      "y": 2780,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_next_config_nextconfig",
+      "type": "file",
+      "file": "nextConfig.md",
+      "x": 5100,
+      "y": 2860,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g32",
+      "type": "group",
+      "label": "Community 32",
+      "x": 6480,
+      "y": 2700,
+      "width": 600,
+      "height": 400,
+      "color": "3"
+    },
+    {
+      "id": "n_postcss_config_config",
+      "type": "file",
+      "file": "config_1.md",
+      "x": 6500,
+      "y": 2780,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_postcss_load_config",
+      "type": "file",
+      "file": "postcss-load-config.md",
+      "x": 6700,
+      "y": 2780,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_postcss_config",
+      "type": "file",
+      "file": "postcss.config.mjs.md",
+      "x": 6500,
+      "y": 2860,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g33",
+      "type": "group",
+      "label": "Community 33",
+      "x": 7880,
+      "y": 2700,
+      "width": 600,
+      "height": 400,
+      "color": "4"
+    },
+    {
+      "id": "n_tailwind_config_config",
+      "type": "file",
+      "file": "config_2.md",
+      "x": 7900,
+      "y": 2780,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ref_tailwindcss",
+      "type": "file",
+      "file": "ref_tailwindcss.md",
+      "x": 8100,
+      "y": 2780,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tailwind_config",
+      "type": "file",
+      "file": "tailwind.config.ts.md",
+      "x": 7900,
+      "y": 2860,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g34",
+      "type": "group",
+      "label": "Community 34",
+      "x": 9060,
+      "y": 2700,
+      "width": 600,
+      "height": 400,
+      "color": "5"
+    },
+    {
+      "id": "n_ambient_design_vercel",
+      "type": "file",
+      "file": "ambient-designvercel.json.md",
+      "x": 9080,
+      "y": 2780,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_ambient_design_vercel_cleanurls",
+      "type": "file",
+      "file": "cleanUrls.md",
+      "x": 9280,
+      "y": 2780,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g35",
+      "type": "group",
+      "label": "Community 35",
+      "x": 0,
+      "y": 3180,
+      "width": 600,
+      "height": 400,
+      "color": "6"
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_routes_layout",
+      "type": "file",
+      "file": "+layout.svelte.md",
+      "x": 20,
+      "y": 3260,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_app",
+      "type": "file",
+      "file": "bhagvatgita_duolingo_app_src_app.md",
+      "x": 220,
+      "y": 3260,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g36",
+      "type": "group",
+      "label": "Community 36",
+      "x": 2060,
+      "y": 3180,
+      "width": 600,
+      "height": 400,
+      "color": "1"
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_app_d_app",
+      "type": "file",
+      "file": "App.md",
+      "x": 2080,
+      "y": 3260,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_app_d",
+      "type": "file",
+      "file": "app.d.ts.md",
+      "x": 2280,
+      "y": 3260,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g37",
+      "type": "group",
+      "label": "Community 37",
+      "x": 3680,
+      "y": 3180,
+      "width": 600,
+      "height": 400,
+      "color": "2"
+    },
+    {
+      "id": "n_sadhna_apology_vercel_cleanurls",
+      "type": "file",
+      "file": "cleanUrls_1.md",
+      "x": 3700,
+      "y": 3260,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_sadhna_apology_vercel",
+      "type": "file",
+      "file": "sadhna-apologyvercel.json.md",
+      "x": 3900,
+      "y": 3260,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g38",
+      "type": "group",
+      "label": "Community 38",
+      "x": 5080,
+      "y": 3180,
+      "width": 600,
+      "height": 400,
+      "color": "3"
+    },
+    {
+      "id": "n_bhagvatgita_duolingo_app_src_lib_index",
+      "type": "file",
+      "file": "index.ts.md",
+      "x": 5100,
+      "y": 3260,
+      "width": 180,
+      "height": 60
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_data_companies_worldwidecompany_data_companies",
+      "fromNode": "n_data_companies_worldwidecompany",
+      "toNode": "n_data_companies",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_jobs_job_src_components_jobpreview_jobpreviewprops",
+      "fromNode": "n_data_jobs_job",
+      "toNode": "n_src_components_jobpreview_jobpreviewprops",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_data_jobs_job_src_app_job_search_all_page",
+      "fromNode": "n_data_jobs_job",
+      "toNode": "n_src_app_job_search_all_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_data_jobs_job_src_components_jobpreview",
+      "fromNode": "n_data_jobs_job",
+      "toNode": "n_src_components_jobpreview",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_data_jobs_job_data_jobs",
+      "fromNode": "n_data_jobs_job",
+      "toNode": "n_data_jobs",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_remote_jobs_category_page_pageprops_src_app_remote_jobs_category_page",
+      "fromNode": "n_src_app_remote_jobs_category_page_pageprops",
+      "toNode": "n_src_app_remote_jobs_category_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_remote_slug_titles_page_pageprops_src_app_remote_slug_titles_page",
+      "fromNode": "n_src_app_remote_slug_titles_page_pageprops",
+      "toNode": "n_src_app_remote_slug_titles_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_brandicon_brandiconprops_src_components_brandicon",
+      "fromNode": "n_src_components_brandicon_brandiconprops",
+      "toNode": "n_src_components_brandicon",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_chip_chipprops_src_components_chip",
+      "fromNode": "n_src_components_chip_chipprops",
+      "toNode": "n_src_components_chip",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_jobpreview_jobpreviewprops_src_components_jobpreview",
+      "fromNode": "n_src_components_jobpreview_jobpreviewprops",
+      "toNode": "n_src_components_jobpreview",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_megamenu_megamenuprops_src_components_megamenu",
+      "fromNode": "n_src_components_megamenu_megamenuprops",
+      "toNode": "n_src_components_megamenu",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_paywallmodal_paywallmodalprops_src_components_paywallmodal",
+      "fromNode": "n_src_components_paywallmodal_paywallmodalprops",
+      "toNode": "n_src_components_paywallmodal",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_testimonials_minireview_src_components_reviewcards_minireviewcardprops",
+      "fromNode": "n_data_testimonials_minireview",
+      "toNode": "n_src_components_reviewcards_minireviewcardprops",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_data_testimonials_minireview_src_components_reviewcards",
+      "fromNode": "n_data_testimonials_minireview",
+      "toNode": "n_src_components_reviewcards",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_data_testimonials_minireview_data_testimonials",
+      "fromNode": "n_data_testimonials_minireview",
+      "toNode": "n_data_testimonials",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_testimonials_review_src_components_reviewcards_reviewcardprops",
+      "fromNode": "n_data_testimonials_review",
+      "toNode": "n_src_components_reviewcards_reviewcardprops",
+      "label": "references [EXTRACTED]"
+    },
+    {
+      "id": "e_data_testimonials_review_src_components_reviewcards",
+      "fromNode": "n_data_testimonials_review",
+      "toNode": "n_src_components_reviewcards",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_data_testimonials_review_data_testimonials",
+      "fromNode": "n_data_testimonials_review",
+      "toNode": "n_data_testimonials",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_remote_slug_page_pageprops_src_app_remote_slug_page",
+      "fromNode": "n_src_app_remote_slug_page_pageprops",
+      "toNode": "n_src_app_remote_slug_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_avatarstack_avatarstackprops_src_components_avatarstack",
+      "fromNode": "n_src_components_avatarstack_avatarstackprops",
+      "toNode": "n_src_components_avatarstack",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_buttons_buttonprops_src_components_buttons",
+      "fromNode": "n_src_components_buttons_buttonprops",
+      "toNode": "n_src_components_buttons",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_cmptable_cmptableprops_src_components_cmptable",
+      "fromNode": "n_src_components_cmptable_cmptableprops",
+      "toNode": "n_src_components_cmptable",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_dotpattern_dotpatternprops_src_components_dotpattern",
+      "fromNode": "n_src_components_dotpattern_dotpatternprops",
+      "toNode": "n_src_components_dotpattern",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_faqitems_faqguidesitemprops_src_components_faqitems",
+      "fromNode": "n_src_components_faqitems_faqguidesitemprops",
+      "toNode": "n_src_components_faqitems",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_faqitems_faqhomeitemprops_src_components_faqitems",
+      "fromNode": "n_src_components_faqitems_faqhomeitemprops",
+      "toNode": "n_src_components_faqitems",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_footer_footerprops_src_components_footer",
+      "fromNode": "n_src_components_footer_footerprops",
+      "toNode": "n_src_components_footer",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_reviewcards_minireviewcardprops_src_components_reviewcards",
+      "fromNode": "n_src_components_reviewcards_minireviewcardprops",
+      "toNode": "n_src_components_reviewcards",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_reviewcards_reviewcardprops_src_components_reviewcards",
+      "fromNode": "n_src_components_reviewcards_reviewcardprops",
+      "toNode": "n_src_components_reviewcards",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_resetstate",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_resetstate",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_constructor",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_constructor",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_loadstate",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_loadstate",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_savestate",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_savestate",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_savereflection",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_savereflection",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_togglescriptmode",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_togglescriptmode",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_setscriptmode",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_setscriptmode",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_decrementheart",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_decrementheart",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_refillhearts",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_refillhearts",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_addxp",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_addxp",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_completelesson",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_completelesson",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_updatestreak",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_gamestate_updatestreak",
+      "label": "method [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_radarcities_countryregion_src_components_jobradarglobe",
+      "fromNode": "n_src_data_radarcities_countryregion",
+      "toNode": "n_src_components_jobradarglobe",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_radarcities_countryregion_src_data_radarcities",
+      "fromNode": "n_src_data_radarcities_countryregion",
+      "toNode": "n_src_data_radarcities",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_radarcities_radarcity_src_components_jobradarglobe",
+      "fromNode": "n_src_data_radarcities_radarcity",
+      "toNode": "n_src_components_jobradarglobe",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_radarcities_radarcity_src_data_radarcities",
+      "fromNode": "n_src_data_radarcities_radarcity",
+      "toNode": "n_src_data_radarcities",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_radarcities_radarjob_src_components_jobradarglobe",
+      "fromNode": "n_src_data_radarcities_radarjob",
+      "toNode": "n_src_components_jobradarglobe",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_radarcities_radarjob_src_data_radarcities",
+      "fromNode": "n_src_data_radarcities_radarjob",
+      "toNode": "n_src_data_radarcities",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_categories_categoryitem_data_categories",
+      "fromNode": "n_data_categories_categoryitem",
+      "toNode": "n_data_categories",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_categoryselectmodal_categoryselectmodalprops_src_components_categoryselectmodal",
+      "fromNode": "n_src_components_categoryselectmodal_categoryselectmodalprops",
+      "toNode": "n_src_components_categoryselectmodal",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_modal_modalprops_src_components_modal",
+      "fromNode": "n_src_components_modal_modalprops",
+      "toNode": "n_src_components_modal",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_data_sanskrithelper_sanskritdisplay_bhagvatgita_duolingo_app_src_lib_data_sanskrithelper",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_data_sanskrithelper_sanskritdisplay",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_data_sanskrithelper",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_scriptmode_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte_scriptmode",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_state_gamestate_svelte",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_guides_roles_certroute_src_data_guides_roles",
+      "fromNode": "n_src_data_guides_roles_certroute",
+      "toNode": "n_src_data_guides_roles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_guides_roles_fitmeter_src_data_guides_roles",
+      "fromNode": "n_src_data_guides_roles_fitmeter",
+      "toNode": "n_src_data_guides_roles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_guides_roles_roleguidedata_src_data_guides_roles",
+      "fromNode": "n_src_data_guides_roles_roleguidedata",
+      "toNode": "n_src_data_guides_roles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_guides_roles_roleladderrung_src_data_guides_roles",
+      "fromNode": "n_src_data_guides_roles_roleladderrung",
+      "toNode": "n_src_data_guides_roles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_guides_roles_titleband_src_data_guides_roles",
+      "fromNode": "n_src_data_guides_roles_titleband",
+      "toNode": "n_src_data_guides_roles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_guides_hub_careerroute_data_guides_hub",
+      "fromNode": "n_data_guides_hub_careerroute",
+      "toNode": "n_data_guides_hub",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_guides_hub_hubguideitem_data_guides_hub",
+      "fromNode": "n_data_guides_hub_hubguideitem",
+      "toNode": "n_data_guides_hub",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_guides_hub_trailhead_data_guides_hub",
+      "fromNode": "n_data_guides_hub_trailhead",
+      "toNode": "n_data_guides_hub",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_guides_hub_workstyleitem_data_guides_hub",
+      "fromNode": "n_data_guides_hub_workstyleitem",
+      "toNode": "n_data_guides_hub",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_guides_hub_careerroute_src_data_guides_hub",
+      "fromNode": "n_src_data_guides_hub_careerroute",
+      "toNode": "n_src_data_guides_hub",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_guides_hub_hubguideitem_src_data_guides_hub",
+      "fromNode": "n_src_data_guides_hub_hubguideitem",
+      "toNode": "n_src_data_guides_hub",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_guides_hub_trailhead_src_data_guides_hub",
+      "fromNode": "n_src_data_guides_hub_trailhead",
+      "toNode": "n_src_data_guides_hub",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_guides_hub_workstyleitem_src_data_guides_hub",
+      "fromNode": "n_src_data_guides_hub_workstyleitem",
+      "toNode": "n_src_data_guides_hub",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_guides_articles_comparisonrow_src_data_guides_articles",
+      "fromNode": "n_src_data_guides_articles_comparisonrow",
+      "toNode": "n_src_data_guides_articles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_guides_articles_faqitem_src_data_guides_articles",
+      "fromNode": "n_src_data_guides_articles_faqitem",
+      "toNode": "n_src_data_guides_articles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_guides_articles_guidearticle_src_data_guides_articles",
+      "fromNode": "n_src_data_guides_articles_guidearticle",
+      "toNode": "n_src_data_guides_articles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_testimonials_minireview_src_data_testimonials",
+      "fromNode": "n_src_data_testimonials_minireview",
+      "toNode": "n_src_data_testimonials",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_testimonials_review_src_data_testimonials",
+      "fromNode": "n_src_data_testimonials_review",
+      "toNode": "n_src_data_testimonials",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_categories_categoryitem_src_data_categories",
+      "fromNode": "n_src_data_categories_categoryitem",
+      "toNode": "n_src_data_categories",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_companies_worldwidecompany_src_data_companies",
+      "fromNode": "n_src_data_companies_worldwidecompany",
+      "toNode": "n_src_data_companies",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_guides_categories_categorylandingdata_src_data_guides_categories",
+      "fromNode": "n_src_data_guides_categories_categorylandingdata",
+      "toNode": "n_src_data_guides_categories",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_data_jobs_job_src_data_jobs",
+      "fromNode": "n_src_data_jobs_job",
+      "toNode": "n_src_data_jobs",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_guides_articles_comparisonrow_data_guides_articles",
+      "fromNode": "n_data_guides_articles_comparisonrow",
+      "toNode": "n_data_guides_articles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_guides_articles_faqitem_data_guides_articles",
+      "fromNode": "n_data_guides_articles_faqitem",
+      "toNode": "n_data_guides_articles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_guides_articles_guidearticle_data_guides_articles",
+      "fromNode": "n_data_guides_articles_guidearticle",
+      "toNode": "n_data_guides_articles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_guides_categories_categorylandingdata_data_guides_categories",
+      "fromNode": "n_data_guides_categories_categorylandingdata",
+      "toNode": "n_data_guides_categories",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_guides_roles_certroute_data_guides_roles",
+      "fromNode": "n_data_guides_roles_certroute",
+      "toNode": "n_data_guides_roles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_guides_roles_fitmeter_data_guides_roles",
+      "fromNode": "n_data_guides_roles_fitmeter",
+      "toNode": "n_data_guides_roles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_guides_roles_roleguidedata_data_guides_roles",
+      "fromNode": "n_data_guides_roles_roleguidedata",
+      "toNode": "n_data_guides_roles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_guides_roles_roleladderrung_data_guides_roles",
+      "fromNode": "n_data_guides_roles_roleladderrung",
+      "toNode": "n_data_guides_roles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_data_guides_roles_titleband_data_guides_roles",
+      "fromNode": "n_data_guides_roles_titleband",
+      "toNode": "n_data_guides_roles",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_data_gitadata_chapter_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_chapter",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_data_gitadata_commentary_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_commentary",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_data_gitadata_gitadata_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_gitadata",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_data_gitadata_lesson_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_lesson",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_data_gitadata_mcqoption_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_mcqoption",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_data_gitadata_phrasepair_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_phrasepair",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_data_gitadata_question_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_question",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_data_gitadata_section_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_section",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_data_gitadata_teachingslide_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_teachingslide",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_data_gitadata_versepart_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_versepart",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_bhagvatgita_duolingo_app_src_lib_data_gitadata_wordmeaning_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "fromNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata_wordmeaning",
+      "toNode": "n_bhagvatgita_duolingo_app_src_lib_data_gitadata",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_job_search_all_page_jobsearchcontent_src_app_job_search_all_page",
+      "fromNode": "n_src_app_job_search_all_page_jobsearchcontent",
+      "toNode": "n_src_app_job_search_all_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_job_search_all_page_jobsearchpage_src_app_job_search_all_page",
+      "fromNode": "n_src_app_job_search_all_page_jobsearchpage",
+      "toNode": "n_src_app_job_search_all_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_layout_rootlayout_src_app_layout",
+      "fromNode": "n_src_app_layout_rootlayout",
+      "toNode": "n_src_app_layout",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_login_page_loginpage_src_app_login_page",
+      "fromNode": "n_src_app_login_page_loginpage",
+      "toNode": "n_src_app_login_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_privacy_policy_page_privacypolicypage_src_app_privacy_policy_page",
+      "fromNode": "n_src_app_privacy_policy_page_privacypolicypage",
+      "toNode": "n_src_app_privacy_policy_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_radar_page_radarpage_src_app_radar_page",
+      "fromNode": "n_src_app_radar_page_radarpage",
+      "toNode": "n_src_app_radar_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_remote_jobs_category_page_categorylandingpage_src_app_remote_jobs_category_page",
+      "fromNode": "n_src_app_remote_jobs_category_page_categorylandingpage",
+      "toNode": "n_src_app_remote_jobs_category_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_remote_jobs_category_page_generatemetadata_src_app_remote_jobs_category_page",
+      "fromNode": "n_src_app_remote_jobs_category_page_generatemetadata",
+      "toNode": "n_src_app_remote_jobs_category_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_remote_jobs_category_page_generatestaticparams_src_app_remote_jobs_category_page",
+      "fromNode": "n_src_app_remote_jobs_category_page_generatestaticparams",
+      "toNode": "n_src_app_remote_jobs_category_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_remote_page_remotepage_src_app_remote_page",
+      "fromNode": "n_src_app_remote_page_remotepage",
+      "toNode": "n_src_app_remote_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_remote_slug_titles_page_generatemetadata_src_app_remote_slug_titles_page",
+      "fromNode": "n_src_app_remote_slug_titles_page_generatemetadata",
+      "toNode": "n_src_app_remote_slug_titles_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_remote_slug_titles_page_generatestaticparams_src_app_remote_slug_titles_page",
+      "fromNode": "n_src_app_remote_slug_titles_page_generatestaticparams",
+      "toNode": "n_src_app_remote_slug_titles_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_remote_slug_titles_page_roletitlespage_src_app_remote_slug_titles_page",
+      "fromNode": "n_src_app_remote_slug_titles_page_roletitlespage",
+      "toNode": "n_src_app_remote_slug_titles_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_resume_page_resumepage_src_app_resume_page",
+      "fromNode": "n_src_app_resume_page_resumepage",
+      "toNode": "n_src_app_resume_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_robots_robots_src_app_robots",
+      "fromNode": "n_src_app_robots_robots",
+      "toNode": "n_src_app_robots",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_terms_and_conditions_page_termspage_src_app_terms_and_conditions_page",
+      "fromNode": "n_src_app_terms_and_conditions_page_termspage",
+      "toNode": "n_src_app_terms_and_conditions_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_worldwide_page_worldwidepage_src_app_worldwide_page",
+      "fromNode": "n_src_app_worldwide_page_worldwidepage",
+      "toNode": "n_src_app_worldwide_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_backtotop_backtotop_src_lib_utils_cn",
+      "fromNode": "n_src_components_backtotop_backtotop",
+      "toNode": "n_src_lib_utils_cn",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_backtotop_backtotop_src_app_layout",
+      "fromNode": "n_src_components_backtotop_backtotop",
+      "toNode": "n_src_app_layout",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_backtotop_backtotop_src_components_backtotop",
+      "fromNode": "n_src_components_backtotop_backtotop",
+      "toNode": "n_src_components_backtotop",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_brandicon_brandicon_src_app_job_search_all_page",
+      "fromNode": "n_src_components_brandicon_brandicon",
+      "toNode": "n_src_app_job_search_all_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_brandicon_brandicon_src_app_login_page",
+      "fromNode": "n_src_components_brandicon_brandicon",
+      "toNode": "n_src_app_login_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_brandicon_brandicon_src_app_page",
+      "fromNode": "n_src_components_brandicon_brandicon",
+      "toNode": "n_src_app_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_brandicon_brandicon_src_app_privacy_policy_page",
+      "fromNode": "n_src_components_brandicon_brandicon",
+      "toNode": "n_src_app_privacy_policy_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_brandicon_brandicon_src_app_terms_and_conditions_page",
+      "fromNode": "n_src_components_brandicon_brandicon",
+      "toNode": "n_src_app_terms_and_conditions_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_brandicon_brandicon_src_components_footer",
+      "fromNode": "n_src_components_brandicon_brandicon",
+      "toNode": "n_src_components_footer",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_brandicon_brandicon_src_components_guideheader",
+      "fromNode": "n_src_components_brandicon_brandicon",
+      "toNode": "n_src_components_guideheader",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_brandicon_brandicon_src_components_jobpreview",
+      "fromNode": "n_src_components_brandicon_brandicon",
+      "toNode": "n_src_components_jobpreview",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_brandicon_brandicon_src_components_paywallmodal",
+      "fromNode": "n_src_components_brandicon_brandicon",
+      "toNode": "n_src_components_paywallmodal",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_brandicon_brandicon_src_components_brandicon",
+      "fromNode": "n_src_components_brandicon_brandicon",
+      "toNode": "n_src_components_brandicon",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_chip_chip_src_lib_utils_cn",
+      "fromNode": "n_src_components_chip_chip",
+      "toNode": "n_src_lib_utils_cn",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_chip_chip_src_app_job_search_all_page",
+      "fromNode": "n_src_components_chip_chip",
+      "toNode": "n_src_app_job_search_all_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_chip_chip_src_app_remote_jobs_category_page",
+      "fromNode": "n_src_components_chip_chip",
+      "toNode": "n_src_app_remote_jobs_category_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_chip_chip_src_components_jobpreview",
+      "fromNode": "n_src_components_chip_chip",
+      "toNode": "n_src_components_jobpreview",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_chip_chip_src_components_chip",
+      "fromNode": "n_src_components_chip_chip",
+      "toNode": "n_src_components_chip",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_guideheader_guideheader_src_app_radar_page",
+      "fromNode": "n_src_components_guideheader_guideheader",
+      "toNode": "n_src_app_radar_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_guideheader_guideheader_src_app_remote_jobs_category_page",
+      "fromNode": "n_src_components_guideheader_guideheader",
+      "toNode": "n_src_app_remote_jobs_category_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_guideheader_guideheader_src_app_remote_slug_page",
+      "fromNode": "n_src_components_guideheader_guideheader",
+      "toNode": "n_src_app_remote_slug_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_guideheader_guideheader_src_app_remote_slug_titles_page",
+      "fromNode": "n_src_components_guideheader_guideheader",
+      "toNode": "n_src_app_remote_slug_titles_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_guideheader_guideheader_src_app_resume_page",
+      "fromNode": "n_src_components_guideheader_guideheader",
+      "toNode": "n_src_app_resume_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_guideheader_guideheader_src_app_worldwide_page",
+      "fromNode": "n_src_components_guideheader_guideheader",
+      "toNode": "n_src_app_worldwide_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_guideheader_guideheader_src_components_guideheader",
+      "fromNode": "n_src_components_guideheader_guideheader",
+      "toNode": "n_src_components_guideheader",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_jobpreview_jobpreview_src_app_remote_jobs_category_page",
+      "fromNode": "n_src_components_jobpreview_jobpreview",
+      "toNode": "n_src_app_remote_jobs_category_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_jobpreview_jobpreview_src_app_remote_slug_titles_page",
+      "fromNode": "n_src_components_jobpreview_jobpreview",
+      "toNode": "n_src_app_remote_slug_titles_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_jobpreview_jobpreview_src_components_jobpreview",
+      "fromNode": "n_src_components_jobpreview_jobpreview",
+      "toNode": "n_src_components_jobpreview",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_megamenu_megamenu_src_components_megamenu",
+      "fromNode": "n_src_components_megamenu_megamenu",
+      "toNode": "n_src_components_megamenu",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_paywallmodal_paywallmodal_src_app_job_search_all_page",
+      "fromNode": "n_src_components_paywallmodal_paywallmodal",
+      "toNode": "n_src_app_job_search_all_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_paywallmodal_paywallmodal_src_components_paywallmodal",
+      "fromNode": "n_src_components_paywallmodal_paywallmodal",
+      "toNode": "n_src_components_paywallmodal",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_page_homepage_src_app_page",
+      "fromNode": "n_src_app_page_homepage",
+      "toNode": "n_src_app_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_remote_slug_page_generatemetadata_src_app_remote_slug_page",
+      "fromNode": "n_src_app_remote_slug_page_generatemetadata",
+      "toNode": "n_src_app_remote_slug_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_remote_slug_page_generatestaticparams_src_app_remote_slug_page",
+      "fromNode": "n_src_app_remote_slug_page_generatestaticparams",
+      "toNode": "n_src_app_remote_slug_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_app_remote_slug_page_guidearticlepage_src_app_remote_slug_page",
+      "fromNode": "n_src_app_remote_slug_page_guidearticlepage",
+      "toNode": "n_src_app_remote_slug_page",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_avatarstack_avatarstack_src_lib_utils_cn",
+      "fromNode": "n_src_components_avatarstack_avatarstack",
+      "toNode": "n_src_lib_utils_cn",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_avatarstack_avatarstack_src_app_job_search_all_page",
+      "fromNode": "n_src_components_avatarstack_avatarstack",
+      "toNode": "n_src_app_job_search_all_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_avatarstack_avatarstack_src_app_page",
+      "fromNode": "n_src_components_avatarstack_avatarstack",
+      "toNode": "n_src_app_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_avatarstack_avatarstack_src_components_avatarstack",
+      "fromNode": "n_src_components_avatarstack_avatarstack",
+      "toNode": "n_src_components_avatarstack",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_buttons_ghostbutton_src_lib_utils_cn",
+      "fromNode": "n_src_components_buttons_ghostbutton",
+      "toNode": "n_src_lib_utils_cn",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_buttons_ghostbutton_src_components_buttons",
+      "fromNode": "n_src_components_buttons_ghostbutton",
+      "toNode": "n_src_components_buttons",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_buttons_outlinesmallbutton_src_lib_utils_cn",
+      "fromNode": "n_src_components_buttons_outlinesmallbutton",
+      "toNode": "n_src_lib_utils_cn",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_buttons_outlinesmallbutton_src_app_page",
+      "fromNode": "n_src_components_buttons_outlinesmallbutton",
+      "toNode": "n_src_app_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_buttons_outlinesmallbutton_src_components_buttons",
+      "fromNode": "n_src_components_buttons_outlinesmallbutton",
+      "toNode": "n_src_components_buttons",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_buttons_primarybutton_src_lib_utils_cn",
+      "fromNode": "n_src_components_buttons_primarybutton",
+      "toNode": "n_src_lib_utils_cn",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_buttons_primarybutton_src_app_page",
+      "fromNode": "n_src_components_buttons_primarybutton",
+      "toNode": "n_src_app_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_buttons_primarybutton_src_components_buttons",
+      "fromNode": "n_src_components_buttons_primarybutton",
+      "toNode": "n_src_components_buttons",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_buttons_whiteherobutton_src_lib_utils_cn",
+      "fromNode": "n_src_components_buttons_whiteherobutton",
+      "toNode": "n_src_lib_utils_cn",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_buttons_whiteherobutton_src_app_page",
+      "fromNode": "n_src_components_buttons_whiteherobutton",
+      "toNode": "n_src_app_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_buttons_whiteherobutton_src_components_buttons",
+      "fromNode": "n_src_components_buttons_whiteherobutton",
+      "toNode": "n_src_components_buttons",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_cmptable_cmptable_src_lib_utils_cn",
+      "fromNode": "n_src_components_cmptable_cmptable",
+      "toNode": "n_src_lib_utils_cn",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_cmptable_cmptable_src_app_remote_slug_page",
+      "fromNode": "n_src_components_cmptable_cmptable",
+      "toNode": "n_src_app_remote_slug_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_cmptable_cmptable_src_components_cmptable",
+      "fromNode": "n_src_components_cmptable_cmptable",
+      "toNode": "n_src_components_cmptable",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_dotpattern_dotpattern_src_lib_utils_cn",
+      "fromNode": "n_src_components_dotpattern_dotpattern",
+      "toNode": "n_src_lib_utils_cn",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_dotpattern_dotpattern_src_app_page",
+      "fromNode": "n_src_components_dotpattern_dotpattern",
+      "toNode": "n_src_app_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_dotpattern_dotpattern_src_components_footer",
+      "fromNode": "n_src_components_dotpattern_dotpattern",
+      "toNode": "n_src_components_footer",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_dotpattern_dotpattern_src_components_dotpattern",
+      "fromNode": "n_src_components_dotpattern_dotpattern",
+      "toNode": "n_src_components_dotpattern",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_faqitems_faqguidesitem_src_lib_utils_cn",
+      "fromNode": "n_src_components_faqitems_faqguidesitem",
+      "toNode": "n_src_lib_utils_cn",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_faqitems_faqguidesitem_src_app_remote_jobs_category_page",
+      "fromNode": "n_src_components_faqitems_faqguidesitem",
+      "toNode": "n_src_app_remote_jobs_category_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_faqitems_faqguidesitem_src_app_remote_slug_page",
+      "fromNode": "n_src_components_faqitems_faqguidesitem",
+      "toNode": "n_src_app_remote_slug_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_faqitems_faqguidesitem_src_app_remote_slug_titles_page",
+      "fromNode": "n_src_components_faqitems_faqguidesitem",
+      "toNode": "n_src_app_remote_slug_titles_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_faqitems_faqguidesitem_src_components_faqitems",
+      "fromNode": "n_src_components_faqitems_faqguidesitem",
+      "toNode": "n_src_components_faqitems",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_faqitems_faqhomeitem_src_lib_utils_cn",
+      "fromNode": "n_src_components_faqitems_faqhomeitem",
+      "toNode": "n_src_lib_utils_cn",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_faqitems_faqhomeitem_src_app_page",
+      "fromNode": "n_src_components_faqitems_faqhomeitem",
+      "toNode": "n_src_app_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_faqitems_faqhomeitem_src_components_faqitems",
+      "fromNode": "n_src_components_faqitems_faqhomeitem",
+      "toNode": "n_src_components_faqitems",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_footer_footer_src_app_page",
+      "fromNode": "n_src_components_footer_footer",
+      "toNode": "n_src_app_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_footer_footer_src_app_remote_jobs_category_page",
+      "fromNode": "n_src_components_footer_footer",
+      "toNode": "n_src_app_remote_jobs_category_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_footer_footer_src_app_remote_slug_page",
+      "fromNode": "n_src_components_footer_footer",
+      "toNode": "n_src_app_remote_slug_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_footer_footer_src_app_remote_slug_titles_page",
+      "fromNode": "n_src_components_footer_footer",
+      "toNode": "n_src_app_remote_slug_titles_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_footer_footer_src_app_resume_page",
+      "fromNode": "n_src_components_footer_footer",
+      "toNode": "n_src_app_resume_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_footer_footer_src_app_worldwide_page",
+      "fromNode": "n_src_components_footer_footer",
+      "toNode": "n_src_app_worldwide_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_footer_footer_src_components_footer",
+      "fromNode": "n_src_components_footer_footer",
+      "toNode": "n_src_components_footer",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_productscreenshotmock_productscreenshotmock_src_app_page",
+      "fromNode": "n_src_components_productscreenshotmock_productscreenshotmock",
+      "toNode": "n_src_app_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_productscreenshotmock_productscreenshotmock_src_components_productscreenshotmock",
+      "fromNode": "n_src_components_productscreenshotmock_productscreenshotmock",
+      "toNode": "n_src_components_productscreenshotmock",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_reviewcards_minireviewcard_src_lib_utils_cn",
+      "fromNode": "n_src_components_reviewcards_minireviewcard",
+      "toNode": "n_src_lib_utils_cn",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_reviewcards_minireviewcard_src_app_page",
+      "fromNode": "n_src_components_reviewcards_minireviewcard",
+      "toNode": "n_src_app_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_reviewcards_minireviewcard_src_components_reviewcards",
+      "fromNode": "n_src_components_reviewcards_minireviewcard",
+      "toNode": "n_src_components_reviewcards",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_reviewcards_reviewcard_src_lib_utils_cn",
+      "fromNode": "n_src_components_reviewcards_reviewcard",
+      "toNode": "n_src_lib_utils_cn",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_reviewcards_reviewcard_src_app_page",
+      "fromNode": "n_src_components_reviewcards_reviewcard",
+      "toNode": "n_src_app_page",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_components_reviewcards_reviewcard_src_components_reviewcards",
+      "fromNode": "n_src_components_reviewcards_reviewcard",
+      "toNode": "n_src_components_reviewcards",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_lib_utils_cn_src_components_modal_modal",
+      "fromNode": "n_src_lib_utils_cn",
+      "toNode": "n_src_components_modal_modal",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_lib_utils_cn_src_components_avatarstack",
+      "fromNode": "n_src_lib_utils_cn",
+      "toNode": "n_src_components_avatarstack",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_lib_utils_cn_src_components_backtotop",
+      "fromNode": "n_src_lib_utils_cn",
+      "toNode": "n_src_components_backtotop",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_lib_utils_cn_src_components_buttons",
+      "fromNode": "n_src_lib_utils_cn",
+      "toNode": "n_src_components_buttons",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_lib_utils_cn_src_components_chip",
+      "fromNode": "n_src_lib_utils_cn",
+      "toNode": "n_src_components_chip",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_lib_utils_cn_src_components_cmptable",
+      "fromNode": "n_src_lib_utils_cn",
+      "toNode": "n_src_components_cmptable",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_lib_utils_cn_src_components_dotpattern",
+      "fromNode": "n_src_lib_utils_cn",
+      "toNode": "n_src_components_dotpattern",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_lib_utils_cn_src_components_faqitems",
+      "fromNode": "n_src_lib_utils_cn",
+      "toNode": "n_src_components_faqitems",
+      "label": "imports [EXTRACTED]"
+    },
+    {
+      "id": "e_src_lib_utils_cn_src_components_modal",
+      "fromNode": "n_src_lib_utils_cn",
+      "toNode": "n_src_components_modal",
+      "label": "imports [EXTRACTED]"
+    }
+  ]
+}

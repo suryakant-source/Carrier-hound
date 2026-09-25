@@ -1,0 +1,202 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-base: #0B0F2B;
+  --color-bg-surface: #12163A;
+  --color-primary: #F4A428;
+  --color-primary-dark: #E88B1F;
+  --color-success: #1DAA7C;
+  --color-error: #D64545;
+  --color-accent-rose: #E85D9A;
+  --color-text-primary: #F5EFE0;
+  --color-text-muted: #9CA3C4;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg-base);
+    color: var(--color-text-primary);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+}
+
+@utility font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+/* Chunky 3D Tactile Button & Tile Utilities */
+@utility btn-3d {
+  position: relative;
+  border-bottom-width: 4px;
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.15s ease, background-color 0.15s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+@utility tile-3d {
+  position: relative;
+  border-bottom-width: 4px;
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Active & disabled states via regular CSS (TailwindCSS v4 @utility doesn't support pseudo-selectors) */
+.btn-3d:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+.btn-3d:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+.tile-3d:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+/* ─── Custom Micro-Interaction Animations ─── */
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+@keyframes float-xp {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  50% { opacity: 1; transform: translateY(-24px) scale(1.15); }
+  100% { opacity: 0; transform: translateY(-40px) scale(0.9); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 0.3; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+/* Node current-lesson glow pulse */
+@keyframes node-glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 16px 4px rgba(244, 164, 40, 0.5), 0 0 40px 8px rgba(244, 164, 40, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 28px 10px rgba(244, 164, 40, 0.75), 0 0 60px 20px rgba(244, 164, 40, 0.35);
+    transform: scale(1.06);
+  }
+}
+
+/* Shimmer on completed gold path */
+@keyframes path-shimmer {
+  0% { stroke-dashoffset: 0; opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { stroke-dashoffset: -100; opacity: 0.8; }
+}
+
+/* Owl subtle blink */
+@keyframes owl-blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.08); }
+}
+
+/* Owl subtle bounce for guide mode */
+@keyframes owl-bounce {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-5px); }
+  60% { transform: translateY(-3px); }
+}
+
+/* Hero card fade-up entrance */
+@keyframes fade-up {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Lotus bloom for section milestone */
+@keyframes lotus-bloom {
+  0% { transform: scale(0.8) rotate(-10deg); opacity: 0.5; }
+  60% { transform: scale(1.12) rotate(4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Golden particle travel */
+@keyframes particle-travel {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--tx, 0px), var(--ty, -60px)) scale(0.2); }
+}
+
+/* Gentle progress bar fill animation */
+@keyframes progress-fill {
+  0% { width: 0%; }
+  100% { width: var(--progress-width); }
+}
+
+/* Daily task check pop */
+@keyframes check-pop {
+  0% { transform: scale(0.6); }
+  60% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+/* Fade in (existing, re-declared for compatibility) */
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* ─── Animation utility classes ─── */
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+.animate-float-xp {
+  animation: float-xp 1.2s ease-out forwards;
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-node-glow {
+  animation: node-glow-pulse 2.2s ease-in-out infinite;
+}
+
+.animate-owl-bounce {
+  animation: owl-bounce 2.5s ease-in-out infinite;
+}
+
+.animate-fade-up {
+  animation: fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-lotus-bloom {
+  animation: lotus-bloom 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-check-pop {
+  animation: check-pop 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ─── Verse Hook cinematic text reveal ─── */
+@keyframes moment-rise {
+  0%   { opacity: 0; transform: translateY(18px) scale(0.97); }
+  60%  { opacity: 1; transform: translateY(-2px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ─── Word Discovery transition banner ─── */
+@keyframes fade-slide-up {
+  0%   { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Scrollbar hide ─── */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }

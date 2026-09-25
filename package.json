@@ -1,0 +1,39 @@
+{
+  "name": "yourbrand-job-discovery",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@types/mapbox-gl": "^3.4.1",
+    "@types/three": "^0.186.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "globe.gl": "^2.46.2",
+    "lucide-react": "^0.453.0",
+    "mapbox-gl": "^3.31.0",
+    "next": "^14.2.15",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-select": "^5.8.1",
+    "react-toastify": "^10.0.6",
+    "tailwind-merge": "^2.5.4",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "puppeteer-core": "^25.12.0",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3"
+  }
+}

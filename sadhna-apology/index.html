@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>A Quiet Space — A Personal Note</title>
+  <meta name="description" content="A sincere, personal apology and reconciliation letter dedicated to Sadhna.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+  <canvas id="webgl-canvas"></canvas>
+  <div class="ambient-vignette" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-left">
+      <span class="dedication-badge">Dedicated to <strong>Sadhna</strong></span>
+    </div>
+    <div class="header-right">
+      <button id="audio-toggle" class="control-btn" title="Toggle Ambient Music" aria-label="Toggle Ambient Music">
+        <span class="audio-waves" aria-hidden="true">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </span>
+        <span id="audio-label" class="btn-text">Ambient Sound: Off</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="story-wrapper">
+
+    <!-- HERO SECTION -->
+    <section class="story-section hero-section" id="hero">
+      <div class="hero-content">
+        <div class="sub-pill fade-in">A Letter From The Heart</div>
+        <h1 class="hero-title fade-in">For Sadhna</h1>
+        <p class="hero-subtitle fade-in">
+          Some apologies are too important for quick messages, and some people mean far too much to leave things unsaid.
+        </p>
+        <div class="scroll-cue fade-in" id="scroll-prompt">
+          <span>Scroll to read</span>
+          <div class="cue-arrow">↓</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: THE OPENING -->
+    <section class="story-section text-section" id="opening">
+      <div class="content-card glass-panel">
+        <span class="section-label">01 / The Intention</span>
+        <h2 class="section-heading">Why I Built This Space For You</h2>
+        <div class="narrative-body">
+          <p>
+            I wanted to create a quiet, honest corner of the world just for you—away from everyday distractions, outside noise, and hurried conversations.
+          </p>
+          <p>
+            I know things became difficult between us. I know there was hurt, misunderstandings, and distance. I am not making this to gloss over what happened, nor to offer hollow excuses. I am here to speak from an open, vulnerable place, and to genuinely take accountability for where I fell short.
+          </p>
+          <blockquote class="poetic-quote">
+            "You deserved patience, tenderness, and understanding every single day. When I failed to give you that, the fault was entirely mine."
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: SPECIFIC ACCOUNTABILITY -->
+    <section class="story-section text-section" id="mistakes">
+      <div class="content-card glass-panel">
+        <span class="section-label">02 / What I Own</span>
+        <h2 class="section-heading">Owning My Mistakes, Without Excuses</h2>
+        <p class="section-intro">
+          Saying a vague "I'm sorry for everything" feels cheap. You deserve specific accountability, because true remorse begins with seeing the exact moments that hurt you:
+        </p>
+
+        <div class="mistakes-grid">
+          <div class="mistake-item">
+            <div class="mistake-icon">✦</div>
+            <div class="mistake-content">
+              <h3>Letting Defensiveness Override Empathy</h3>
+              <p>
+                When friction arose, there were times I jumped to defend my pride or explain my intentions instead of first acknowledging how you felt. I should have prioritized protecting your feelings above protecting my ego.
+              </p>
+            </div>
+          </div>
+
+          <div class="mistake-item">
+            <div class="mistake-icon">✦</div>
+            <div class="mistake-content">
+              <h3>Failing to Truly Pause and Listen</h3>
+              <p>
+                When you were trying to communicate what was bothering you, I sometimes listened to respond rather than listening to understand. You were asking for emotional presence and patience, and I didn't give you the depth you needed.
+              </p>
+            </div>
+          </div>
+
+          <div class="mistake-item">
+            <div class="mistake-icon">✦</div>
+            <div class="mistake-content">
+              <h3>Taking Your Presence and Warmth for Granted</h3>
+              <p>
+                Your kindness, your care, and the effort you brought into my life were rare gifts. Becoming complacent or assuming you would always just be there was a profound failure on my part, and I deeply regret it.
+              </p>
+            </div>
+          </div>
+
+          <div class="mistake-item">
+            <div class="mistake-icon">✦</div>
+            <div class="mistake-content">
+              <h3>Letting Stress Dictate My Tone</h3>
+              <p>
+                I allowed outside frustrations and impatience to spill over into the way I communicated with you. You deserved gentle care, especially during stressful moments, not unpredictability or sharp words.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: WHAT CHANGED DURING TIME APART -->
+    <section class="story-section text-section" id="growth">
+      <div class="content-card glass-panel">
+        <span class="section-label">03 / The Realization</span>
+        <h2 class="section-heading">What The Time Apart Taught Me</h2>
+        <div class="narrative-body">
+          <p>
+            The quietness of these days gave me room to step back and honestly examine who I was in those moments. It’s easy to realize someone's value when the room goes quiet, but what matters more is understanding <em>why</em> things broke down.
+          </p>
+          <div class="growth-highlights">
+            <div class="growth-pillar">
+              <span class="pillar-num">I</span>
+              <h4>Patience Over Pride</h4>
+              <p>No argument is ever worth causing a single second of emotional pain to someone you cherish.</p>
+            </div>
+            <div class="growth-pillar">
+              <span class="pillar-num">II</span>
+              <h4>Consistency Over Words</h4>
+              <p>Apologies mean nothing without sustained, calm behavioral change. Real maturity is proven in quiet everyday actions.</p>
+            </div>
+            <div class="growth-pillar">
+              <span class="pillar-num">III</span>
+              <h4>Protecting Your Peace</h4>
+              <p>True care means being a safe harbor for you, never the storm you have to endure.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: MEMORY MOMENTS -->
+    <section class="story-section text-section" id="memories">
+      <div class="content-card glass-panel wide-card">
+        <span class="section-label">04 / Moments I Hold Dear</span>
+        <h2 class="section-heading">Moments That Remind Me Who You Are</h2>
+        <p class="section-intro">
+          Beyond the misunderstandings, what remains clearest in my mind is your grace, your laughter, and the warmth you brought into my days.
+        </p>
+
+        <div class="memory-cards-container">
+          <div class="memory-card">
+            <div class="card-visual visual-lantern">
+              <div class="inner-glow"></div>
+              <span class="card-symbol">🕯️</span>
+            </div>
+            <div class="card-text">
+              <h3>The Unfiltered Laughter</h3>
+              <p>Those spontaneous moments where neither of us had our guard up, and the world felt effortless and light.</p>
+            </div>
+          </div>
+
+          <div class="memory-card">
+            <div class="card-visual visual-stars">
+              <div class="inner-glow"></div>
+              <span class="card-symbol">✨</span>
+            </div>
+            <div class="card-text">
+              <h3>The Quiet Understanding</h3>
+              <p>When words weren't needed—just knowing you were there was enough to make any heavy day feel calm.</p>
+            </div>
+          </div>
+
+          <div class="memory-card">
+            <div class="card-visual visual-embers">
+              <div class="inner-glow"></div>
+              <span class="card-symbol">🕊️</span>
+            </div>
+            <div class="card-text">
+              <h3>Your Gentle Kindness</h3>
+              <p>The pure, natural compassion you carry. It made me want to become a better, more thoughtful human being.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: ZERO PRESSURE & FREEDOM -->
+    <section class="story-section text-section" id="closing">
+      <div class="content-card glass-panel highlight-panel">
+        <span class="section-label">05 / Total Autonomy</span>
+        <h2 class="section-heading">The Choice is Entirely Yours</h2>
+        <div class="narrative-body">
+          <p>
+            I want to make something unequivocally clear: <strong>I ask for nothing under pressure.</strong>
+          </p>
+          <p>
+            I am not offering this apology with the expectation that things magically reset, or that you owe me a reply, a call, or immediate forgiveness. Forgiveness is a gift, not a debt to be collected.
+          </p>
+          <p>
+            If you need more time, take as much time as you want. If you need space, I honor your boundaries completely. And if all you wanted was to hear that your feelings were valid and that I see my errors clearly—then I am deeply grateful that you read this far.
+          </p>
+          <p class="signature-line">
+            With genuine respect, remorse, and warmth,<br>
+            <em>Always wishing you peace and happiness.</em>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: RECONCILIATION & CONTACT -->
+    <section class="story-section response-section" id="reply">
+      <div class="content-card glass-panel center-align">
+        <span class="section-label">06 / If You Ever Wish to Reach Out</span>
+        <h2 class="section-heading">When & If You're Ready</h2>
+        <p class="section-intro">
+          If your heart ever feels ready to say hello or talk things through, you can reach me with a single tap. No pressure, no awkwardness.
+        </p>
+
+        <div class="reply-actions">
+          <a id="whatsapp-btn" class="action-btn primary-action" href="https://wa.me/?text=Hey%2C%20I%20read%20your%20letter%2E%20I%20appreciate%20your%20honesty%20and%20wanted%20to%20reach%20out%2E" target="_blank" rel="noopener noreferrer">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.599 2.679-.702c.971.558 1.83.856 2.781.856h.001c3.181 0 5.767-2.586 5.768-5.766 0-3.18-2.586-5.766-5.769-5.766zm9.969 5.766c0 5.518-4.482 10-10 10-1.745 0-3.385-.45-4.818-1.238l-5.182 1.36 1.385-5.061c-.886-1.493-1.385-3.23-1.385-5.061 0-5.518 4.482-10 10-10 5.518 0 10 4.482 10 10z"/>
+            </svg>
+            <span>Send a Note on WhatsApp</span>
+          </a>
+
+          <a id="sms-btn" class="action-btn secondary-action" href="sms:?body=Hey%2C%20I%20read%20your%20letter%2E">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>Send via SMS</span>
+          </a>
+        </div>
+
+        <div class="optional-config">
+          <button id="toggle-config-btn" class="text-link-btn">Customizing phone number?</button>
+          <div id="config-drawer" class="config-drawer hidden">
+            <label for="custom-phone">Your Phone Number (optional with country code, e.g. 919876543210):</label>
+            <div class="input-row">
+              <input type="tel" id="custom-phone" placeholder="e.g. 919876543210" pattern="[0-9+]*">
+              <button id="save-phone-btn" class="small-btn">Update Links</button>
+            </div>
+            <p class="config-note">Saved locally in your browser only. Never transmitted anywhere.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <p>Handcrafted with sincerity and deep respect for Sadhna.</p>
+      <p class="footer-sub">Floating Lanterns & Golden Embers • Pure Client-side Experience</p>
+    </footer>
+
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>
