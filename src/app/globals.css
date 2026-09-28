@@ -4,12 +4,34 @@
 @tailwind utilities;
 
 :root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 240 5.9% 10%;
+  --radius: 0.5rem;
+  --gap: 1rem;
+  --duration: 30s;
+
   --primary-blue: #2563EB;
   --primary-blue-hover: #1D4ED8;
   --blue-tint: #F8FAFF;
   --navy: #090E34;
   --headline-ink: #142033;
-  --foreground: #09090B;
   --muted-text: #4B5563;
   --guide-text: rgb(99, 115, 129);
   --border-default: #E4E4E7;
@@ -39,12 +61,39 @@ body {
   html {
     scroll-behavior: auto;
   }
-  *, *::before, *::after {
+  *:not(.animate-marquee-left):not(.animate-marquee-right):not(.animate-marquee) {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Bi-directional Continuous Marquee Keyframes & Classes */
+@keyframes marquee-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-100% - var(--gap, 1.25rem)));
+  }
+}
+
+@keyframes marquee-right {
+  0% {
+    transform: translateX(calc(-100% - var(--gap, 1.25rem)));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-marquee-left {
+  animation: marquee-left var(--duration, 25s) linear infinite !important;
+}
+
+.animate-marquee-right {
+  animation: marquee-right var(--duration, 25s) linear infinite !important;
 }
 
 /* Focus styles */
@@ -83,6 +132,22 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Custom utility to hide scrollbar cleanly on mobile */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Netlify floating badge suppression */
+#netlify-badge,
+.netlify-badge,
+[data-netlify-badge] {
+  display: none !important;
 }
 
 /* 3D Globe Job Radar Custom Animations */

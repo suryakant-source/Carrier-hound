@@ -23,14 +23,11 @@ export default function Footer({ isGuide = false }: FooterProps) {
               <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-sm">
                 <BrandIcon className="w-5 h-5 text-white" />
               </div>
-              <span className="text-2xl font-black tracking-tight text-white">YourBrand</span>
+              <span className="text-2xl font-black tracking-tight text-white">Career Hound</span>
             </Link>
             <p className="text-slate-400 text-sm max-w-md leading-relaxed">
               We find jobs posted on company websites. Real-time radar for unindexed remote engineering, design, data, and product jobs directly from verified company ATS endpoints.
             </p>
-            <div className="pt-2 text-xs text-slate-500">
-              Zero ghost listings. Zero spam agencies. 100% direct company ATS urls.
-            </div>
           </div>
 
           {/* Quick Links Column */}
@@ -111,7 +108,7 @@ export default function Footer({ isGuide = false }: FooterProps) {
 
         {/* Bottom row: copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-          <p>© {new Date().getFullYear()} YourBrand Inc. All rights reserved. Not affiliated with any referenced brands.</p>
+          <p>© {new Date().getFullYear()} Career Hound Inc. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <Link href="/privacy-policy" className="hover:text-slate-300 transition-colors">
               Privacy

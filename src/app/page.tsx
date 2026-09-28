@@ -7,23 +7,17 @@ import BrandIcon from "@/components/BrandIcon";
 import DotPattern from "@/components/DotPattern";
 import AvatarStack from "@/components/AvatarStack";
 import ProductScreenshotMock from "@/components/ProductScreenshotMock";
-import { ReviewCard, MiniReviewCard } from "@/components/ReviewCards";
 import { FaqHomeItem } from "@/components/FaqItems";
-import { WhiteHeroButton, OutlineSmallButton, PrimaryButton } from "@/components/Buttons";
+import { WhiteHeroButton } from "@/components/Buttons";
 import CategorySelectModal from "@/components/CategorySelectModal";
 import Footer from "@/components/Footer";
-import { FULL_REVIEWS, MINI_REVIEWS } from "@/data/testimonials";
-import { X, Check, ExternalLink, ArrowRight, Sparkles } from "lucide-react";
+import WireframeDottedGlobe from "@/components/ui/wireframe-dotted-globe";
+import { Testimonials } from "@/components/testimonials";
+import { TestimonialMarqueeDemo } from "@/components/ui/marquee-01";
+import { X, Check, ArrowRight } from "lucide-react";
 
 export default function HomePage() {
   const [modalOpen, setModalOpen] = useState(false);
-  const [reviewsCount, setReviewsCount] = useState({ row1: 3, row2: 3, row3: 3 });
-  const [visibleMiniReviews, setVisibleMiniReviews] = useState(16);
-
-  // Reviews partitioned for the 3 distinct review sections
-  const row1Reviews = FULL_REVIEWS.slice(0, 3);
-  const row2Reviews = FULL_REVIEWS.slice(3, 6);
-  const row3Reviews = FULL_REVIEWS.slice(6, 9);
 
   return (
     <div className="min-h-screen bg-white text-[#09090B] flex flex-col selection:bg-blue-100 selection:text-blue-900">
@@ -39,7 +33,7 @@ export default function HomePage() {
           {/* Left: Round white logo circle - enlarged */}
           <Link
             href="/"
-            aria-label="YourBrand Home"
+            aria-label="Career Hound Home"
             className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white flex items-center justify-center shadow-lg transition-transform hover:scale-105"
           >
             <BrandIcon className="w-8 h-8 sm:w-9 sm:h-9 text-[#2563EB]" />
@@ -54,17 +48,17 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* Hero Content - shifted downward so View Jobs sits just slightly above center */}
-        <div className="max-w-4xl mx-auto px-6 text-center relative z-20 space-y-4 sm:space-y-5 pt-2 sm:pt-4">
+        {/* Hero Content - centered with 16px rhythm and 32px gap above card panel */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-20 flex flex-col items-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[48px] font-bold leading-tight sm:leading-tight text-white max-w-3xl mx-auto tracking-tight">
             Find jobs not on LinkedIn/Indeed
           </h1>
 
-          <p className="text-white/90 text-sm sm:text-base md:text-lg max-w-xl mx-auto font-normal leading-relaxed">
+          <p className="mt-4 text-white/90 text-sm sm:text-base md:text-lg max-w-xl mx-auto font-normal leading-relaxed">
             We find jobs posted on company websites.
           </p>
 
-          <div className="pt-3 sm:pt-4 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-4 flex items-center justify-center">
             <button
               onClick={() => setModalOpen(true)}
               className="inline-flex items-center justify-center gap-2.5 bg-white text-[#09090B] font-bold text-base sm:text-lg px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer"
@@ -72,34 +66,27 @@ export default function HomePage() {
               <span>View Jobs</span>
               <ArrowRight className="w-5 h-5 ml-0.5 stroke-[2.5]" />
             </button>
-            <Link
-              href="/radar"
-              className="inline-flex items-center justify-center gap-2 bg-slate-950/80 hover:bg-slate-950 text-white font-bold text-base px-6 py-3.5 sm:py-4 rounded-xl border border-white/20 hover:border-cyan-400 backdrop-blur-md shadow-lg hover:scale-105 transition-all"
-            >
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-              <span>3D Globe Radar</span>
-            </Link>
           </div>
 
-          <div className="pt-3 sm:pt-4">
+          <div className="mt-4">
             <AvatarStack
               peopleCount="8,573"
               jobsCount="4.5 million"
-              textColor="text-white/90"
+              textColor="text-white"
             />
           </div>
         </div>
 
-        {/* Product Screenshot Mock nested inside hero on blue background, flush with section bottom */}
-        <div className="mt-6 sm:mt-8 max-w-[960px] mx-auto px-4 sm:px-6 relative z-20 pb-0">
+        {/* Product Screenshot Mock nested inside hero on blue background, flush with section bottom (32px mt-8 below social-proof line) */}
+        <div className="mt-8 max-w-[960px] mx-auto px-3 sm:px-6 relative z-20 pb-0">
           {/* Dotted grid pattern behind top-right corner */}
-          <div className="absolute -top-6 -right-4 sm:-top-7 sm:-right-6 pointer-events-none hidden sm:block z-0">
-            <DotPattern width={160} height={120} dotColor="rgba(255, 255, 255, 0.45)" rows={6} cols={8} />
+          <div className="absolute -top-6 -right-1 sm:-top-8 sm:-right-4 pointer-events-none z-0">
+            <DotPattern width={160} height={100} dotColor="rgba(255, 255, 255, 0.45)" rows={5} cols={8} />
           </div>
 
           {/* Dotted grid pattern behind bottom-left corner */}
-          <div className="absolute -bottom-6 -left-4 sm:-bottom-7 sm:-left-6 pointer-events-none hidden sm:block z-0">
-            <DotPattern width={160} height={120} dotColor="rgba(255, 255, 255, 0.45)" rows={6} cols={8} />
+          <div className="absolute -bottom-6 -left-1 sm:-bottom-8 sm:-left-4 pointer-events-none z-0">
+            <DotPattern width={160} height={100} dotColor="rgba(255, 255, 255, 0.45)" rows={5} cols={8} />
           </div>
 
           <div className="relative z-10">
@@ -112,66 +99,56 @@ export default function HomePage() {
       {/* 3. PROBLEM VS SOLUTION (Centered H2 + 2 columns)                          */}
       {/* ========================================================================= */}
       <section className="pt-20 pb-12 lg:pt-[120px] lg:pb-[90px] max-w-content mx-auto px-6">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#09090B] tracking-tight mb-4">
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
+          <h2 className="text-3xl font-bold text-[#09090B] sm:text-4xl md:text-[40px] md:leading-[1.2]">
             Tired of getting auto-rejections?
           </h2>
-          <p className="text-[#4B5563] text-base sm:text-lg">
-            Traditional aggregator algorithms bury your resume under hundreds of bots and agency spam. Here is how YourBrand changes the odds:
-          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {/* Left card: Competitor (Big job boards) */}
+          {/* Left card: LinkedIn / Indeed */}
           <div className="bg-white border border-[#E4E4E7] rounded-xl p-7 shadow-sm">
-            <h3 className="text-xl font-bold text-[#09090B] pb-4 mb-6 border-b border-gray-100 flex items-center justify-between">
-              <span>Big job boards</span>
-              <span className="text-xs font-semibold uppercase tracking-wider text-red-500 bg-red-50 px-2.5 py-1 rounded">
-                High Friction
-              </span>
-            </h3>
+            <span className="mb-5 block text-xl font-medium text-dark pb-4 border-b border-gray-100">
+              <a href="https://www.linkedin.com/jobs" target="_blank" rel="noreferrer noopener" className="hover:underline">LinkedIn</a>
+              {" / "}
+              <a href="https://www.indeed.com/" target="_blank" rel="noreferrer noopener" className="hover:underline">Indeed</a>
+            </span>
             <ul className="space-y-4">
               {[
-                "1,000+ applicants within hours of syndication",
-                "Ghost listings that expired weeks ago",
-                "Aggressive recruiter tracking and 8-page questionnaires",
-                "Concealed compensation and vague salary ranges",
-                "Recruiting agency reposts disguising client identities",
+                "\"Posted 1 hour ago, over 200 applicants.\"",
+                "Low reply rate for interviews.",
+                "Advertised jobs = low quality jobs.",
+                "Recruiter fees. Companies prefer direct applicants.",
+                "Fake jobs.",
               ].map((item, idx) => (
                 <li key={idx} className="flex items-start gap-3">
                   <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <X className="w-3.5 h-3.5 text-red-600 stroke-[3]" />
                   </div>
-                  <span className="text-sm sm:text-base text-gray-700 leading-snug">{item}</span>
+                  <span className="text-base text-gray-700 leading-snug">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Right card: YourBrand (5 green checks) */}
-          <div className="bg-[#F8FAFF] border-2 border-blue-500/80 rounded-xl p-7 shadow-[0_12px_32px_rgba(37,99,235,0.08)] relative overflow-hidden">
-            <div className="absolute top-0 right-0 bg-[#2563EB] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-bl-lg">
-              RECOMMENDED
-            </div>
-            <h3 className="text-xl font-bold text-[#09090B] pb-4 mb-6 border-b border-blue-100 flex items-center gap-2">
-              <span className="text-[#2563EB]">YourBrand</span>
-              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded">
-                Direct Signal
-              </span>
-            </h3>
+          {/* Right card: Career Hound */}
+          <div className="bg-white border border-[#E4E4E7] rounded-xl p-7 shadow-sm">
+            <span className="mb-5 block text-xl font-medium text-dark pb-4 border-b border-gray-100">
+              Career Hound
+            </span>
             <ul className="space-y-4">
               {[
-                "Under 25 applicants per unindexed opening",
-                "Verified active ATS endpoints polled sub-hourly",
-                "One click direct to employer Greenhouse, Lever, or Ashby",
-                "Pre-calculated salary chips and true compensation bounds",
-                "Direct employer requisitions only—no staffing brokers",
+                "Less competition.",
+                "High reply rate for interviews.",
+                "Jobs that aren't being advertised.",
+                "Apply directly to the hiring team.",
+                "Real jobs.",
               ].map((item, idx) => (
                 <li key={idx} className="flex items-start gap-3">
                   <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
                   </div>
-                  <span className="text-sm sm:text-base text-[#09090B] font-medium leading-snug">{item}</span>
+                  <span className="text-base text-[#09090B] font-medium leading-snug">{item}</span>
                 </li>
               ))}
             </ul>
@@ -180,40 +157,75 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 4. REVIEWS ROW 1 (3 ReviewCards + See More button)                       */}
+      {/* 4. MARQUEE TESTIMONIALS (Dual-row auto-scrolling marquee)                 */}
       {/* ========================================================================= */}
-      <section className="py-12 bg-white max-w-content mx-auto px-6 w-full">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {row1Reviews.map((rev) => (
-            <ReviewCard key={rev.id} review={rev} />
-          ))}
+      <section className="py-14 sm:py-20 bg-white w-full overflow-hidden border-t border-gray-100">
+        <div className="max-w-3xl mx-auto px-6 text-center mb-10 sm:mb-12">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-blue-100 text-[#2563EB] bg-blue-50/80 mb-3 shadow-xs">
+            <span>Wall of Love</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#09090B] tracking-tight">
+            Loved by job seekers skipping the crowd
+          </h2>
+          <p className="mt-2.5 text-sm sm:text-base text-gray-600 max-w-xl mx-auto">
+            See how professionals bypass recruiter markups and public job board spam to land direct offers.
+          </p>
         </div>
-        <div className="mt-8 text-center">
-          <OutlineSmallButton onClick={() => setModalOpen(true)}>
-            See More Reviews
-          </OutlineSmallButton>
-        </div>
+        <TestimonialMarqueeDemo />
       </section>
 
       {/* ========================================================================= */}
       {/* 5. CTA BAND (Blue #2563EB, Free Preview style)                            */}
       {/* ========================================================================= */}
-      <section className="bg-[#2563EB] text-white py-20 lg:py-[115px] relative overflow-hidden">
+      <section className="bg-[#2563EB] text-white py-16 sm:py-20 lg:py-24 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]" />
-        <div className="max-w-3xl mx-auto px-6 text-center relative z-10 space-y-6">
-          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight">
-            Free Preview: Explore Verified Hidden Requisitions
+        <div className="max-w-3xl mx-auto px-6 text-center relative z-10 space-y-4 sm:space-y-5">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+            Free Preview
           </h2>
-          <p className="text-white/90 text-base sm:text-lg max-w-[515px] mx-auto leading-relaxed">
-            Scan live feeds from 12,000+ top employers. Filter by salary, timezone, and exact role criteria with zero commitment.
+          <p className="text-white/90 text-base sm:text-lg max-w-xl mx-auto leading-relaxed font-normal">
+            Find jobs you can&apos;t find on job sites. Start applying directly to companies. No more middle-men!
           </p>
           <div className="pt-2">
             <WhiteHeroButton onClick={() => setModalOpen(true)} className="px-8 min-w-[210px]">
-              View Jobs
+              View Jobs (Preview Only)
             </WhiteHeroButton>
-            <div className="text-xs text-white/70 mt-2 font-medium">
-              (Preview Only • No Credit Card Required)
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 5B. GLOBAL COVERAGE SECTION (Dotted Wireframe Globe + Details)            */}
+      {/* ========================================================================= */}
+      <section className="max-w-6xl mx-auto px-4 py-16 sm:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-10 lg:gap-12">
+          {/* Right-side text block (stacked first on mobile via order-1) */}
+          <div className="order-1 lg:order-2 space-y-5 text-center lg:text-left">
+            <div>
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border border-gray-200 text-gray-700 bg-white shadow-sm">
+                Global coverage
+              </span>
             </div>
+            <h2 className="text-3xl sm:text-4xl md:text-[42px] font-bold text-[#09090B] tracking-tight leading-tight">
+              Hidden jobs from every corner of the map
+            </h2>
+            <p className="text-gray-600 text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
+              We scan company career pages across the globe - from Silicon Valley startups to Bangalore scale-ups - and surface openings before they hit the big job boards.
+            </p>
+            <div className="pt-2 flex justify-center lg:justify-start">
+              <Link
+                href="/radar"
+                className="inline-flex items-center justify-center gap-2.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-base sm:text-lg px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition-all cursor-pointer"
+              >
+                <span>View Jobs</span>
+                <ArrowRight className="w-5 h-5 ml-0.5 stroke-[2.5]" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Left-side globe (stacked below on mobile via order-2) */}
+          <div className="order-2 lg:order-1 w-full max-w-[480px] mx-auto lg:max-w-none">
+            <WireframeDottedGlobe />
           </div>
         </div>
       </section>
@@ -221,27 +233,27 @@ export default function HomePage() {
       {/* ========================================================================= */}
       {/* 6. FOUNDER CARD (Centered bordered card ~670px)                           */}
       {/* ========================================================================= */}
-      <section className="pt-20 pb-12 lg:pt-[120px] lg:pb-[90px] max-w-content mx-auto px-6 w-full">
+      <section className="pt-16 pb-12 lg:pt-20 lg:pb-16 max-w-content mx-auto px-6 w-full">
         <div className="max-w-[670px] mx-auto bg-white border border-[#E4E4E7] rounded-xl p-8 sm:p-10 shadow-sm">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
-            {/* Left: Big round photo placeholder + button */}
+            {/* Left: Round photo + My TikTok Videos button */}
             <div className="flex flex-col items-center flex-shrink-0 space-y-3">
               <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-blue-500 shadow-md">
                 <Image
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&h=240&q=80"
-                  alt="Founder photo"
+                  alt="Roman - Creator of Career Hound"
                   fill
                   className="object-cover"
                   sizes="112px"
                 />
               </div>
               <a
-                href="https://youtube.com"
+                href="https://tiktok.com"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-700 hover:text-black border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 transition-colors"
               >
-                <span>My Videos</span>
+                <span>My TikTok Videos</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </a>
             </div>
@@ -249,27 +261,27 @@ export default function HomePage() {
             {/* Right: Name, role, story, 3 stats */}
             <div className="space-y-4">
               <div>
-                <h3 className="text-2xl font-bold text-[#09090B]">Alex Mercer</h3>
-                <p className="text-sm font-medium text-[#2563EB]">Founder & Career Systems Engineer</p>
+                <h3 className="text-2xl font-bold text-[#09090B]">Roman here, saying hello.</h3>
+                <p className="text-sm font-medium text-gray-500">Creator of Career Hound</p>
               </div>
 
-              <p className="text-[#4B5563] text-sm leading-relaxed">
-                After spending six years building distributed platform infrastructure and watching hundreds of brilliant peers struggle with broken job boards, I wrote automated crawlers to query company ATS pages directly. YourBrand is built to give candidates unfair velocity in their job search.
+              <p className="text-[#4B5563] text-base leading-relaxed">
+                I wasn&apos;t getting anywhere with LinkedIn, but it wasn&apos;t my fault. A lot of job postings aren&apos;t even real, and it&apos;s too competitive. My friend showed me a simpler way: apply directly to company websites. So I built this tool to find hidden jobs.
               </p>
 
-              {/* 3 Stats: 10M+ Views / 50K+ Followers / 500K+ Likes */}
+              {/* 3 Stats: 17M+ Views / 70K+ Followers / 900k+ Likes */}
               <div className="pt-2 border-t border-gray-100 grid grid-cols-3 gap-3 text-center sm:text-left">
                 <div>
-                  <div className="text-lg font-black text-[#09090B]">10M+</div>
-                  <div className="text-xs text-gray-500">Career Views</div>
+                  <div className="text-lg font-bold text-[#09090B]">17M+</div>
+                  <div className="text-xs text-gray-500">Views</div>
                 </div>
                 <div>
-                  <div className="text-lg font-black text-[#09090B]">50K+</div>
-                  <div className="text-xs text-gray-500">Subscribers</div>
+                  <div className="text-lg font-bold text-[#09090B]">70K+</div>
+                  <div className="text-xs text-gray-500">Followers</div>
                 </div>
                 <div>
-                  <div className="text-lg font-black text-[#09090B]">500K+</div>
-                  <div className="text-xs text-gray-500">Community Likes</div>
+                  <div className="text-lg font-bold text-[#09090B]">900k+</div>
+                  <div className="text-xs text-gray-500">Likes</div>
                 </div>
               </div>
             </div>
@@ -278,33 +290,19 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 7. REVIEWS ROW 2 (3 cards + See More button)                              */}
+      {/* 7. SCROLLING WALL OF LOVE (8,573 job seekers are using Career Hound)     */}
       {/* ========================================================================= */}
-      <section className="py-12 bg-white max-w-content mx-auto px-6 w-full">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {row2Reviews.map((rev) => (
-            <ReviewCard key={rev.id} review={rev} />
-          ))}
-        </div>
-        <div className="mt-8 text-center">
-          <OutlineSmallButton onClick={() => setModalOpen(true)}>
-            See More Reviews
-          </OutlineSmallButton>
-        </div>
-      </section>
+      <Testimonials />
 
       {/* ========================================================================= */}
       {/* 8. FAQ (Gray-100 bg #F3F4F6, centered H2, 5 Q&A items, max-width ~670px) */}
       {/* ========================================================================= */}
       <section className="bg-[#F3F4F6] py-10 sm:py-12 lg:py-14">
         <div className="max-w-[670px] mx-auto px-6">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#09090B] tracking-tight mb-2">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold md:text-4xl md:leading-tight text-center text-[#09090B]">
               Frequently Asked Questions
             </h2>
-            <p className="text-[#4B5563] text-sm sm:text-base">
-              Everything you need to know about our direct employer discovery radar.
-            </p>
           </div>
 
           <div className="bg-white rounded-2xl p-5 sm:p-7 border border-gray-200/80 shadow-sm divide-y divide-gray-100">
@@ -333,74 +331,29 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 9. REVIEWS ROW 3 (3 cards + See More button)                              */}
-      {/* ========================================================================= */}
-      <section className="py-10 sm:py-12 bg-white max-w-content mx-auto px-6 w-full">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {row3Reviews.map((rev) => (
-            <ReviewCard key={rev.id} review={rev} />
-          ))}
-        </div>
-        <div className="mt-8 text-center">
-          <OutlineSmallButton onClick={() => setModalOpen(true)}>
-            See More Reviews
-          </OutlineSmallButton>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
       {/* 10. CONTACT (Gray-50 bg #F9FAFB, id="contact")                            */}
       {/* ========================================================================= */}
       <section id="contact" className="bg-[#F9FAFB] py-10 sm:py-12 lg:py-14 border-t border-gray-200/60">
-        <div className="max-w-xl mx-auto px-6 text-center space-y-4">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#09090B] tracking-tight">
+        <div className="max-w-xl mx-auto px-6 text-center space-y-3">
+          <h2 className="text-3xl font-bold text-gray-800 sm:text-4xl tracking-tight">
             Contact us
           </h2>
-          <p className="text-[#4B5563] text-sm sm:text-base leading-relaxed">
-            Have questions about career feeds, employer integrations, or membership tiers? Our direct support engineering team is here to help.
+          <p className="text-gray-600 text-sm sm:text-base">
+            We&apos;ll try to respond the same day.
           </p>
-          <div className="pt-1">
+          <div className="pt-2">
             <a
-              href="mailto:support@yourbrand.example.com"
-              className="inline-flex items-center justify-center bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-medium px-6 py-2.5 rounded-[6px] text-sm sm:text-base transition-colors shadow-sm"
+              href="mailto:contact@careerhound.io"
+              className="inline-flex items-center justify-center bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-medium px-8 py-3 rounded-lg text-sm sm:text-base transition-colors shadow-sm"
             >
-              <span>support@yourbrand.example.com</span>
+              <span>contact@careerhound.io</span>
             </a>
           </div>
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* 11. WALL OF LOVE (~30 MiniReviewCards in CSS columns masonry)             */}
-      {/* ========================================================================= */}
-      <section className="py-20 lg:py-[120px] max-w-content mx-auto px-6 w-full">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#142033] tracking-tight mb-3">
-            24,800+ job seekers are using YourBrand
-          </h2>
-          <p className="text-[#4B5563] text-base">
-            Real feedback from software engineers, product designers, and remote professionals who landed roles.
-          </p>
-        </div>
-
-        {/* 4-column masonry via Tailwind columns */}
-        <div className="columns-1 sm:columns-2 lg:columns-4 gap-4">
-          {MINI_REVIEWS.slice(0, visibleMiniReviews).map((mini) => (
-            <MiniReviewCard key={mini.id} review={mini} />
-          ))}
-        </div>
-
-        {visibleMiniReviews < MINI_REVIEWS.length && (
-          <div className="mt-10 text-center">
-            <OutlineSmallButton onClick={() => setVisibleMiniReviews(MINI_REVIEWS.length)}>
-              Show All 30+ Reviews
-            </OutlineSmallButton>
-          </div>
-        )}
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 12. FOOTER (Navy #090E34) & 13. BackToTop Button                          */}
+      {/* 13. FOOTER (Navy #090E34) & BackToTop Button                              */}
       {/* ========================================================================= */}
       <Footer />
 

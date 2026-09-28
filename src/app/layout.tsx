@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,10 +12,15 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
-  title: "YourBrand — Unindexed Jobs & Remote Career Discovery",
+  title: "Career Hound — Unindexed Jobs & Remote Career Discovery",
   description: "Discover unindexed remote engineering, design, marketing, and data roles directly from verified employer career pages before they hit public aggregators.",
-  metadataBase: new URL("https://yourbrand-jobs.example.com"),
+  metadataBase: new URL("https://yourbrand-jobs-502.netlify.app"),
   alternates: {
     canonical: "/",
   },
