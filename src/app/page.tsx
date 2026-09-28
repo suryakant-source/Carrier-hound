@@ -12,6 +12,7 @@ import { WhiteHeroButton } from "@/components/Buttons";
 import CategorySelectModal from "@/components/CategorySelectModal";
 import Footer from "@/components/Footer";
 import WireframeDottedGlobe from "@/components/ui/wireframe-dotted-globe";
+import GlobeLiveStats from "@/components/GlobeLiveStats";
 import { Testimonials } from "@/components/testimonials";
 import { TestimonialMarqueeDemo } from "@/components/ui/marquee-01";
 import { X, Check, ArrowRight } from "lucide-react";
@@ -221,6 +222,9 @@ export default function HomePage() {
                 <ArrowRight className="w-5 h-5 ml-0.5 stroke-[2.5]" />
               </Link>
             </div>
+
+            {/* LIVE STATS row directly under View Jobs button */}
+            <GlobeLiveStats />
           </div>
 
           {/* Left-side globe (stacked below on mobile via order-2) */}

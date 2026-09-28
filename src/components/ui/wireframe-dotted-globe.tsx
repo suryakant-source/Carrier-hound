@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import * as d3 from "d3";
 import { cn } from "@/lib/utils";
 
@@ -9,6 +10,7 @@ interface WireframeDottedGlobeProps {
 }
 
 export function WireframeDottedGlobe({ className }: WireframeDottedGlobeProps) {
+  const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState(true);
@@ -77,25 +79,31 @@ export function WireframeDottedGlobe({ className }: WireframeDottedGlobeProps) {
         { name: "Singapore", coords: [103.8198, 1.3521] },
       ];
 
-      // 5. State for rotation, zoom, interaction
+      // 5. State for rotation and tap-to-3D interaction (zoom in/out disabled)
       let rotation: [number, number] = [-20, -15];
-      let scaleRatio = 1.0;
+      const scaleRatio = 1.0; // Fixed scale - no zoom in / zoom out
       let isDragging = false;
       let lastX = 0;
       let lastY = 0;
-      const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
+      let startX = 0;
+      let startY = 0;
+      let totalMovement = 0;
 
-      // Mouse drag handlers
+      // Mouse drag and tap handlers
       const onMouseDown = (e: MouseEvent) => {
         isDragging = true;
         lastX = e.clientX;
         lastY = e.clientY;
+        startX = e.clientX;
+        startY = e.clientY;
+        totalMovement = 0;
       };
 
       const onMouseMove = (e: MouseEvent) => {
         if (!isDragging) return;
         const dx = e.clientX - lastX;
         const dy = e.clientY - lastY;
+        totalMovement += Math.hypot(dx, dy);
         rotation[0] += dx * 0.4;
         rotation[1] = Math.max(-75, Math.min(75, rotation[1] - dy * 0.4));
         lastX = e.clientX;
@@ -103,15 +111,22 @@ export function WireframeDottedGlobe({ className }: WireframeDottedGlobeProps) {
       };
 
       const onMouseUp = () => {
+        if (isDragging && totalMovement < 8) {
+          // Tap / click without dragging -> go to 3D Radar!
+          router.push("/radar");
+        }
         isDragging = false;
       };
 
-      // Touch handlers (drag-to-rotate for mobile)
+      // Touch handlers (drag-to-rotate, tap-to-3D, zero zoom)
       const onTouchStart = (e: TouchEvent) => {
         if (e.touches.length === 1) {
           isDragging = true;
           lastX = e.touches[0].clientX;
           lastY = e.touches[0].clientY;
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          totalMovement = 0;
         }
       };
 
@@ -119,6 +134,7 @@ export function WireframeDottedGlobe({ className }: WireframeDottedGlobeProps) {
         if (!isDragging || e.touches.length !== 1) return;
         const dx = e.touches[0].clientX - lastX;
         const dy = e.touches[0].clientY - lastY;
+        totalMovement += Math.hypot(dx, dy);
         rotation[0] += dx * 0.4;
         rotation[1] = Math.max(-75, Math.min(75, rotation[1] - dy * 0.4));
         lastX = e.touches[0].clientX;
@@ -127,15 +143,11 @@ export function WireframeDottedGlobe({ className }: WireframeDottedGlobeProps) {
       };
 
       const onTouchEnd = () => {
+        if (isDragging && totalMovement < 10) {
+          // Tap on touch device -> go to 3D Radar!
+          router.push("/radar");
+        }
         isDragging = false;
-      };
-
-      // Wheel handler only on fine pointer devices
-      const onWheel = (e: WheelEvent) => {
-        if (!hasFinePointer) return;
-        e.preventDefault();
-        const factor = e.deltaY < 0 ? 1.06 : 0.94;
-        scaleRatio = Math.max(0.75, Math.min(1.5, scaleRatio * factor));
       };
 
       canvas.addEventListener("mousedown", onMouseDown);
@@ -146,10 +158,6 @@ export function WireframeDottedGlobe({ className }: WireframeDottedGlobeProps) {
       canvas.addEventListener("touchmove", onTouchMove, { passive: false });
       canvas.addEventListener("touchend", onTouchEnd);
       canvas.addEventListener("touchcancel", onTouchEnd);
-
-      if (hasFinePointer) {
-        canvas.addEventListener("wheel", onWheel, { passive: false });
-      }
 
       // 6. Render loop
       const graticule = d3.geoGraticule10();
@@ -284,10 +292,6 @@ export function WireframeDottedGlobe({ className }: WireframeDottedGlobeProps) {
         canvas.removeEventListener("touchmove", onTouchMove);
         canvas.removeEventListener("touchend", onTouchEnd);
         canvas.removeEventListener("touchcancel", onTouchEnd);
-
-        if (hasFinePointer) {
-          canvas.removeEventListener("wheel", onWheel);
-        }
       };
     }
 
@@ -301,23 +305,30 @@ export function WireframeDottedGlobe({ className }: WireframeDottedGlobeProps) {
       if (animId) cancelAnimationFrame(animId);
       if (cleanupFn) cleanupFn();
     };
-  }, []);
+  }, [router]);
 
   return (
     <div
       ref={containerRef}
       className={cn(
-        "relative w-full aspect-square flex items-center justify-center select-none cursor-grab active:cursor-grabbing",
+        "relative w-full aspect-square flex items-center justify-center select-none cursor-pointer group",
         className
       )}
     >
-      <canvas ref={canvasRef} className="w-full h-full block" />
+      <canvas ref={canvasRef} className="w-full h-full block cursor-pointer" />
 
-      {/* Hint overlay badge */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 pointer-events-none z-10">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-white/90 text-gray-800 border border-gray-200 shadow-sm backdrop-blur-sm select-none">
-          Drag to rotate
-        </span>
+      {/* Interactive tap badge to launch 3D radar */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 pointer-events-auto">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push("/radar");
+          }}
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/95 text-blue-600 border border-blue-200/80 shadow-md backdrop-blur-sm hover:bg-blue-50 hover:border-blue-300 transition-all cursor-pointer group-hover:scale-105"
+        >
+          <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+          <span>Tap for 3D Radar ↗</span>
+        </button>
       </div>
 
       {loading && (

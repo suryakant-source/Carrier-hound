@@ -88,12 +88,40 @@ body {
   }
 }
 
+@keyframes marquee-vertical {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
 .animate-marquee-left {
-  animation: marquee-left var(--duration, 25s) linear infinite !important;
+  animation: marquee-left var(--duration, 25s) linear infinite;
+  will-change: transform;
 }
 
 .animate-marquee-right {
-  animation: marquee-right var(--duration, 25s) linear infinite !important;
+  animation: marquee-right var(--duration, 25s) linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-vertical {
+  animation: marquee-vertical var(--vertical-duration, 25s) linear infinite;
+  will-change: transform;
+}
+
+/* Pause on hover for any marquee line / row / column when mouse pointer enters */
+.group:hover .animate-marquee-left,
+.group:hover .animate-marquee-right,
+.group:hover .animate-marquee-vertical,
+.group:hover .animate-marquee,
+.animate-marquee-left:hover,
+.animate-marquee-right:hover,
+.animate-marquee-vertical:hover,
+.animate-marquee:hover {
+  animation-play-state: paused !important;
 }
 
 /* Focus styles */

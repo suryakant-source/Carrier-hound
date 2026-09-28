@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { motion } from "motion/react";
+import React, { useEffect, useRef } from "react";
+import { useAnimate } from "motion/react";
 import { Star } from "lucide-react";
 
 export type Testimonial = {
@@ -18,18 +18,39 @@ export const TestimonialsColumn = (props: {
   testimonials: Testimonial[];
   duration?: number;
 }) => {
+  const [scope, animate] = useAnimate();
+  const controlsRef = useRef<any>(null);
+
+  useEffect(() => {
+    const controls = animate(
+      scope.current,
+      { translateY: ["0%", "-50%"] },
+      {
+        duration: props.duration || 20,
+        repeat: Infinity,
+        ease: "linear",
+        repeatType: "loop",
+      }
+    );
+    controlsRef.current = controls;
+
+    return () => {
+      controls.stop();
+    };
+  }, [animate, props.duration]);
+
   return (
-    <div className={props.className}>
-      <motion.div
-        animate={{
-          translateY: "-50%",
-        }}
-        transition={{
-          duration: props.duration || 20,
-          repeat: Infinity,
-          ease: "linear",
-          repeatType: "loop",
-        }}
+    <div
+      className={props.className}
+      onMouseEnter={() => {
+        controlsRef.current?.pause();
+      }}
+      onMouseLeave={() => {
+        controlsRef.current?.play();
+      }}
+    >
+      <div
+        ref={scope}
         className="flex flex-col gap-4 pb-4"
       >
         {[
@@ -84,7 +105,7 @@ export const TestimonialsColumn = (props: {
             </React.Fragment>
           )),
         ]}
-      </motion.div>
+      </div>
     </div>
   );
 };
