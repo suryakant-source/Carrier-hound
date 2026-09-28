@@ -13,7 +13,7 @@ import { WhiteHeroButton, OutlineSmallButton, PrimaryButton } from "@/components
 import CategorySelectModal from "@/components/CategorySelectModal";
 import Footer from "@/components/Footer";
 import { FULL_REVIEWS, MINI_REVIEWS } from "@/data/testimonials";
-import { X, Check, Mail, ExternalLink, ArrowRight, Sparkles } from "lucide-react";
+import { X, Check, ExternalLink, ArrowRight, Sparkles } from "lucide-react";
 
 export default function HomePage() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -294,12 +294,12 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 8. FAQ (Gray-100 bg #F3F4F6, centered H2, 2 Q&A items, max-width ~670px) */}
+      {/* 8. FAQ (Gray-100 bg #F3F4F6, centered H2, 5 Q&A items, max-width ~670px) */}
       {/* ========================================================================= */}
-      <section className="bg-[#F3F4F6] py-20 lg:py-[100px]">
+      <section className="bg-[#F3F4F6] py-10 sm:py-12 lg:py-14">
         <div className="max-w-[670px] mx-auto px-6">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#09090B] tracking-tight mb-3">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#09090B] tracking-tight mb-2">
               Frequently Asked Questions
             </h2>
             <p className="text-[#4B5563] text-sm sm:text-base">
@@ -307,14 +307,26 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="bg-white rounded-xl p-6 sm:p-8 border border-gray-200/80 shadow-sm divide-y divide-gray-100">
+          <div className="bg-white rounded-2xl p-5 sm:p-7 border border-gray-200/80 shadow-sm divide-y divide-gray-100">
             <FaqHomeItem
-              question="How is YourBrand different from LinkedIn or Indeed?"
-              answer="Conventional job boards require employers to manually publish and pay for promotional placement, which results in huge backlogs and thousands of applicants per listing. YourBrand automatically queries verified company career endpoints directly every 15 minutes, uncovering positions before they are publicized."
+              question="How is Careerhound different from LinkedIn or Indeed?"
+              answer="Conventional job boards require employers to manually publish and pay for sponsored placements, creating massive applicant backlogs and ghost listings. Careerhound automatically scrapes verified company career portals and ATS feeds directly every 15 minutes, uncovering open roles before they are publicized on aggregators."
             />
             <FaqHomeItem
               question="Do you take a percentage of my compensation if I get hired?"
-              answer="Never. We are not a staffing agency or contingency recruiter. 100% of your compensation and equity offer stays with you. We simply give you direct, unmediated access to open employer requisitions."
+              answer="Never. We are not a staffing agency, headhunter, or contingency recruiter. 100% of your compensation, equity offer, and signing bonus stays with you. We simply give you direct, unmediated access to open employer requisitions."
+            />
+            <FaqHomeItem
+              question="How often are the job feeds and ATS links updated?"
+              answer="Our automated ingestion pipeline continuously synchronizes directly with top ATS platforms (Greenhouse, Ashby, Lever, Workday) 24/7. When an employer creates or removes a requisition, our radar updates in real time so you never waste time applying to expired positions."
+            />
+            <FaqHomeItem
+              question="Can I filter jobs by remote status, country, and tech stack?"
+              answer="Yes! You can filter requisitions by global worldwide eligibility, timezone requirements, specific tech stacks (e.g., React, Node, Python, AI/ML), and seniority levels to find matches that fit your exact background."
+            />
+            <FaqHomeItem
+              question="Do I apply directly on the company website?"
+              answer="Yes, 100% of the time. Every job on Careerhound links directly to the official company careers page or official ATS application form. There are no middleman forms, third-party redirects, or spam filters between you and the hiring team."
             />
           </div>
         </div>
@@ -323,7 +335,7 @@ export default function HomePage() {
       {/* ========================================================================= */}
       {/* 9. REVIEWS ROW 3 (3 cards + See More button)                              */}
       {/* ========================================================================= */}
-      <section className="py-12 bg-white max-w-content mx-auto px-6 w-full">
+      <section className="py-10 sm:py-12 bg-white max-w-content mx-auto px-6 w-full">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {row3Reviews.map((rev) => (
             <ReviewCard key={rev.id} review={rev} />
@@ -339,20 +351,19 @@ export default function HomePage() {
       {/* ========================================================================= */}
       {/* 10. CONTACT (Gray-50 bg #F9FAFB, id="contact")                            */}
       {/* ========================================================================= */}
-      <section id="contact" className="bg-[#F9FAFB] py-20 lg:py-[100px] border-t border-gray-200/60">
-        <div className="max-w-xl mx-auto px-6 text-center space-y-5">
+      <section id="contact" className="bg-[#F9FAFB] py-10 sm:py-12 lg:py-14 border-t border-gray-200/60">
+        <div className="max-w-xl mx-auto px-6 text-center space-y-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-[#09090B] tracking-tight">
             Contact us
           </h2>
-          <p className="text-[#4B5563] text-base leading-relaxed">
+          <p className="text-[#4B5563] text-sm sm:text-base leading-relaxed">
             Have questions about career feeds, employer integrations, or membership tiers? Our direct support engineering team is here to help.
           </p>
-          <div className="pt-2">
+          <div className="pt-1">
             <a
               href="mailto:support@yourbrand.example.com"
-              className="inline-flex items-center gap-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-medium px-7 py-3 rounded-[6px] text-base transition-colors shadow-sm"
+              className="inline-flex items-center justify-center bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-medium px-6 py-2.5 rounded-[6px] text-sm sm:text-base transition-colors shadow-sm"
             >
-              <Mail className="w-5 h-5" />
               <span>support@yourbrand.example.com</span>
             </a>
           </div>

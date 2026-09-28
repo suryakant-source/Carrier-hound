@@ -1,27 +1,47 @@
-import React from "react";
-import { HelpCircle, ChevronDown } from "lucide-react";
+"use client";
+
+import React, { useState } from "react";
+import { Plus, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface FaqHomeItemProps {
   question: string;
   answer: string;
+  defaultOpen?: boolean;
   className?: string;
 }
 
-export function FaqHomeItem({ question, answer, className }: FaqHomeItemProps) {
+export function FaqHomeItem({ question, answer, defaultOpen = false, className }: FaqHomeItemProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
   return (
-    <div className={cn("py-6 border-b border-gray-200 last:border-b-0", className)}>
-      <div className="flex items-start gap-4">
-        <div className="flex-shrink-0 mt-1">
-          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-[#2563EB]">
-            <HelpCircle className="w-5 h-5" />
-          </div>
+    <div className={cn("py-3 sm:py-3.5 border-b border-gray-200 last:border-b-0", className)}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between gap-4 text-left group focus:outline-none cursor-pointer"
+        aria-expanded={isOpen}
+      >
+        <span className="text-base sm:text-lg font-bold text-[#09090B] group-hover:text-[#2563EB] transition-colors">
+          {question}
+        </span>
+        <span
+          className={cn(
+            "w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-200",
+            isOpen
+              ? "bg-blue-50 text-[#2563EB] rotate-45"
+              : "bg-gray-100 text-gray-600 group-hover:bg-blue-50 group-hover:text-[#2563EB]"
+          )}
+        >
+          <Plus className="w-4 h-4 stroke-[2.5]" />
+        </span>
+      </button>
+
+      {isOpen && (
+        <div className="pt-3 pb-1 text-[#4B5563] text-sm sm:text-base leading-relaxed animate-in fade-in slide-in-from-top-1 duration-200">
+          <p>{answer}</p>
         </div>
-        <div className="flex-1">
-          <h3 className="text-lg font-bold text-[#09090B] mb-2">{question}</h3>
-          <p className="text-[#4B5563] text-base leading-relaxed">{answer}</p>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
