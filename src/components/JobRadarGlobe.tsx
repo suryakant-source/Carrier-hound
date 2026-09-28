@@ -22,6 +22,8 @@ import {
   CheckCircle2,
   Compass,
 } from "lucide-react";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 // Convert latitude and longitude to a 3D Cartesian Vector3 on a sphere
 function latLngToVector3(lat: number, lng: number, radius: number = 5) {
@@ -70,16 +72,11 @@ export default function JobRadarGlobe() {
   useEffect(() => {
     let isCancelled = false;
 
-    const initGlobe = async () => {
+    const initGlobe = () => {
       if (!containerRef.current) return;
 
-      const THREE = await import("three");
-      const { OrbitControls } = await import(
-        "three/examples/jsm/controls/OrbitControls.js"
-      );
-
-      const width = containerRef.current.clientWidth;
-      const height = containerRef.current.clientHeight;
+      const width = containerRef.current.clientWidth || window.innerWidth;
+      const height = containerRef.current.clientHeight || (window.innerHeight - 64);
 
       // 1. Scene, Camera, Renderer
       const scene = new THREE.Scene();
@@ -328,13 +325,12 @@ export default function JobRadarGlobe() {
   }, []);
 
   // Handle City Select: Smooth Cinematic FlyTo without locking orbit center
-  const handleCitySelect = useCallback(async (city: RadarCity) => {
+  const handleCitySelect = useCallback((city: RadarCity) => {
     setSelectedCity(city);
     setIsSpinning(false);
 
     if (!cameraRef.current || !controlsRef.current) return;
 
-    const THREE = await import("three");
     const { x, y, z } = latLngToVector3(
       city.coordinates[1],
       city.coordinates[0],
@@ -352,11 +348,10 @@ export default function JobRadarGlobe() {
   }, []);
 
   // Handle Close City Drawer and Smoothly Pull Back to Orbit
-  const handleCloseCity = useCallback(async () => {
+  const handleCloseCity = useCallback(() => {
     setSelectedCity(null);
     if (!cameraRef.current || !controlsRef.current) return;
 
-    const THREE = await import("three");
     const currentDir = cameraRef.current.position.clone().normalize();
     targetCameraPosRef.current = currentDir.multiplyScalar(13.8);
     targetLookAtRef.current = new THREE.Vector3(0, 0, 0);
@@ -365,13 +360,11 @@ export default function JobRadarGlobe() {
   }, []);
 
   // Handle Country Filter Pill Click: Smooth Camera Orbit to Country Center
-  const handleCountryFilter = async (country: CountryRegion) => {
+  const handleCountryFilter = (country: CountryRegion) => {
     setSelectedCountry(country.id);
     setSelectedCity(null);
 
     if (!cameraRef.current || !controlsRef.current) return;
-
-    const THREE = await import("three");
 
     if (country.id === "all") {
       setIsSpinning(true);
@@ -396,13 +389,12 @@ export default function JobRadarGlobe() {
   };
 
   // Reset Orbit / Zoom Out
-  const handleResetOrbit = async () => {
+  const handleResetOrbit = () => {
     setSelectedCity(null);
     setSelectedCountry("all");
     setIsSpinning(true);
 
     if (!cameraRef.current || !controlsRef.current) return;
-    const THREE = await import("three");
     targetCameraPosRef.current = new THREE.Vector3(0, 4, 14);
     targetLookAtRef.current = new THREE.Vector3(0, 0, 0);
     isTransitioningRef.current = true;
