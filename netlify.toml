@@ -1,5 +1,21 @@
 [build]
   command = "npm run build"
+  publish = "out"
 
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+[[redirects]]
+  from = "/job-search"
+  to = "/job-search/all"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/paywall"
+  to = "/job-search/all"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false

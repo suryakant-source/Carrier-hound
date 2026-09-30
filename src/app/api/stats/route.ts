@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { DUMMY_JOBS } from "@/data/jobs";
 
+export const dynamic = "force-static";
+
 // TODO: replace with real DB counts
 const FALLBACK_JOBS_TODAY = 1240;
 const FALLBACK_TOTAL_JOBS = 128400;
