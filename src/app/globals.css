@@ -243,3 +243,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   align-items: center;
   user-select: none;
 }
+
+/* Hide Microsoft Edge / IE password clear and reveal buttons */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+

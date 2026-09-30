@@ -15,6 +15,7 @@ import WireframeDottedGlobe from "@/components/ui/wireframe-dotted-globe";
 import GlobeLiveStats from "@/components/GlobeLiveStats";
 import { Testimonials } from "@/components/testimonials";
 import { TestimonialMarqueeDemo } from "@/components/ui/marquee-01";
+import UserMenu from "@/components/UserMenu";
 import { X, Check, ArrowRight } from "lucide-react";
 
 export default function HomePage() {
@@ -31,22 +32,17 @@ export default function HomePage() {
 
         {/* Minimal Hero Header (no nav bar, sits directly on blue hero) */}
         <div className="w-full max-w-[1340px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 pt-4 sm:pt-6 mb-10 sm:mb-14 lg:mb-16 flex items-center justify-between relative z-20">
-          {/* Left: Round white logo circle - enlarged */}
+          {/* Left: Round white logo circle */}
           <Link
             href="/"
-            aria-label="Career Hound Home"
-            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white flex items-center justify-center shadow-lg transition-transform hover:scale-105"
+            aria-label="CareerMonke Home"
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white flex items-center justify-center shadow-lg transition-transform hover:scale-105 p-1.5"
           >
-            <BrandIcon className="w-8 h-8 sm:w-9 sm:h-9 text-[#2563EB]" />
+            <BrandIcon className="w-11 h-11 sm:w-12 sm:h-12" />
           </Link>
 
-          {/* Right: Outlined white 'Sign In' button - enlarged & well-proportioned */}
-          <Link
-            href="/login"
-            className="w-[96px] sm:w-[108px] h-[46px] sm:h-[50px] rounded-xl border-2 border-white/90 hover:border-white text-white font-bold text-sm sm:text-base flex items-center justify-center transition-all hover:bg-white/10 shadow-sm"
-          >
-            Sign In
-          </Link>
+          {/* Right: Auth-aware Sign In / User Menu */}
+          <UserMenu />
         </div>
 
         {/* Hero Content - centered with 16px rhythm and 32px gap above card panel */}
@@ -132,10 +128,10 @@ export default function HomePage() {
             </ul>
           </div>
 
-          {/* Right card: Career Hound */}
+          {/* Right card: CareerMonke */}
           <div className="bg-white border border-[#E4E4E7] rounded-xl p-7 shadow-sm">
             <span className="mb-5 block text-xl font-medium text-dark pb-4 border-b border-gray-100">
-              Career Hound
+              CareerMonke
             </span>
             <ul className="space-y-4">
               {[
@@ -245,7 +241,7 @@ export default function HomePage() {
               <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-blue-500 shadow-md">
                 <Image
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&h=240&q=80"
-                  alt="Roman - Creator of Career Hound"
+                  alt="Roman - Creator of CareerMonke"
                   fill
                   className="object-cover"
                   sizes="112px"
@@ -266,7 +262,7 @@ export default function HomePage() {
             <div className="space-y-4">
               <div>
                 <h3 className="text-2xl font-bold text-[#09090B]">Roman here, saying hello.</h3>
-                <p className="text-sm font-medium text-gray-500">Creator of Career Hound</p>
+                <p className="text-sm font-medium text-gray-500">Creator of CareerMonke</p>
               </div>
 
               <p className="text-[#4B5563] text-base leading-relaxed">
@@ -311,8 +307,8 @@ export default function HomePage() {
 
           <div className="bg-white rounded-2xl p-5 sm:p-7 border border-gray-200/80 shadow-sm divide-y divide-gray-100">
             <FaqHomeItem
-              question="How is Careerhound different from LinkedIn or Indeed?"
-              answer="Conventional job boards require employers to manually publish and pay for sponsored placements, creating massive applicant backlogs and ghost listings. Careerhound automatically scrapes verified company career portals and ATS feeds directly every 15 minutes, uncovering open roles before they are publicized on aggregators."
+              question="How is CareerMonke different from LinkedIn or Indeed?"
+              answer="Conventional job boards require employers to manually publish and pay for sponsored placements, creating massive applicant backlogs and ghost listings. CareerMonke automatically scrapes verified company career portals and ATS feeds directly every 15 minutes, uncovering open roles before they are publicized on aggregators."
             />
             <FaqHomeItem
               question="Do you take a percentage of my compensation if I get hired?"
@@ -328,7 +324,7 @@ export default function HomePage() {
             />
             <FaqHomeItem
               question="Do I apply directly on the company website?"
-              answer="Yes, 100% of the time. Every job on Careerhound links directly to the official company careers page or official ATS application form. There are no middleman forms, third-party redirects, or spam filters between you and the hiring team."
+              answer="Yes, 100% of the time. Every job on CareerMonke links directly to the official company careers page or official ATS application form. There are no middleman forms, third-party redirects, or spam filters between you and the hiring team."
             />
           </div>
         </div>
@@ -347,10 +343,10 @@ export default function HomePage() {
           </p>
           <div className="pt-2">
             <a
-              href="mailto:contact@careerhound.io"
+              href="mailto:contact@careermonke.io"
               className="inline-flex items-center justify-center bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-medium px-8 py-3 rounded-lg text-sm sm:text-base transition-colors shadow-sm"
             >
-              <span>contact@careerhound.io</span>
+              <span>contact@careermonke.io</span>
             </a>
           </div>
         </div>

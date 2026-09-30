@@ -85,7 +85,7 @@ export const Testimonials = () => {
           className="text-center max-w-3xl mx-auto mb-10 sm:mb-14"
         >
           <h2 className="text-3xl font-semibold tracking-tight text-[#142033] sm:text-4xl lg:whitespace-nowrap">
-            8,573 job seekers are using Career Hound
+            8,573 job seekers are using CareerMonke
           </h2>
         </motion.div>
 

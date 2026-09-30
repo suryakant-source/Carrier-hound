@@ -6,7 +6,7 @@ import { WORLDWIDE_COMPANIES } from "@/data/companies";
 import { ArrowRight } from "lucide-react";
 
 export const metadata = {
-  title: "Companies Hiring Worldwide | YourBrand Directory",
+  title: "Companies Hiring Worldwide | CareerMonke Directory",
   description: "Explore 150+ companies currently hiring international and worldwide remote talent across engineering, product, and design.",
 };
 
@@ -15,7 +15,7 @@ export default function WorldwidePage() {
     <div className="min-h-screen bg-white text-[#09090B] flex flex-col">
       <GuideHeader />
 
-      <main className="flex-1 py-16 sm:py-24">
+      <main className="flex-1 py-12 sm:py-20">
         {/* Centered Header */}
         <div className="max-w-3xl mx-auto px-6 text-center space-y-6 mb-12 sm:mb-16">
           <h1 className="text-3xl sm:text-5xl font-bold tracking-tighter text-[#09090B]">
@@ -29,9 +29,9 @@ export default function WorldwidePage() {
           <div className="pt-2">
             <Link
               href="/job-search/all"
-              className="inline-flex items-center gap-2 bg-black hover:bg-neutral-800 text-white font-semibold px-7 py-3.5 rounded-lg text-base transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 bg-black hover:bg-neutral-800 text-white font-semibold px-7 py-3.5 min-h-[44px] rounded-lg text-base transition-colors shadow-sm"
             >
-              <span>View Jobs on YourBrand</span>
+              <span>View Jobs on CareerMonke</span>
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
@@ -47,11 +47,11 @@ export default function WorldwidePage() {
             {WORLDWIDE_COMPANIES.map((company) => (
               <div
                 key={company.id}
-                className="py-4 flex items-center justify-between hover:bg-slate-50/80 px-2 transition-colors group"
+                className="py-3.5 min-h-[44px] flex items-center justify-between hover:bg-slate-50/80 px-2 transition-colors group"
               >
                 <Link
                   href={`/job-search/all?search=${encodeURIComponent(company.name)}`}
-                  className="text-lg font-medium text-[#09090B] group-hover:text-blue-600 transition-colors"
+                  className="text-base sm:text-lg font-medium text-[#09090B] group-hover:text-blue-600 transition-colors flex-1 py-1"
                 >
                   {company.name}
                 </Link>

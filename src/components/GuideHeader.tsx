@@ -13,10 +13,10 @@ export default function GuideHeader() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Left: Brand */}
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-sm">
-            <BrandIcon className="w-4 h-4 text-white" />
+          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center p-0.5 shadow-sm overflow-hidden">
+            <BrandIcon className="w-7 h-7" />
           </div>
-          <span className="text-xl font-black text-blue-600 tracking-tight">YourBrand</span>
+          <span className="text-xl font-black text-blue-600 tracking-tight">CareerMonke</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -50,7 +50,7 @@ export default function GuideHeader() {
           {/* Blue Sign In Button */}
           <Link
             href="/login"
-            className="inline-flex items-center justify-center bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-5 min-h-[40px] rounded-lg text-sm font-semibold transition-colors shadow-sm"
+            className="inline-flex items-center justify-center bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-5 min-h-[44px] rounded-lg text-sm font-semibold transition-colors shadow-sm"
           >
             Sign In
           </Link>
@@ -62,7 +62,7 @@ export default function GuideHeader() {
             type="button"
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open navigation menu"
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-gray-200 text-xs font-semibold text-gray-700 bg-white shadow-xs"
+            className="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] min-w-[44px] rounded-full border border-gray-200 text-xs font-semibold text-gray-700 bg-white shadow-xs active:bg-gray-100"
           >
             <Menu className="w-4 h-4" />
             <span>Menu</span>
@@ -76,27 +76,27 @@ export default function GuideHeader() {
           <div className="w-full max-w-xs bg-white h-full shadow-2xl p-6 flex flex-col justify-between overflow-y-auto">
             <div>
               <div className="flex items-center justify-between pb-6 border-b border-gray-100">
-                <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white">
-                    <BrandIcon className="w-4 h-4 text-white" />
+                <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 min-h-[44px]">
+                  <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-xs p-0.5 border border-gray-100">
+                    <BrandIcon className="w-7 h-7" />
                   </div>
-                  <span className="font-bold text-lg text-gray-900">YourBrand</span>
+                  <span className="font-bold text-lg text-blue-600">CareerMonke</span>
                 </Link>
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(false)}
                   aria-label="Close menu"
-                  className="p-1 rounded-md text-gray-400 hover:text-gray-600"
+                  className="p-2.5 min-h-[44px] min-w-[44px] rounded-lg text-gray-500 hover:text-gray-700 flex items-center justify-center"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="space-y-4 pt-6">
+              <div className="space-y-3 pt-6">
                 <Link
                   href="/job-search/all"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 text-gray-800 font-medium"
+                  className="flex items-center gap-3 p-3 min-h-[44px] rounded-lg hover:bg-gray-50 text-gray-800 font-medium"
                 >
                   <Briefcase className="w-4 h-4 text-blue-600" />
                   <span>Hidden Jobs Search</span>
@@ -104,7 +104,7 @@ export default function GuideHeader() {
                 <Link
                   href="/worldwide"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 text-gray-800 font-medium"
+                  className="flex items-center gap-3 p-3 min-h-[44px] rounded-lg hover:bg-gray-50 text-gray-800 font-medium"
                 >
                   <Globe className="w-4 h-4 text-blue-600" />
                   <span>Companies Hiring Worldwide</span>
@@ -112,7 +112,7 @@ export default function GuideHeader() {
                 <Link
                   href="/resume"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 text-gray-800 font-medium"
+                  className="flex items-center gap-3 p-3 min-h-[44px] rounded-lg hover:bg-gray-50 text-gray-800 font-medium"
                 >
                   <FileText className="w-4 h-4 text-blue-600" />
                   <span>Resume</span>
@@ -120,7 +120,7 @@ export default function GuideHeader() {
                 <Link
                   href="/radar"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-slate-900 text-white font-medium shadow-sm"
+                  className="flex items-center gap-3 p-3 min-h-[44px] rounded-lg bg-slate-900 text-white font-medium shadow-sm"
                 >
                   <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
                   <span>3D Globe Job Radar</span>
@@ -132,7 +132,7 @@ export default function GuideHeader() {
               <Link
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center bg-[#2563EB] text-white py-3 rounded-lg font-semibold text-sm shadow-sm"
+                className="w-full min-h-[44px] flex items-center justify-center bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3 rounded-lg font-semibold text-sm shadow-sm transition-colors"
               >
                 Sign In
               </Link>

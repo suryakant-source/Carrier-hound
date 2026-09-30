@@ -134,12 +134,19 @@ export function WireframeDottedGlobe({ className }: WireframeDottedGlobeProps) {
         if (!isDragging || e.touches.length !== 1) return;
         const dx = e.touches[0].clientX - lastX;
         const dy = e.touches[0].clientY - lastY;
+
+        // If gesture is vertical, allow the browser to scroll the page naturally
+        if (Math.abs(dy) > Math.abs(dx) && totalMovement < 15) {
+          isDragging = false;
+          return;
+        }
+
         totalMovement += Math.hypot(dx, dy);
         rotation[0] += dx * 0.4;
         rotation[1] = Math.max(-75, Math.min(75, rotation[1] - dy * 0.4));
         lastX = e.touches[0].clientX;
         lastY = e.touches[0].clientY;
-        e.preventDefault();
+        if (e.cancelable) e.preventDefault();
       };
 
       const onTouchEnd = () => {
@@ -315,7 +322,7 @@ export function WireframeDottedGlobe({ className }: WireframeDottedGlobeProps) {
         className
       )}
     >
-      <canvas ref={canvasRef} className="w-full h-full block cursor-pointer" />
+      <canvas ref={canvasRef} className="w-full h-full block cursor-pointer touch-pan-y" />
 
       {/* Interactive tap badge to launch 3D radar */}
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 pointer-events-auto">
@@ -324,7 +331,7 @@ export function WireframeDottedGlobe({ className }: WireframeDottedGlobeProps) {
             e.stopPropagation();
             router.push("/radar");
           }}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/95 text-blue-600 border border-blue-200/80 shadow-md backdrop-blur-sm hover:bg-blue-50 hover:border-blue-300 transition-all cursor-pointer group-hover:scale-105"
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-full text-xs font-semibold bg-white/95 text-blue-600 border border-blue-200/80 shadow-md backdrop-blur-sm hover:bg-blue-50 hover:border-blue-300 transition-all cursor-pointer group-hover:scale-105 active:scale-95"
         >
           <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
           <span>Tap for 3D Radar ↗</span>

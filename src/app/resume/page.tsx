@@ -256,11 +256,11 @@ export default function ResumePage() {
                 </button>
 
                 {/* Trust Signals */}
-                <div className="flex items-center justify-center gap-4 text-xs text-gray-500 pt-2">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs text-gray-500 pt-2 text-center">
                   <span className="flex items-center gap-1.5 font-medium">
                     <Lock className="w-3.5 h-3.5 text-emerald-600" /> 256-Bit SSL Encrypted
                   </span>
-                  <span>•</span>
+                  <span className="hidden sm:inline">•</span>
                   <span>7-Day Full Money Back Guarantee</span>
                 </div>
               </form>

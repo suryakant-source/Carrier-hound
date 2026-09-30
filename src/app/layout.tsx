@@ -15,10 +15,11 @@ const inter = Inter({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 export const metadata: Metadata = {
-  title: "Career Hound — Unindexed Jobs & Remote Career Discovery",
+  title: "CareerMonke — Unindexed Jobs & Remote Career Discovery",
   description: "Discover unindexed remote engineering, design, marketing, and data roles directly from verified employer career pages before they hit public aggregators.",
   metadataBase: new URL("https://yourbrand-jobs-502.netlify.app"),
   alternates: {
@@ -37,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} scroll-smooth`}>
-      <body className="font-sans antialiased text-[#09090B] bg-white min-h-screen flex flex-col selection:bg-blue-100 selection:text-blue-900">
+      <body className="font-sans antialiased text-[#09090B] bg-white min-h-screen flex flex-col selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden w-full max-w-full">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded focus:shadow-lg focus:outline-none"

@@ -18,7 +18,7 @@ const testimonials: TestimonialItem[] = [
       handle: "@liam_codes",
       avatar: "https://i.pravatar.cc/96?img=12",
     },
-    text: "Career Hound picked up a US remote job 2 hours after posting. Got an offer in 10 days flat.",
+    text: "CareerMonke picked up a US remote job 2 hours after posting. Got an offer in 10 days flat.",
   },
   {
     author: {

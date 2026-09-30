@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   X,
   Check,
@@ -12,38 +14,101 @@ import {
   ArrowRight,
   Star,
   CheckCircle2,
+  LogIn,
 } from "lucide-react";
 import BrandIcon from "./BrandIcon";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
 
 interface PaywallModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title?: string;
   subtitle?: string;
+  user?: User | null;
+  onSuccess?: () => void;
 }
 
 export default function PaywallModal({
   open,
   onOpenChange,
-  title = "Unlock YourBrand Pro Access",
+  title = "Unlock CareerMonke Pro Access",
   subtitle = "Direct access to unlisted company career feeds, instant ATS matching, and priority notifications.",
+  user: initialUser,
+  onSuccess,
 }: PaywallModalProps) {
+  const router = useRouter();
+  const [currentUser, setCurrentUser] = useState<User | null>(initialUser ?? null);
   const [selectedPlan, setSelectedPlan] = useState<"lifetime" | "monthly">("lifetime");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [email, setEmail] = useState("");
   const [cardName, setCardName] = useState("");
 
-  if (!open) return null;
+  useEffect(() => {
+    if (initialUser) {
+      setCurrentUser(initialUser);
+      if (initialUser?.email) setEmail(initialUser.email);
+    } else {
+      const localEmail =
+        typeof window !== "undefined"
+          ? localStorage.getItem("careermonke_user_email")
+          : null;
+      if (localEmail) {
+        const u = {
+          id: "local-user",
+          email: localEmail,
+          user_metadata: {},
+        } as User;
+        setCurrentUser(u);
+        setEmail(localEmail);
+      } else {
+        const supabase = createClient();
+        supabase.auth.getUser().then(({ data }) => {
+          setCurrentUser(data.user);
+          if (data.user?.email) setEmail(data.user.email);
+        });
+      }
+    }
+  }, [initialUser, open]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanEmail = email.trim();
+    if (!cleanEmail && !currentUser) {
+      router.push("/login?next=/job-search/all");
+      return;
+    }
+
+    if (cleanEmail && typeof window !== "undefined") {
+      localStorage.setItem("careermonke_user_email", cleanEmail);
+      document.cookie = `careermonke_user_email=${encodeURIComponent(cleanEmail)}; path=/; max-age=2592000`;
+      window.dispatchEvent(new Event("careermonke_auth_updated"));
+    }
+
     setIsProcessing(true);
+
+    try {
+      const supabase = createClient();
+      await supabase.auth.updateUser({
+        data: { is_pro: true, pro_plan: selectedPlan },
+      });
+    } catch (err) {
+      console.warn("Could not update remote user metadata", err);
+    }
+
     setTimeout(() => {
       setIsProcessing(false);
       setIsSuccess(true);
-    }, 1200);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("careermonke_pro_active", "true");
+        window.dispatchEvent(new Event("careermonke_pro_updated"));
+      }
+      onSuccess?.();
+    }, 800);
   };
+
+  if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm animate-fadeIn">
@@ -55,10 +120,10 @@ export default function PaywallModal({
         <button
           type="button"
           onClick={() => onOpenChange(false)}
-          className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-800 flex items-center justify-center transition-colors"
+          className="absolute top-3 right-3 z-10 w-11 h-11 rounded-full bg-white/80 sm:bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 flex items-center justify-center transition-colors shadow-xs"
           aria-label="Close paywall modal"
         >
-          <X className="w-4 h-4" />
+          <X className="w-5 h-5" />
         </button>
 
         {isSuccess ? (
@@ -68,7 +133,7 @@ export default function PaywallModal({
               <CheckCircle2 className="w-10 h-10" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-gray-900">Welcome to YourBrand Pro!</h3>
+              <h3 className="text-2xl font-bold text-gray-900">Welcome to CareerMonke Pro!</h3>
               <p className="text-sm text-gray-600 max-w-md mx-auto">
                 Your account ({email || "candidate@example.com"}) is now active with unlimited access to direct company ATS feeds and resume tools.
               </p>
@@ -80,7 +145,7 @@ export default function PaywallModal({
                   setIsSuccess(false);
                   onOpenChange(false);
                 }}
-                className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3.5 rounded-xl font-bold text-sm shadow-md transition-all"
+                className="w-full min-h-[44px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3.5 rounded-xl font-bold text-sm shadow-md transition-all flex items-center justify-center"
               >
                 Go to Jobs Radar
               </button>
@@ -109,7 +174,7 @@ export default function PaywallModal({
 
             <div className="p-6 sm:p-8 space-y-6 max-h-[75vh] overflow-y-auto">
               {/* Plan Switcher */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* Lifetime Plan */}
                 <div
                   onClick={() => setSelectedPlan("lifetime")}
@@ -207,92 +272,119 @@ export default function PaywallModal({
                 </ul>
               </div>
 
-              {/* Checkout Form */}
-              <form onSubmit={handleSubmit} className="space-y-3.5">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Your Email Address
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="candidate@example.com"
-                    className="w-full h-10 px-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+              {/* If NOT logged in: Prompt to sign in first */}
+              {!currentUser ? (
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-center space-y-4">
+                  <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 mx-auto flex items-center justify-center">
+                    <LogIn className="w-6 h-6" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-bold text-gray-900 text-base">Sign In Required Before Checkout</h4>
+                    <p className="text-xs text-gray-600 max-w-sm mx-auto leading-relaxed">
+                      Please sign in with your email or Google account first so your CareerMonke Pro pass is securely attached to your profile.
+                    </p>
+                  </div>
+                  <Link
+                    href="/login?next=/job-search/all"
+                    onClick={() => onOpenChange(false)}
+                    className="inline-flex items-center justify-center gap-2 w-full py-3 min-h-[44px] bg-[#2563EB] hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow-md transition-all cursor-pointer"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    <span>Sign In First to Continue</span>
+                  </Link>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              ) : (
+                /* Checkout Form */
+                <form onSubmit={handleSubmit} className="space-y-3.5">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">
-                      Card Number
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        required
-                        defaultValue="4242 •••• •••• 4242"
-                        className="w-full h-10 pl-9 pr-3 rounded-lg border border-gray-300 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      <CreditCard className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">
-                        Expiry
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-semibold text-gray-700">
+                        Account Email
                       </label>
-                      <input
-                        type="text"
-                        required
-                        defaultValue="12/28"
-                        className="w-full h-10 px-3 rounded-lg border border-gray-300 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">
-                        CVC
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        defaultValue="891"
-                        className="w-full h-10 px-3 rounded-lg border border-gray-300 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isProcessing}
-                  className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3.5 rounded-xl font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer mt-2 disabled:opacity-75"
-                >
-                  {isProcessing ? (
-                    <span>Securing access...</span>
-                  ) : (
-                    <>
-                      <span>
-                        Unlock Instant Access • {selectedPlan === "lifetime" ? "$29 One-Time" : "$9/Month"}
+                      <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                        Verified Account
                       </span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
+                    </div>
+                    <input
+                      type="email"
+                      required
+                      value={currentUser.email || email}
+                      readOnly
+                      className="w-full h-11 px-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-700 text-sm font-medium focus:outline-none"
+                    />
+                  </div>
 
-                {/* Trust Signals */}
-                <div className="flex items-center justify-center gap-4 text-[11px] text-gray-500 pt-1">
-                  <span className="flex items-center gap-1">
-                    <Lock className="w-3 h-3 text-emerald-600" /> 256-Bit SSL
-                  </span>
-                  <span>•</span>
-                  <span>7-Day Money Back Guarantee</span>
-                  <span>•</span>
-                  <span>No hidden contracts</span>
-                </div>
-              </form>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        Card Number
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          required
+                          defaultValue="4242 •••• •••• 4242"
+                          className="w-full h-11 pl-9 pr-3 rounded-lg border border-gray-300 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <CreditCard className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Expiry
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          defaultValue="12/28"
+                          className="w-full h-11 px-3 rounded-lg border border-gray-300 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          CVC
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          defaultValue="891"
+                          className="w-full h-11 px-3 rounded-lg border border-gray-300 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isProcessing}
+                    className="w-full min-h-[44px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3 rounded-xl font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer mt-2 disabled:opacity-75"
+                  >
+                    {isProcessing ? (
+                      <span>Securing access...</span>
+                    ) : (
+                      <>
+                        <span>
+                          Unlock Instant Access • {selectedPlan === "lifetime" ? "$29 One-Time" : "$9/Month"}
+                        </span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+
+                  {/* Trust Signals */}
+                  <div className="flex items-center justify-center gap-4 text-[11px] text-gray-500 pt-1">
+                    <span className="flex items-center gap-1">
+                      <Lock className="w-3 h-3 text-emerald-600" /> 256-Bit SSL
+                    </span>
+                    <span>•</span>
+                    <span>7-Day Money Back Guarantee</span>
+                    <span>•</span>
+                    <span>No hidden contracts</span>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
         )}

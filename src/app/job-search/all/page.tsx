@@ -1,14 +1,19 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import BrandIcon from "@/components/BrandIcon";
 import Modal from "@/components/Modal";
 import AvatarStack from "@/components/AvatarStack";
 import Chip from "@/components/Chip";
 import PaywallModal from "@/components/PaywallModal";
-import { DUMMY_JOBS, Job } from "@/data/jobs";
+import UserMenu from "@/components/UserMenu";
+import CategoryPillBar from "@/components/CategoryPillBar";
+import FilterSlideOver from "@/components/FilterSlideOver";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
+import type { Job } from "@/data/jobs";
 import { CATEGORIES } from "@/data/categories";
 import { toast } from "react-toastify";
 import {
@@ -23,13 +28,118 @@ import {
   ChevronRight,
   X,
   Filter,
+  SlidersHorizontal,
   Radio,
   ExternalLink,
+  Lock,
+  Loader2,
+  Menu,
 } from "lucide-react";
 
+// Category mapping for social app style category pills
+const PILL_CATEGORY_MAPPING: Record<string, string[]> = {
+  tech: ["software", "engineering", "technology", "devops", "ai-ml", "ai", "mobile-dev", "architecture"],
+  design: ["design", "art-design"],
+  marketing: ["marketing", "product-marketing", "sales"],
+  finance: ["finance"],
+  data: ["data-analytics", "data-science"],
+  product: ["product"],
+  hr: ["hr", "recruiting"],
+  operations: ["operations"],
+  sales: ["sales"],
+  "cyber-security": ["cyber-security"],
+  "qa-testing": ["qa-testing"],
+  "customer-support": ["customer-support", "customer-success"],
+  legal: ["legal"],
+  healthcare: ["healthcare"],
+};
+
 function JobSearchContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("categories") || "";
+
+  // Auth & Membership state
+  const [user, setUser] = useState<User | null>(null);
+  const [isPro, setIsPro] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    const updateAuthAndPro = (currentUser: User | null) => {
+      let effectiveUser = currentUser;
+      if (!effectiveUser && typeof window !== "undefined") {
+        const localEmail = localStorage.getItem("careermonke_user_email");
+        if (localEmail) {
+          effectiveUser = {
+            id: "local-user",
+            email: localEmail,
+            user_metadata: {},
+          } as User;
+        }
+      }
+
+      setUser(effectiveUser);
+      if (!effectiveUser) {
+        setIsPro(false);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("careermonke_pro_active");
+        }
+        return;
+      }
+      const isUserPro = effectiveUser.user_metadata?.is_pro === true;
+      const isLocalPro =
+        typeof window !== "undefined" &&
+        localStorage.getItem("careermonke_pro_active") === "true";
+      setIsPro(Boolean(isUserPro || isLocalPro));
+    };
+
+    // Initial check
+    updateAuthAndPro(null);
+
+    supabase.auth.getUser().then(({ data }) => {
+      updateAuthAndPro(data.user);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT" || !session?.user) {
+        const localEmail =
+          typeof window !== "undefined"
+            ? localStorage.getItem("careermonke_user_email")
+            : null;
+        if (!localEmail) {
+          if (typeof window !== "undefined") {
+            localStorage.removeItem("careermonke_pro_active");
+          }
+          setUser(null);
+          setIsPro(false);
+        } else {
+          updateAuthAndPro(null);
+        }
+      } else {
+        updateAuthAndPro(session.user);
+      }
+    });
+
+    const handleStorageUpdate = () => {
+      supabase.auth.getUser().then(({ data }) => {
+        updateAuthAndPro(data.user);
+      });
+    };
+
+    window.addEventListener("storage", handleStorageUpdate);
+    window.addEventListener("careermonke_pro_updated", handleStorageUpdate);
+    window.addEventListener("careermonke_auth_updated", handleStorageUpdate);
+
+    return () => {
+      listener.subscription.unsubscribe();
+      window.removeEventListener("storage", handleStorageUpdate);
+      window.removeEventListener("careermonke_pro_updated", handleStorageUpdate);
+      window.removeEventListener("careermonke_auth_updated", handleStorageUpdate);
+    };
+  }, []);
 
   // State
   const [searchTerm, setSearchTerm] = useState("");
@@ -41,56 +151,251 @@ function JobSearchContent() {
   const [dateFilter, setDateFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Social App Category Pill State (reflects ?cat=... in URL)
+  const [activePillCategory, setActivePillCategory] = useState<string | null>(
+    searchParams.get("cat") || (initialCategory ? initialCategory : null)
+  );
+
+  // Advanced Filters State (Salary, Experience)
+  const [salaryFilter, setSalaryFilter] = useState("all");
+  const [experienceFilter, setExperienceFilter] = useState("all");
+  const [slideOverOpen, setSlideOverOpen] = useState(false);
+
+  // Live Supabase Jobs & Pagination State
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [totalJobs, setTotalJobs] = useState<number>(4600);
+  const [loading, setLoading] = useState(true);
+
   // Modals state
   const [moreModalJob, setMoreModalJob] = useState<Job | null>(null);
   const [applyModalJob, setApplyModalJob] = useState<Job | null>(null);
   const [signupEmail, setSignupEmail] = useState("");
   const [paywallOpen, setPaywallOpen] = useState(false);
 
+  const handleProUnlocked = () => {
+    setIsPro(true);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("careermonke_pro_active", "true");
+    }
+    toast.success("CareerMonke Pro unlocked! All verified job details and direct apply links are active.");
+  };
+
+  // Handle clicking on any blurred detail (Location, Date, Remote, Salary)
+  const handleGatedAction = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    if (!user) {
+      toast.info("Please sign in first to access CareerMonke Pro and unlock job details.");
+      router.push("/login?next=/job-search/all");
+      return;
+    }
+    if (!isPro) {
+      setPaywallOpen(true);
+    }
+  };
+
+  // Handle Apply Direct — if guest -> prompt sign in. If authed & free -> Paywall. If Pro -> open URL!
+  const handleApplyClick = (e: React.MouseEvent, applyUrl?: string) => {
+    e.preventDefault();
+    if (!user) {
+      toast.info("Please sign in first to apply directly to verified employer listings.");
+      router.push("/login?next=/job-search/all");
+      return;
+    }
+    if (!isPro) {
+      setPaywallOpen(true);
+      return;
+    }
+    if (applyUrl && applyUrl !== "#") {
+      window.open(applyUrl, "_blank", "noopener,noreferrer");
+    } else {
+      toast.info("Opening employer application portal...");
+    }
+  };
+
   // Categories list
   const allCategoryOptions = useMemo(() => {
     return CATEGORIES.map((c) => ({ value: c.slug, label: c.name }));
   }, []);
 
-  // Filter logic
-  const filteredJobs = useMemo(() => {
-    return DUMMY_JOBS.filter((job) => {
-      // Search term
-      if (
-        searchTerm &&
-        !job.title.toLowerCase().includes(searchTerm.toLowerCase())
-      ) {
-        return false;
-      }
-
-      // Categories (if any selected)
-      if (
-        selectedCategories.length > 0 &&
-        !selectedCategories.includes(job.category)
-      ) {
-        return false;
-      }
-
-      // Country
-      if (countryFilter !== "all" && job.country !== countryFilter) {
-        return false;
-      }
-
-      // Remote
-      if (remoteOnly && !job.remote) {
-        return false;
-      }
-
-      return true;
-    });
-  }, [searchTerm, selectedCategories, countryFilter, remoteOnly]);
-
   const jobsPerPage = 10;
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage) || 1;
-  const paginatedJobs = filteredJobs.slice(
-    (currentPage - 1) * jobsPerPage,
-    currentPage * jobsPerPage
-  );
+  const totalPages = Math.ceil(totalJobs / jobsPerPage) || 1;
+
+  // Handle Category Pill Selection (toggling, URL sync, page reset)
+  const handleSelectPillCategory = (id: string | null) => {
+    setActivePillCategory(id);
+    setCurrentPage(1);
+
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (id) {
+        url.searchParams.set("cat", id);
+      } else {
+        url.searchParams.delete("cat");
+      }
+      url.searchParams.delete("categories");
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
+
+  // Reset all filters
+  const handleResetAllFilters = () => {
+    setSelectedCategories([]);
+    setCountryFilter("all");
+    setRemoteOnly(false);
+    setDateFilter("all");
+    setSalaryFilter("all");
+    setExperienceFilter("all");
+    setActivePillCategory(null);
+    setSearchTerm("");
+    setCurrentPage(1);
+
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("cat");
+      url.searchParams.delete("categories");
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
+
+  // Live Database Fetch — Instant & lightweight!
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+
+    const supabase = createClient();
+    let query = supabase
+      .from("jobs")
+      .select("*", { count: "exact" })
+      .eq("status", "active");
+
+    if (searchTerm.trim()) {
+      query = query.or(
+        `title.ilike.%${searchTerm.trim()}%,company.ilike.%${searchTerm.trim()}%`
+      );
+    }
+
+    // Category Pill Filter
+    if (activePillCategory) {
+      if (activePillCategory === "trending") {
+        query = query.in("company", [
+          "OpenAI",
+          "Stripe",
+          "Linear",
+          "ElevenLabs",
+          "Perplexity AI",
+          "Baseten",
+          "Cohere",
+          "Notion",
+        ]);
+      } else if (activePillCategory === "tech") {
+        query = query.or(
+          "category.in.(software,engineering,devops,ai),title.ilike.%engineer%,title.ilike.%developer%"
+        );
+      } else if (activePillCategory === "design") {
+        query = query.or("category.eq.design,title.ilike.%design%,title.ilike.%ui%,title.ilike.%ux%");
+      } else if (activePillCategory === "marketing") {
+        query = query.or("category.eq.marketing,title.ilike.%marketing%,title.ilike.%growth%");
+      } else if (activePillCategory === "finance") {
+        query = query.or("category.eq.finance,title.ilike.%finance%,title.ilike.%accounting%");
+      } else if (activePillCategory === "data") {
+        query = query.or("category.eq.data,title.ilike.%data%,title.ilike.%analytics%,title.ilike.%ml%");
+      } else if (activePillCategory === "internships") {
+        query = query.or("title.ilike.%intern%,job_type.ilike.%intern%");
+      } else if (activePillCategory === "remote") {
+        query = query.eq("remote_scope", "remote");
+      } else if (activePillCategory === "fresher") {
+        query = query.or(
+          "title.ilike.%junior%,title.ilike.%entry%,title.ilike.%associate%,title.ilike.%graduate%,title.ilike.%fresher%,title.ilike.%intern%"
+        );
+      } else if (activePillCategory === "product") {
+        query = query.ilike("title", "%product%");
+      } else if (activePillCategory === "hr") {
+        query = query.or("title.ilike.%hr%,title.ilike.%people%,title.ilike.%recruiting%,title.ilike.%talent%");
+      } else if (activePillCategory === "operations") {
+        query = query.or("title.ilike.%operation%,title.ilike.%ops%");
+      } else if (activePillCategory === "sales") {
+        query = query.or("title.ilike.%sales%,title.ilike.%account executive%,title.ilike.%business development%");
+      } else if (activePillCategory === "cyber-security") {
+        query = query.ilike("title", "%security%");
+      } else if (activePillCategory === "qa-testing") {
+        query = query.or("title.ilike.%test%,title.ilike.%qa%,title.ilike.%quality%");
+      } else if (activePillCategory === "customer-support") {
+        query = query.or("title.ilike.%support%,title.ilike.%success%");
+      } else if (activePillCategory === "legal") {
+        query = query.or("title.ilike.%legal%,title.ilike.%counsel%,title.ilike.%compliance%");
+      } else if (activePillCategory === "healthcare") {
+        query = query.or("title.ilike.%health%,title.ilike.%care%,title.ilike.%medical%");
+      } else if (PILL_CATEGORY_MAPPING[activePillCategory]) {
+        query = query.in("category", PILL_CATEGORY_MAPPING[activePillCategory]);
+      }
+    }
+
+    if (selectedCategories.length > 0) {
+      query = query.in("category", selectedCategories);
+    }
+
+    if (countryFilter !== "all") {
+      query = query.eq("country", countryFilter);
+    }
+
+    if (remoteOnly) {
+      query = query.eq("remote_scope", "remote");
+    }
+
+    // Experience Filter
+    if (experienceFilter === "fresher") {
+      query = query.or(
+        "title.ilike.%junior%,title.ilike.%entry%,title.ilike.%associate%,title.ilike.%graduate%,title.ilike.%fresher%,title.ilike.%intern%"
+      );
+    } else if (experienceFilter === "senior") {
+      query = query.or(
+        "title.ilike.%senior%,title.ilike.%lead%,title.ilike.%staff%,title.ilike.%principal%,title.ilike.%director%"
+      );
+    } else if (experienceFilter === "mid") {
+      query = query.not("title", "ilike", "%senior%").not("title", "ilike", "%intern%");
+    }
+
+    const from = (currentPage - 1) * jobsPerPage;
+    const to = from + jobsPerPage - 1;
+
+    query = query.order("id", { ascending: true }).range(from, to);
+
+    query.then(({ data, count, error }) => {
+      if (!isMounted) return;
+      if (!error && data) {
+        const mapped: Job[] = data.map((d: any) => ({
+          id: d.id,
+          title: d.title,
+          company: d.company,
+          location: d.location,
+          date: d.date || "Today",
+          salary: d.salary_text || "Competitive",
+          category: d.category || "software",
+          remote: d.remote_scope === "remote",
+          country: d.country || "United States",
+          type: d.job_type === "full-time" ? "Full-time" : d.job_type,
+          directSource: true,
+          applyUrl: d.apply_url || "#",
+        }));
+        setJobs(mapped);
+        if (count !== null) setTotalJobs(count);
+      }
+      setLoading(false);
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [
+    searchTerm,
+    activePillCategory,
+    selectedCategories,
+    countryFilter,
+    remoteOnly,
+    experienceFilter,
+    salaryFilter,
+    currentPage,
+  ]);
 
   const handleToggleCategory = (slug: string) => {
     if (selectedCategories.includes(slug)) {
@@ -103,10 +408,23 @@ function JobSearchContent() {
 
   const handleSignupSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!signupEmail) return;
-    toast.success(`Check ${signupEmail} for your instant login link!`);
+    const cleanEmail = signupEmail.trim();
+    if (!cleanEmail) return;
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("careermonke_user_email", cleanEmail);
+      document.cookie = `careermonke_user_email=${encodeURIComponent(cleanEmail)}; path=/; max-age=2592000`;
+      window.dispatchEvent(new Event("careermonke_auth_updated"));
+    }
+
+    setUser({ id: "local-user", email: cleanEmail, user_metadata: {} } as User);
+    toast.success(`Welcome, ${cleanEmail}!`);
     setApplyModalJob(null);
     setSignupEmail("");
+
+    if (!isPro) {
+      setPaywallOpen(true);
+    }
   };
 
   return (
@@ -118,17 +436,17 @@ function JobSearchContent() {
         {/* Row 1: Logo & Nav Buttons */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-sm">
-              <BrandIcon className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center p-0.5 shadow-sm overflow-hidden">
+              <BrandIcon className="w-7 h-7" />
             </div>
-            <span className="text-xl font-black text-blue-600 tracking-tight">YourBrand</span>
+            <span className="text-xl font-black text-blue-600 tracking-tight">CareerMonke</span>
           </Link>
 
-          {/* 3 Outline buttons with icons */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-3">
             <Link
               href="/job-search/all"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-gray-300 text-xs sm:text-sm font-medium text-gray-700 hover:bg-slate-100 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-gray-300 text-xs sm:text-sm font-medium text-gray-700 hover:bg-slate-100 transition-colors min-h-[44px]"
             >
               <Briefcase className="w-3.5 h-3.5 text-blue-600" />
               <span>Jobs</span>
@@ -136,29 +454,70 @@ function JobSearchContent() {
             <button
               type="button"
               onClick={() => setPaywallOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-gray-300 text-xs sm:text-sm font-medium text-gray-700 hover:bg-slate-100 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-gray-300 text-xs sm:text-sm font-medium text-gray-700 hover:bg-slate-100 transition-colors cursor-pointer min-h-[44px]"
             >
               <FileText className="w-3.5 h-3.5 text-blue-600" />
               <span>Resume</span>
             </button>
             <Link
               href="/radar"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-900 text-white hover:bg-cyan-950 border border-slate-700 text-xs sm:text-sm font-semibold transition-colors shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-900 text-white hover:bg-cyan-950 border border-slate-700 text-xs sm:text-sm font-semibold transition-colors shadow-xs min-h-[44px]"
             >
               <Radio className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
               <span>3D Radar</span>
             </Link>
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 text-xs sm:text-sm font-semibold transition-colors"
+            <UserMenu variant="light" />
+          </div>
+
+          {/* Mobile Header Controls: UserMenu + Hamburger Menu Button */}
+          <div className="flex md:hidden items-center gap-2">
+            <UserMenu variant="light" />
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="w-11 h-11 flex items-center justify-center rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors"
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}
             >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>Login</span>
-            </Link>
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
 
-        {/* Row 2: Search input + black Search button */}
+        {/* Mobile Menu Dropdown Drawer */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-2 shadow-lg animate-fadeIn">
+            <Link
+              href="/job-search/all"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors min-h-[44px]"
+            >
+              <Briefcase className="w-4 h-4 text-blue-600" />
+              <span>Jobs Feed</span>
+            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setPaywallOpen(true);
+              }}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors min-h-[44px] text-left cursor-pointer"
+            >
+              <FileText className="w-4 h-4 text-blue-600" />
+              <span>AI Resume Scanner</span>
+            </button>
+            <Link
+              href="/radar"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold bg-slate-900 text-white min-h-[44px]"
+            >
+              <Radio className="w-4 h-4 text-cyan-400" />
+              <span>3D Radar View</span>
+            </Link>
+          </div>
+        )}
+
+        {/* Row 2: Search input + Search button + Mobile Filter Toggle */}
         <div className="border-t border-gray-100 bg-gray-50/60 py-3 px-4 sm:px-6">
           <div className="max-w-7xl mx-auto flex items-center gap-2">
             <div className="relative flex-1">
@@ -171,12 +530,12 @@ function JobSearchContent() {
                   setCurrentPage(1);
                 }}
                 placeholder="Search job title... (Exact search)"
-                className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E4E4E7] rounded-lg text-sm text-[#09090B] focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm"
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E4E4E7] rounded-lg text-sm text-[#09090B] focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm min-h-[44px]"
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -184,37 +543,73 @@ function JobSearchContent() {
             </div>
             <button
               type="button"
-              className="inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-neutral-800 transition-colors shadow-sm cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-neutral-800 transition-colors shadow-sm cursor-pointer min-h-[44px]"
             >
               <Search className="w-4 h-4" />
-              <span className="hidden sm:inline">Search</span>
+              <span>Search</span>
+            </button>
+            {/* Mobile Filters Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setSlideOverOpen(true)}
+              className="lg:hidden inline-flex items-center gap-1.5 bg-white border border-gray-300 text-gray-700 px-3.5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors shadow-xs min-h-[44px] shrink-0 cursor-pointer"
+              aria-label="Toggle job filters"
+            >
+              <SlidersHorizontal className="w-4 h-4 text-blue-600" />
+              <span className="text-xs sm:text-sm font-semibold">Filters</span>
+              {(selectedCategories.length > 0 ||
+                countryFilter !== "all" ||
+                remoteOnly ||
+                salaryFilter !== "all" ||
+                experienceFilter !== "all") && (
+                <span className="w-2 h-2 rounded-full bg-blue-600" />
+              )}
             </button>
           </div>
         </div>
+
+        {/* Row 3: Category Filter Pill-Bar (Social app style, horizontal scroll with snap) */}
+        <CategoryPillBar
+          activeCategory={activePillCategory}
+          onSelectCategory={handleSelectPillCategory}
+          onOpenFilters={() => setSlideOverOpen(true)}
+          hasActiveFilters={
+            selectedCategories.length > 0 ||
+            countryFilter !== "all" ||
+            remoteOnly ||
+            salaryFilter !== "all" ||
+            experienceFilter !== "all" ||
+            dateFilter !== "all"
+          }
+        />
       </header>
 
       {/* ========================================================================= */}
       {/* 2 COLUMNS BODY                                                           */}
       {/* ========================================================================= */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-[290px_1fr] gap-8 items-start">
           {/* ===================================================================== */}
-          {/* Left Column: Sticky Filter Card (~290px)                              */}
+          {/* Left Column: Filter Card (~290px)                                     */}
           {/* ===================================================================== */}
-          <aside className="bg-white border border-[#E4E4E7] rounded-xl p-5 shadow-sm lg:sticky lg:top-36 space-y-6">
+          <aside
+            className={`bg-white border border-[#E4E4E7] rounded-xl p-5 shadow-sm lg:sticky lg:top-36 space-y-6 ${
+              showMobileFilters ? "block" : "hidden lg:block"
+            }`}
+          >
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div className="flex items-center gap-2 font-bold text-[#09090B] text-base">
                 <Filter className="w-4 h-4 text-blue-600" />
                 <span>Filters</span>
               </div>
-              {(selectedCategories.length > 0 || countryFilter !== "all" || remoteOnly) && (
+              {(selectedCategories.length > 0 ||
+                countryFilter !== "all" ||
+                remoteOnly ||
+                salaryFilter !== "all" ||
+                experienceFilter !== "all" ||
+                activePillCategory !== null) && (
                 <button
-                  onClick={() => {
-                    setSelectedCategories([]);
-                    setCountryFilter("all");
-                    setRemoteOnly(false);
-                    setSearchTerm("");
-                  }}
+                  onClick={handleResetAllFilters}
                   className="text-xs text-blue-600 hover:underline font-medium"
                 >
                   Reset all
@@ -345,61 +740,130 @@ function JobSearchContent() {
             {/* Job Count Line */}
             <div className="flex items-center justify-between pb-2">
               <h2 className="text-lg font-bold text-[#09090B]">
-                {filteredJobs.length > 0 ? (
+                {totalJobs > 0 ? (
                   <span>
-                    Showing {filteredJobs.length} active listings{" "}
+                    Showing {totalJobs.toLocaleString()} active listings{" "}
                     <span className="text-sm font-normal text-gray-500">(from 61,065 monitored jobs)</span>
                   </span>
                 ) : (
-                  <span>No matching jobs found</span>
+                  <span>{loading ? "Searching active listings..." : "No matching jobs found"}</span>
                 )}
               </h2>
               <span className="text-xs font-mono text-gray-400">Page {currentPage} of {totalPages}</span>
             </div>
 
             {/* Job Cards */}
-            {paginatedJobs.length === 0 ? (
+            {loading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="bg-white border border-[#E4E4E7] rounded-xl p-6 shadow-sm animate-pulse space-y-4"
+                  >
+                    <div className="h-6 bg-gray-200 rounded w-2/3" />
+                    <div className="h-4 bg-gray-100 rounded w-1/3" />
+                    <div className="h-8 bg-gray-100 rounded w-1/2 mt-4" />
+                  </div>
+                ))}
+              </div>
+            ) : jobs.length === 0 ? (
               <div className="bg-white border border-[#E4E4E7] rounded-xl p-12 text-center space-y-3">
                 <p className="text-gray-500 text-base">No listings match your current filter selections.</p>
                 <button
-                  onClick={() => {
-                    setSelectedCategories([]);
-                    setCountryFilter("all");
-                    setRemoteOnly(false);
-                    setSearchTerm("");
-                  }}
+                  onClick={handleResetAllFilters}
                   className="text-sm font-semibold text-blue-600 hover:underline"
                 >
                   Clear all filters
                 </button>
               </div>
             ) : (
-              paginatedJobs.map((job) => (
+              jobs.map((job) => (
                 <div
                   key={job.id}
                   className="bg-white border border-[#E4E4E7] rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-150 space-y-4"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                     <div className="space-y-1.5">
-                      {/* Job Title: text-2xl semibold */}
+                      {/* Job Title: text-2xl semibold (Unblurred) */}
                       <h3 className="text-2xl font-semibold text-[#09090B] tracking-tight hover:text-[#2563EB] cursor-pointer">
                         {job.title}
                       </h3>
 
-                      {/* Verified Company Name (Unblurred) */}
+                      {/* Company Name, Location, Date */}
                       <div className="flex flex-wrap items-center gap-2.5 text-sm text-[#4B5563]">
-                        <span className="font-semibold text-gray-900">
+                        {/* Company Name (Blurred if !isPro) */}
+                        <span
+                          onClick={!isPro ? handleGatedAction : undefined}
+                          className={
+                            !isPro
+                              ? "filter blur-[6px] select-none text-gray-800 font-semibold cursor-pointer"
+                              : "font-semibold text-gray-900"
+                          }
+                          title={
+                            !isPro
+                              ? user
+                                ? "Click to unlock company with Pro"
+                                : "Sign in to unlock company"
+                              : undefined
+                          }
+                        >
                           {job.company}
                         </span>
+
                         <span>•</span>
-                        <span className="flex items-center gap-1">
-                          <MapPin className="w-3.5 h-3.5 text-gray-400" />
-                          {job.location}
+
+                        {/* Location (Blurred if !isPro) */}
+                        <span
+                          onClick={!isPro ? handleGatedAction : undefined}
+                          className={`flex items-center gap-1 ${
+                            !isPro ? "cursor-pointer group/loc" : ""
+                          }`}
+                          title={
+                            !isPro
+                              ? user
+                                ? "Click to unlock location with Pro"
+                                : "Sign in to unlock location"
+                              : undefined
+                          }
+                        >
+                          <MapPin className="w-3.5 h-3.5 text-gray-400 group-hover/loc:text-blue-600 transition-colors" />
+                          <span
+                            className={
+                              !isPro
+                                ? "filter blur-[6px] select-none text-gray-700"
+                                : ""
+                            }
+                          >
+                            {job.location}
+                          </span>
                         </span>
+
                         <span>•</span>
-                        <span className="flex items-center gap-1 text-gray-400 font-mono text-xs">
-                          <Clock className="w-3.5 h-3.5" />
-                          {job.date}
+
+                        {/* Date (Blurred if !isPro) */}
+                        <span
+                          onClick={!isPro ? handleGatedAction : undefined}
+                          className={`flex items-center gap-1 font-mono text-xs ${
+                            !isPro ? "cursor-pointer group/date" : "text-gray-400"
+                          }`}
+                          title={
+                            !isPro
+                              ? user
+                                ? "Click to unlock release date with Pro"
+                                : "Sign in to unlock release date"
+                              : undefined
+                          }
+                        >
+                          <Clock className="w-3.5 h-3.5 text-gray-400 group-hover/date:text-blue-600 transition-colors" />
+                          <span
+                            className={
+                              !isPro
+                                ? "filter blur-[5px] select-none text-gray-600"
+                                : "text-gray-400"
+                            }
+                          >
+                            {job.date || "Today"}
+                          </span>
                         </span>
                       </div>
                     </div>
@@ -407,18 +871,19 @@ function JobSearchContent() {
                     {/* Action buttons: Direct Apply Link + Outline pill More */}
                     <div className="flex items-center gap-2 sm:flex-col sm:items-end">
                       {/* Direct Apply button */}
-                      <a
-                        href={job.applyUrl || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        type="button"
+                        onClick={(e) => handleApplyClick(e, job.applyUrl)}
                         className="inline-flex items-center gap-1.5 px-5 py-2 bg-[#2563EB] hover:bg-blue-700 text-white rounded-full font-semibold text-sm transition-colors shadow-sm cursor-pointer whitespace-nowrap group"
                       >
+                        {!isPro && <Lock className="w-3.5 h-3.5 opacity-80" />}
                         <span>Apply Direct</span>
                         <ExternalLink className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                      </a>
+                      </button>
 
                       {/* Outline pill More button with layers icon */}
                       <button
+                        type="button"
                         onClick={() => setMoreModalJob(job)}
                         className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-medium text-xs transition-colors cursor-pointer whitespace-nowrap"
                       >
@@ -430,9 +895,52 @@ function JobSearchContent() {
 
                   {/* Chips: Salary, Source, Remote */}
                   <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-100">
-                    <Chip variant="salary">{job.salary}</Chip>
+                    {!isPro ? (
+                      <button
+                        type="button"
+                        onClick={handleGatedAction}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-transparent hover:bg-gray-50/80 px-3 py-1 text-[0.88rem] text-gray-700 transition-all cursor-pointer group"
+                        title={
+                          user
+                            ? "Click to unlock verified salary with Pro"
+                            : "Sign in to unlock verified salary"
+                        }
+                      >
+                        <Lock className="w-3.5 h-3.5 text-gray-400 group-hover:text-blue-600 transition-colors shrink-0" />
+                        <span className="filter blur-[6px] select-none font-mono text-gray-800 tracking-tight">
+                          {job.salary || "$130,000 - $175,000"}
+                        </span>
+                      </button>
+                    ) : (
+                      <Chip variant="salary">{job.salary}</Chip>
+                    )}
+
                     <Chip variant="source">Direct ATS Source</Chip>
-                    {job.remote && <Chip variant="default">100% Remote</Chip>}
+
+                    {job.remote && (
+                      <span
+                        onClick={!isPro ? handleGatedAction : undefined}
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${
+                          !isPro
+                            ? "border-gray-200 bg-gray-50/60 text-gray-700 cursor-pointer hover:border-gray-300 transition-all"
+                            : "border-gray-200 bg-white text-gray-700"
+                        }`}
+                        title={
+                          !isPro
+                            ? user
+                              ? "Click to unlock remote status with Pro"
+                              : "Sign in to unlock remote status"
+                            : undefined
+                        }
+                      >
+                        <span
+                          className={!isPro ? "filter blur-[5px] select-none" : ""}
+                        >
+                          100% Remote
+                        </span>
+                      </span>
+                    )}
+
                     <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded ml-auto">
                       Verified Active
                     </span>
@@ -475,7 +983,13 @@ function JobSearchContent() {
       <Modal
         open={!!moreModalJob}
         onOpenChange={(open) => !open && setMoreModalJob(null)}
-        title={moreModalJob ? `${moreModalJob.company} — Role Breakdown` : "Job Details"}
+        title={
+          moreModalJob
+            ? isPro
+              ? `${moreModalJob.company} — Role Breakdown`
+              : "Requisition Details — Role Breakdown"
+            : "Job Details"
+        }
         description="Verified direct-source requisition data directly from employer ATS."
       >
         {moreModalJob && (
@@ -488,11 +1002,23 @@ function JobSearchContent() {
                 {moreModalJob.title}
               </h4>
               <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 pt-1">
-                <span className="font-semibold text-gray-900">{moreModalJob.company}</span>
+                <span
+                  className={
+                    !isPro
+                      ? "filter blur-[6px] select-none text-gray-800 font-semibold"
+                      : "font-semibold text-gray-900"
+                  }
+                >
+                  {moreModalJob.company}
+                </span>
                 <span>•</span>
-                <span>{moreModalJob.location}</span>
+                <span className={!isPro ? "filter blur-[6px] select-none text-gray-700" : ""}>
+                  {moreModalJob.location}
+                </span>
                 <span>•</span>
-                <span className="text-emerald-700 font-bold font-mono">{moreModalJob.salary}</span>
+                <span className={!isPro ? "filter blur-[6px] select-none text-gray-700 font-mono" : "text-emerald-700 font-bold font-mono"}>
+                  {moreModalJob.salary}
+                </span>
               </div>
             </div>
 
@@ -505,19 +1031,19 @@ function JobSearchContent() {
               <button
                 type="button"
                 onClick={() => setMoreModalJob(null)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 Close
               </button>
-              <a
-                href={moreModalJob.applyUrl || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-6 py-2 bg-[#2563EB] hover:bg-blue-700 text-white rounded-lg font-semibold text-sm transition-colors shadow-sm"
+              <button
+                type="button"
+                onClick={(e) => handleApplyClick(e, moreModalJob.applyUrl)}
+                className="inline-flex items-center gap-1.5 px-6 py-2 bg-[#2563EB] hover:bg-blue-700 text-white rounded-lg font-semibold text-sm transition-colors shadow-sm cursor-pointer"
               >
+                {!isPro && <Lock className="w-4 h-4 opacity-80" />}
                 <span>Go to Employer Application</span>
                 <ExternalLink className="w-4 h-4" />
-              </a>
+              </button>
             </div>
           </div>
         )}
@@ -576,8 +1102,44 @@ function JobSearchContent() {
         </form>
       </Modal>
 
-      {/* Paywall Modal triggered by Resume button */}
-      <PaywallModal open={paywallOpen} onOpenChange={setPaywallOpen} />
+      {/* Advanced Filter Slide-Over Drawer */}
+      <FilterSlideOver
+        open={slideOverOpen}
+        onClose={() => setSlideOverOpen(false)}
+        selectedCategories={selectedCategories}
+        onToggleCategory={handleToggleCategory}
+        countryFilter={countryFilter}
+        onChangeCountry={(c) => {
+          setCountryFilter(c);
+          setCurrentPage(1);
+        }}
+        remoteOnly={remoteOnly}
+        onToggleRemote={(r) => {
+          setRemoteOnly(r);
+          setCurrentPage(1);
+        }}
+        dateFilter={dateFilter}
+        onChangeDate={(d) => setDateFilter(d)}
+        salaryFilter={salaryFilter}
+        onChangeSalary={(s) => {
+          setSalaryFilter(s);
+          setCurrentPage(1);
+        }}
+        experienceFilter={experienceFilter}
+        onChangeExperience={(exp) => {
+          setExperienceFilter(exp);
+          setCurrentPage(1);
+        }}
+        onResetAll={handleResetAllFilters}
+      />
+
+      {/* Paywall Modal */}
+      <PaywallModal
+        open={paywallOpen}
+        onOpenChange={setPaywallOpen}
+        user={user}
+        onSuccess={handleProUnlocked}
+      />
     </div>
   );
 }

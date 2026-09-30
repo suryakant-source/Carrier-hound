@@ -27,7 +27,7 @@ export function generateMetadata({ params }: PageProps) {
   if (!data) return { title: "Category Landing Not Found" };
 
   return {
-    title: `${data.title} | YourBrand Jobs`,
+    title: `${data.title} | CareerMonke Jobs`,
     description: data.lede,
   };
 }
@@ -96,13 +96,13 @@ export default function CategoryLandingPage({ params }: PageProps) {
             <div className="pt-2 flex flex-wrap items-center gap-4">
               <a
                 href="#sample-jobs"
-                className="inline-flex items-center justify-center bg-white text-[#09090B] font-semibold text-base px-6 py-3 rounded-[6px] shadow-sm hover:bg-gray-100 transition-colors"
+                className="inline-flex items-center justify-center bg-white text-[#09090B] font-semibold text-base px-6 py-3 min-h-[44px] rounded-[6px] shadow-sm hover:bg-gray-100 transition-colors"
               >
                 See sample jobs
               </a>
               <Link
                 href={`/job-search/all?categories=${data.slug}`}
-                className="inline-flex items-center justify-center bg-transparent border border-white/50 text-white font-medium text-base px-6 py-3 rounded-[6px] hover:bg-white/10 transition-colors"
+                className="inline-flex items-center justify-center bg-transparent border border-white/50 text-white font-medium text-base px-6 py-3 min-h-[44px] rounded-[6px] hover:bg-white/10 transition-colors"
               >
                 Search every title
               </Link>
@@ -171,7 +171,7 @@ export default function CategoryLandingPage({ params }: PageProps) {
           <div className="text-center pt-2">
             <Link
               href={`/job-search/all?categories=${data.slug}`}
-              className="inline-flex items-center gap-2 bg-black hover:bg-neutral-800 text-white font-semibold px-7 py-3 rounded-lg text-sm transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 bg-black hover:bg-neutral-800 text-white font-semibold px-7 py-3.5 min-h-[44px] rounded-lg text-sm transition-colors shadow-sm"
             >
               <span>Explore All {data.name} Roles on Radar</span>
               <ArrowRight className="w-4 h-4" />

@@ -508,7 +508,7 @@ export default function JobRadarGlobe() {
                 key={country.id}
                 type="button"
                 onClick={() => handleCountryFilter(country)}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
+                className={`flex items-center gap-1.5 px-3.5 py-2 min-h-[44px] rounded-full text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
                   isActive
                     ? "bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.6)] font-bold scale-102"
                     : "text-slate-300 hover:text-white hover:bg-slate-800/60"
@@ -528,7 +528,7 @@ export default function JobRadarGlobe() {
             type="button"
             onClick={handleResetOrbit}
             title="Reset to Global Orbit"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-950/80 border border-slate-700 text-xs font-medium text-slate-200 hover:text-white hover:border-cyan-400 hover:bg-slate-900 transition-all backdrop-blur-md shadow-md"
+            className="flex items-center gap-1.5 px-3.5 py-2 min-h-[44px] rounded-full bg-slate-950/80 border border-slate-700 text-xs font-medium text-slate-200 hover:text-white hover:border-cyan-400 hover:bg-slate-900 transition-all backdrop-blur-md shadow-md"
           >
             <RotateCw className="w-3.5 h-3.5 text-cyan-400" />
             <span className="hidden sm:inline">Reset Orbit</span>
@@ -539,7 +539,7 @@ export default function JobRadarGlobe() {
             type="button"
             onClick={() => setIsSpinning((prev) => !prev)}
             title={isSpinning ? "Pause Auto-Rotation" : "Resume Auto-Rotation"}
-            className={`p-2 rounded-full border text-xs font-medium transition-all backdrop-blur-md shadow-md ${
+            className={`p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full border text-xs font-medium transition-all backdrop-blur-md shadow-md ${
               isSpinning
                 ? "bg-cyan-950/60 border-cyan-500/50 text-cyan-300"
                 : "bg-slate-950/80 border-slate-700 text-slate-400 hover:text-white"
@@ -591,16 +591,16 @@ export default function JobRadarGlobe() {
                 type="button"
                 onClick={handleCloseCity}
                 title="Back to Global Orbit"
-                className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/90 hover:bg-cyan-950/80 text-xs font-semibold text-cyan-300 hover:text-white transition-all border border-cyan-500/30 cursor-pointer shadow-xs"
+                className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-full bg-slate-800/90 hover:bg-cyan-950/80 text-xs font-semibold text-cyan-300 hover:text-white transition-all border border-cyan-500/30 cursor-pointer shadow-xs"
               >
-                <RotateCw className="w-3 h-3 text-cyan-400" />
+                <RotateCw className="w-3.5 h-3.5 text-cyan-400" />
                 <span>Orbit</span>
               </button>
               <button
                 type="button"
                 onClick={handleCloseCity}
                 aria-label="Close job drawer"
-                className="p-1.5 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-600/50 cursor-pointer"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-600/50 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -683,7 +683,7 @@ export default function JobRadarGlobe() {
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => handleApplyClick(job.id)}
-                        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shadow-md ${
+                        className={`inline-flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-lg text-xs font-bold transition-all shadow-md ${
                           isApplied
                             ? "bg-emerald-600 text-white"
                             : "bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-cyan-500/30 hover:shadow-cyan-400/50"
@@ -715,7 +715,7 @@ export default function JobRadarGlobe() {
             </span>
             <Link
               href={`/job-search/all?city=${selectedCity.id}`}
-              className="inline-flex items-center gap-1 font-bold text-cyan-400 hover:text-cyan-300"
+              className="inline-flex items-center gap-1 min-h-[44px] py-1 font-bold text-cyan-400 hover:text-cyan-300"
             >
               <span>Explore all in {selectedCity.name}</span>
               <ChevronRight className="w-3.5 h-3.5" />
