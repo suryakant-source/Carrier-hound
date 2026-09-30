@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { SlidersHorizontal, ChevronDown, Check } from "lucide-react";
+import { ChevronDown, Check } from "lucide-react";
 
 export interface CategoryPillItem {
   id: string;
@@ -37,7 +37,7 @@ export const MORE_CATEGORIES: CategoryPillItem[] = [
 interface CategoryPillBarProps {
   activeCategory: string | null;
   onSelectCategory: (id: string | null) => void;
-  onOpenFilters: () => void;
+  onOpenFilters?: () => void;
   hasActiveFilters?: boolean;
 }
 
@@ -123,8 +123,8 @@ export default function CategoryPillBar({
           />
         </div>
 
-        {/* Right End: Always pinned 'More' pill dropdown and 'Filter' pill */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 pl-1.5 sm:pl-3 border-l border-gray-200 relative z-20">
+        {/* Right End: Always pinned 'More' pill dropdown */}
+        <div className="flex items-center shrink-0 pl-1.5 sm:pl-3 border-l border-gray-200 relative z-20">
           {/* More Pill Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
@@ -183,24 +183,6 @@ export default function CategoryPillBar({
               </div>
             )}
           </div>
-
-          {/* Filter Pill with Sliders icon */}
-          <button
-            type="button"
-            onClick={onOpenFilters}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] rounded-full text-[13px] font-medium transition-colors duration-150 whitespace-nowrap cursor-pointer select-none border ${
-              hasActiveFilters
-                ? "bg-blue-50 text-[#2563EB] border-blue-300 font-semibold"
-                : "bg-transparent text-gray-700 border-gray-200 hover:border-gray-300 hover:bg-gray-50/70"
-            }`}
-            aria-label="Open advanced filters"
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>Filter</span>
-            {hasActiveFilters && (
-              <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB]" />
-            )}
-          </button>
         </div>
       </div>
     </div>
