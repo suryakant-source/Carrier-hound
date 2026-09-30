@@ -434,7 +434,7 @@ function JobSearchContent() {
       {/* ========================================================================= */}
       <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-30">
         {/* Row 1: Logo & Nav Buttons */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center p-0.5 shadow-sm overflow-hidden">
               <BrandIcon className="w-7 h-7" />
@@ -517,9 +517,9 @@ function JobSearchContent() {
           </div>
         )}
 
-        {/* Row 2: Search input + Search button + Mobile Filter Toggle */}
+        {/* Row 2: Search input + Search button + Filter Toggle */}
         <div className="border-t border-gray-100 bg-gray-50/60 py-3 px-4 sm:px-6">
-          <div className="max-w-7xl mx-auto flex items-center gap-2">
+          <div className="max-w-5xl mx-auto flex items-center gap-2">
             <div className="relative flex-1">
               <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
@@ -548,11 +548,11 @@ function JobSearchContent() {
               <Search className="w-4 h-4" />
               <span>Search</span>
             </button>
-            {/* Mobile Filters Toggle Button */}
+            {/* Filter Drawer Toggle Button */}
             <button
               type="button"
               onClick={() => setSlideOverOpen(true)}
-              className="lg:hidden inline-flex items-center gap-1.5 bg-white border border-gray-300 text-gray-700 px-3.5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors shadow-xs min-h-[44px] shrink-0 cursor-pointer"
+              className="inline-flex items-center gap-1.5 bg-white border border-gray-300 text-gray-700 px-3.5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors shadow-xs min-h-[44px] shrink-0 cursor-pointer"
               aria-label="Toggle job filters"
             >
               <SlidersHorizontal className="w-4 h-4 text-blue-600" />
@@ -585,172 +585,41 @@ function JobSearchContent() {
       </header>
 
       {/* ========================================================================= */}
-      {/* 2 COLUMNS BODY                                                           */}
+      {/* MAIN JOB FEED (Centered Clean Layout)                                     */}
       {/* ========================================================================= */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-[290px_1fr] gap-8 items-start">
-          {/* ===================================================================== */}
-          {/* Left Column: Filter Card (~290px)                                     */}
-          {/* ===================================================================== */}
-          <aside
-            className={`bg-white border border-[#E4E4E7] rounded-xl p-5 shadow-sm lg:sticky lg:top-36 space-y-6 ${
-              showMobileFilters ? "block" : "hidden lg:block"
-            }`}
-          >
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <div className="flex items-center gap-2 font-bold text-[#09090B] text-base">
-                <Filter className="w-4 h-4 text-blue-600" />
-                <span>Filters</span>
-              </div>
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full">
+        <div className="space-y-4">
+          {/* Job Count Line & Active Filters Reset */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2">
+            <h2 className="text-lg font-bold text-[#09090B]">
+              {totalJobs > 0 ? (
+                <span>
+                  Showing {totalJobs.toLocaleString()} active listings{" "}
+                  <span className="text-sm font-normal text-gray-500">(from 61,065 monitored jobs)</span>
+                </span>
+              ) : (
+                <span>{loading ? "Searching active listings..." : "No matching jobs found"}</span>
+              )}
+            </h2>
+
+            <div className="flex items-center gap-3">
               {(selectedCategories.length > 0 ||
                 countryFilter !== "all" ||
                 remoteOnly ||
                 salaryFilter !== "all" ||
                 experienceFilter !== "all" ||
-                activePillCategory !== null) && (
+                activePillCategory !== null ||
+                searchTerm) && (
                 <button
                   onClick={handleResetAllFilters}
-                  className="text-xs text-blue-600 hover:underline font-medium"
+                  className="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 cursor-pointer"
                 >
-                  Reset all
+                  <span>Reset all filters</span>
                 </button>
               )}
-            </div>
-
-            {/* Category Filter with multi-select chips */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-gray-500">
-                Categories
-              </label>
-
-              {/* Selected Category Chips */}
-              {selectedCategories.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mb-2">
-                  {selectedCategories.map((catSlug) => {
-                    const catObj = CATEGORIES.find((c) => c.slug === catSlug);
-                    return (
-                      <span
-                        key={catSlug}
-                        className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-medium px-2 py-1 rounded-md border border-blue-200"
-                      >
-                        <span>{catObj?.name || catSlug}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleToggleCategory(catSlug)}
-                          className="hover:text-blue-900"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </span>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Category dropdown */}
-              <select
-                value=""
-                onChange={(e) => {
-                  if (e.target.value) handleToggleCategory(e.target.value);
-                }}
-                className="w-full text-sm px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
-              >
-                <option value="">+ Add category filter...</option>
-                {allCategoryOptions.map((opt) => (
-                  <option
-                    key={opt.value}
-                    value={opt.value}
-                    disabled={selectedCategories.includes(opt.value)}
-                  >
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Country Filter */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-gray-500">
-                Country / Region
-              </label>
-              <select
-                value={countryFilter}
-                onChange={(e) => {
-                  setCountryFilter(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="w-full text-sm px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
-              >
-                <option value="all">All Countries</option>
-                <option value="United States">United States</option>
-                <option value="United Kingdom">United Kingdom</option>
-                <option value="Canada">Canada</option>
-                <option value="Germany">Germany</option>
-                <option value="France">France</option>
-                <option value="Sweden">Sweden</option>
-                <option value="Switzerland">Switzerland</option>
-                <option value="Australia">Australia</option>
-              </select>
-            </div>
-
-            {/* Remote Filter */}
-            <div className="pt-2">
-              <label className="flex items-center gap-2.5 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={remoteOnly}
-                  onChange={(e) => {
-                    setRemoteOnly(e.target.checked);
-                    setCurrentPage(1);
-                  }}
-                  className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
-                />
-                <span className="text-sm font-medium text-[#09090B]">100% Remote Only</span>
-              </label>
-            </div>
-
-            {/* Date Filter */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-gray-500">
-                Date Discovered
-              </label>
-              <select
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-                className="w-full text-sm px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
-              >
-                <option value="all">Anytime (Live ATS feed)</option>
-                <option value="24h">Past 24 hours</option>
-                <option value="7d">Past 7 days</option>
-                <option value="30d">Past 30 days</option>
-              </select>
-            </div>
-
-            {/* Pro Tip Box */}
-            <div className="bg-[#F8FAFF] p-3.5 rounded-lg border border-[#DBE3EF] text-xs text-[#4B5563] space-y-1">
-              <span className="font-bold text-blue-700 block">Crawler Live Status:</span>
-              <p>Polling verified company domains every 15 minutes. No agency syndication.</p>
-            </div>
-          </aside>
-
-          {/* ===================================================================== */}
-          {/* Right Column: Job Count + Job Cards + Pagination                      */}
-          {/* ===================================================================== */}
-          <div className="space-y-4">
-            {/* Job Count Line */}
-            <div className="flex items-center justify-between pb-2">
-              <h2 className="text-lg font-bold text-[#09090B]">
-                {totalJobs > 0 ? (
-                  <span>
-                    Showing {totalJobs.toLocaleString()} active listings{" "}
-                    <span className="text-sm font-normal text-gray-500">(from 61,065 monitored jobs)</span>
-                  </span>
-                ) : (
-                  <span>{loading ? "Searching active listings..." : "No matching jobs found"}</span>
-                )}
-              </h2>
               <span className="text-xs font-mono text-gray-400">Page {currentPage} of {totalPages}</span>
             </div>
+          </div>
 
             {/* Job Cards */}
             {loading ? (
@@ -974,7 +843,6 @@ function JobSearchContent() {
               </button>
             </div>
           </div>
-        </div>
       </main>
 
       {/* ========================================================================= */}

@@ -83,7 +83,7 @@ export default function CategoryPillBar({
 
   return (
     <div className="w-full bg-white border-b border-gray-200/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-2 sm:gap-3">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-2 sm:gap-3">
         {/* Left: Horizontally scrollable row of pills with right fade gradient */}
         <div className="relative flex-1 min-w-0 overflow-hidden">
           <div
