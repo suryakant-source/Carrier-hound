@@ -20,6 +20,7 @@ interface FilterSlideOverProps {
   experienceFilter: string;
   onChangeExperience: (exp: string) => void;
   onResetAll: () => void;
+  availableCountries?: string[];
 }
 
 export default function FilterSlideOver({
@@ -38,6 +39,17 @@ export default function FilterSlideOver({
   experienceFilter,
   onChangeExperience,
   onResetAll,
+  availableCountries = [
+    "United States",
+    "United Kingdom",
+    "Canada",
+    "Germany",
+    "France",
+    "Sweden",
+    "Switzerland",
+    "Australia",
+    "India",
+  ],
 }: FilterSlideOverProps) {
   // Close on ESC
   useEffect(() => {
@@ -178,15 +190,13 @@ export default function FilterSlideOver({
               className="w-full text-sm px-3.5 py-2.5 min-h-[44px] bg-white border border-gray-200 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
             >
               <option value="all">All Countries (Worldwide)</option>
-              <option value="United States">United States</option>
-              <option value="United Kingdom">United Kingdom</option>
-              <option value="Canada">Canada</option>
-              <option value="Germany">Germany</option>
-              <option value="France">France</option>
-              <option value="Sweden">Sweden</option>
-              <option value="Switzerland">Switzerland</option>
-              <option value="Australia">Australia</option>
-              <option value="India">India</option>
+              {availableCountries
+                .filter((c) => c && c.toLowerCase() !== "all")
+                .map((countryName) => (
+                  <option key={countryName} value={countryName}>
+                    {countryName}
+                  </option>
+                ))}
             </select>
           </div>
 
@@ -255,12 +265,12 @@ export default function FilterSlideOver({
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="p-4 sm:p-5 border-t border-gray-100 bg-gray-50/80">
+        {/* Footer with sticky safe padding (Netlify badge clearance) */}
+        <div className="sticky bottom-0 z-20 p-4 sm:p-5 pb-24 sm:pb-5 border-t border-gray-100 bg-white/95 backdrop-blur-xs">
           <button
             type="button"
             onClick={onClose}
-            className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3 min-h-[44px] rounded-xl font-bold text-sm shadow-sm transition-colors flex items-center justify-center cursor-pointer"
+            className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3 min-h-[48px] rounded-xl font-bold text-sm sm:text-base shadow-sm transition-colors flex items-center justify-center cursor-pointer"
           >
             Apply Filters
           </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import BrandIcon from "@/components/BrandIcon";
@@ -12,9 +12,11 @@ import UserMenu from "@/components/UserMenu";
 import CategoryPillBar from "@/components/CategoryPillBar";
 import FilterSlideOver from "@/components/FilterSlideOver";
 import { createClient } from "@/lib/supabase/client";
+import { searchJobs } from "@/lib/api/jobs";
 import type { User } from "@supabase/supabase-js";
 import type { Job } from "@/data/jobs";
 import { CATEGORIES } from "@/data/categories";
+import { expandCategoryFilter } from "@/lib/taxonomy";
 import { toast } from "react-toastify";
 import {
   Search,
@@ -34,6 +36,8 @@ import {
   Lock,
   Loader2,
   Menu,
+  AlertTriangle,
+  RotateCcw,
 } from "lucide-react";
 
 // Category mapping for social app style category pills
@@ -141,30 +145,48 @@ function JobSearchContent() {
     };
   }, []);
 
-  // State
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    initialCategory ? [initialCategory] : []
-  );
-  const [countryFilter, setCountryFilter] = useState("all");
-  const [remoteOnly, setRemoteOnly] = useState(false);
-  const [dateFilter, setDateFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
+  // State (initialized from URL params)
+  const initialCity = searchParams.get("city") || "";
+  const initialQ = searchParams.get("q") || searchParams.get("search") || "";
+  const initialCat = searchParams.get("cat") || "";
+  const initialCategories = searchParams.get("categories")
+    ? searchParams.get("categories")!.split(",").map((c) => c.trim()).filter(Boolean)
+    : initialCat
+    ? [initialCat]
+    : [];
+  const initialCountry = searchParams.get("country") || "all";
+  const initialRemote = searchParams.get("remote") === "true";
+  const initialSalary = searchParams.get("salary") || "all";
+  const initialExperience = searchParams.get("experience") || "all";
+  const initialDate = searchParams.get("date") || "all";
+  const initialPage = Math.max(1, parseInt(searchParams.get("page") || "1", 10) || 1);
+
+  // Immediate input keystroke state vs debounced search term
+  const [searchInput, setSearchInput] = useState(initialQ);
+  const [searchTerm, setSearchTerm] = useState(initialQ);
+  const [cityFilter, setCityFilter] = useState(initialCity);
+
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(initialCategories);
+  const [countryFilter, setCountryFilter] = useState(initialCountry);
+  const [remoteOnly, setRemoteOnly] = useState(initialRemote);
+  const [dateFilter, setDateFilter] = useState(initialDate);
+  const [salaryFilter, setSalaryFilter] = useState(initialSalary);
+  const [experienceFilter, setExperienceFilter] = useState(initialExperience);
+  const [currentPage, setCurrentPage] = useState(initialPage);
+  const [availableCountries, setAvailableCountries] = useState<string[]>([]);
 
   // Social App Category Pill State (reflects ?cat=... in URL)
-  const [activePillCategory, setActivePillCategory] = useState<string | null>(
-    searchParams.get("cat") || (initialCategory ? initialCategory : null)
-  );
+  const [activePillCategory, setActivePillCategory] = useState<string | null>(initialCat || null);
 
-  // Advanced Filters State (Salary, Experience)
-  const [salaryFilter, setSalaryFilter] = useState("all");
-  const [experienceFilter, setExperienceFilter] = useState("all");
   const [slideOverOpen, setSlideOverOpen] = useState(false);
 
   // Live Supabase Jobs & Pagination State
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [totalJobs, setTotalJobs] = useState<number>(4600);
+  const [totalJobs, setTotalJobs] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const activeRequestIdRef = useRef(0);
 
   // Modals state
   const [moreModalJob, setMoreModalJob] = useState<Job | null>(null);
@@ -220,21 +242,138 @@ function JobSearchContent() {
   const jobsPerPage = 10;
   const totalPages = Math.ceil(totalJobs / jobsPerPage) || 1;
 
+  // Compact page input state for direct jump
+  const [pageInput, setPageInput] = useState(String(currentPage));
+  useEffect(() => {
+    setPageInput(String(currentPage));
+  }, [currentPage]);
+
+  const handlePageInputSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const p = parseInt(pageInput, 10);
+    if (!isNaN(p) && p >= 1 && p <= totalPages) {
+      setCurrentPage(p);
+    } else {
+      setPageInput(String(currentPage));
+    }
+  };
+
+  // 300ms Search Debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const trimmed = searchInput.trim();
+      if (trimmed !== searchTerm) {
+        setSearchTerm(trimmed);
+        setCurrentPage(1);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchInput, searchTerm]);
+
+  // Immediate commit on Search button click or Enter key
+  const handleCommitSearch = useCallback(() => {
+    const trimmed = searchInput.trim();
+    if (trimmed !== searchTerm) {
+      setSearchTerm(trimmed);
+      setCurrentPage(1);
+    }
+  }, [searchInput, searchTerm]);
+
+  // URL sync helper
+  const updateUrl = useCallback((updates: Record<string, string | null>) => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    Object.entries(updates).forEach(([key, val]) => {
+      if (val === null || val === "" || val === "all" || val === "false") {
+        url.searchParams.delete(key);
+      } else {
+        url.searchParams.set(key, val);
+      }
+    });
+    window.history.pushState({}, "", url.toString());
+  }, []);
+
+  // Sync state changes to URL
+  useEffect(() => {
+    updateUrl({
+      q: searchTerm.trim() || null,
+      cat: activePillCategory || null,
+      categories: selectedCategories.length > 0 ? selectedCategories.join(",") : null,
+      country: countryFilter !== "all" ? countryFilter : null,
+      remote: remoteOnly ? "true" : null,
+      salary: salaryFilter !== "all" ? salaryFilter : null,
+      experience: experienceFilter !== "all" ? experienceFilter : null,
+      date: dateFilter !== "all" ? dateFilter : null,
+      page: currentPage > 1 ? String(currentPage) : null,
+    });
+  }, [
+    searchTerm,
+    activePillCategory,
+    selectedCategories,
+    countryFilter,
+    remoteOnly,
+    salaryFilter,
+    experienceFilter,
+    dateFilter,
+    currentPage,
+    updateUrl,
+  ]);
+
+  // Handle browser Back / Forward buttons (popstate)
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get("q") || "";
+      const cat = params.get("cat") || null;
+      const cats = params.get("categories")
+        ? params.get("categories")!.split(",").map((c) => c.trim()).filter(Boolean)
+        : [];
+      const country = params.get("country") || "all";
+      const remote = params.get("remote") === "true";
+      const salary = params.get("salary") || "all";
+      const exp = params.get("experience") || "all";
+      const dt = params.get("date") || "all";
+      const pg = Math.max(1, parseInt(params.get("page") || "1", 10) || 1);
+
+      setSearchInput(q);
+      setSearchTerm(q);
+      setActivePillCategory(cat);
+      setSelectedCategories(cats);
+      setCountryFilter(country);
+      setRemoteOnly(remote);
+      setSalaryFilter(salary);
+      setExperienceFilter(exp);
+      setDateFilter(dt);
+      setCurrentPage(pg);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  // Fetch unique active countries from database on mount
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from("jobs")
+      .select("country")
+      .eq("status", "active")
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          const uniqueCountries = Array.from(
+            new Set(data.map((j: any) => j.country).filter(Boolean))
+          ).sort() as string[];
+          if (uniqueCountries.length > 0) {
+            setAvailableCountries(uniqueCountries);
+          }
+        }
+      });
+  }, []);
+
   // Handle Category Pill Selection (toggling, URL sync, page reset)
   const handleSelectPillCategory = (id: string | null) => {
     setActivePillCategory(id);
     setCurrentPage(1);
-
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href);
-      if (id) {
-        url.searchParams.set("cat", id);
-      } else {
-        url.searchParams.delete("cat");
-      }
-      url.searchParams.delete("categories");
-      window.history.replaceState({}, "", url.toString());
-    }
   };
 
   // Reset all filters
@@ -246,142 +385,58 @@ function JobSearchContent() {
     setSalaryFilter("all");
     setExperienceFilter("all");
     setActivePillCategory(null);
+    setSearchInput("");
     setSearchTerm("");
+    setCityFilter("");
     setCurrentPage(1);
 
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
-      url.searchParams.delete("cat");
-      url.searchParams.delete("categories");
-      window.history.replaceState({}, "", url.toString());
+      url.search = "";
+      window.history.pushState({}, "", url.toString());
     }
   };
 
-  // Live Database Fetch — Instant & lightweight!
+  // Live Database Fetch — Instant, debounced, resilient via searchJobs service
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
+    setFetchError(null);
+    const requestId = ++activeRequestIdRef.current;
 
-    const supabase = createClient();
-    let query = supabase
-      .from("jobs")
-      .select("*", { count: "exact" })
-      .eq("status", "active");
+    const runFetch = async () => {
+      try {
+        const result = await searchJobs({
+          q: searchTerm,
+          city: cityFilter || undefined,
+          cat: activePillCategory || undefined,
+          categories: selectedCategories,
+          country: countryFilter,
+          remote: remoteOnly,
+          salary: salaryFilter,
+          experience: experienceFilter,
+          date: dateFilter,
+          page: currentPage,
+          pageSize: jobsPerPage,
+        });
 
-    if (searchTerm.trim()) {
-      query = query.or(
-        `title.ilike.%${searchTerm.trim()}%,company.ilike.%${searchTerm.trim()}%`
-      );
-    }
-
-    // Category Pill Filter
-    if (activePillCategory) {
-      if (activePillCategory === "trending") {
-        query = query.in("company", [
-          "OpenAI",
-          "Stripe",
-          "Linear",
-          "ElevenLabs",
-          "Perplexity AI",
-          "Baseten",
-          "Cohere",
-          "Notion",
-        ]);
-      } else if (activePillCategory === "tech") {
-        query = query.or(
-          "category.in.(software,engineering,devops,ai),title.ilike.%engineer%,title.ilike.%developer%"
-        );
-      } else if (activePillCategory === "design") {
-        query = query.or("category.eq.design,title.ilike.%design%,title.ilike.%ui%,title.ilike.%ux%");
-      } else if (activePillCategory === "marketing") {
-        query = query.or("category.eq.marketing,title.ilike.%marketing%,title.ilike.%growth%");
-      } else if (activePillCategory === "finance") {
-        query = query.or("category.eq.finance,title.ilike.%finance%,title.ilike.%accounting%");
-      } else if (activePillCategory === "data") {
-        query = query.or("category.eq.data,title.ilike.%data%,title.ilike.%analytics%,title.ilike.%ml%");
-      } else if (activePillCategory === "internships") {
-        query = query.or("title.ilike.%intern%,job_type.ilike.%intern%");
-      } else if (activePillCategory === "remote") {
-        query = query.eq("remote_scope", "remote");
-      } else if (activePillCategory === "fresher") {
-        query = query.or(
-          "title.ilike.%junior%,title.ilike.%entry%,title.ilike.%associate%,title.ilike.%graduate%,title.ilike.%fresher%,title.ilike.%intern%"
-        );
-      } else if (activePillCategory === "product") {
-        query = query.ilike("title", "%product%");
-      } else if (activePillCategory === "hr") {
-        query = query.or("title.ilike.%hr%,title.ilike.%people%,title.ilike.%recruiting%,title.ilike.%talent%");
-      } else if (activePillCategory === "operations") {
-        query = query.or("title.ilike.%operation%,title.ilike.%ops%");
-      } else if (activePillCategory === "sales") {
-        query = query.or("title.ilike.%sales%,title.ilike.%account executive%,title.ilike.%business development%");
-      } else if (activePillCategory === "cyber-security") {
-        query = query.ilike("title", "%security%");
-      } else if (activePillCategory === "qa-testing") {
-        query = query.or("title.ilike.%test%,title.ilike.%qa%,title.ilike.%quality%");
-      } else if (activePillCategory === "customer-support") {
-        query = query.or("title.ilike.%support%,title.ilike.%success%");
-      } else if (activePillCategory === "legal") {
-        query = query.or("title.ilike.%legal%,title.ilike.%counsel%,title.ilike.%compliance%");
-      } else if (activePillCategory === "healthcare") {
-        query = query.or("title.ilike.%health%,title.ilike.%care%,title.ilike.%medical%");
-      } else if (PILL_CATEGORY_MAPPING[activePillCategory]) {
-        query = query.in("category", PILL_CATEGORY_MAPPING[activePillCategory]);
+        if (!isMounted || requestId !== activeRequestIdRef.current) return;
+        setJobs(result.jobs);
+        setTotalJobs(result.total);
+        if (result.availableCountries.length > 0 && availableCountries.length === 0) {
+          setAvailableCountries(result.availableCountries);
+        }
+        setLoading(false);
+      } catch (err: any) {
+        if (!isMounted || requestId !== activeRequestIdRef.current) return;
+        console.error("Fetch jobs error:", err);
+        setFetchError(err?.message || "Connection error occurred");
+        setJobs([]);
+        setLoading(false);
       }
-    }
+    };
 
-    if (selectedCategories.length > 0) {
-      query = query.in("category", selectedCategories);
-    }
-
-    if (countryFilter !== "all") {
-      query = query.eq("country", countryFilter);
-    }
-
-    if (remoteOnly) {
-      query = query.eq("remote_scope", "remote");
-    }
-
-    // Experience Filter
-    if (experienceFilter === "fresher") {
-      query = query.or(
-        "title.ilike.%junior%,title.ilike.%entry%,title.ilike.%associate%,title.ilike.%graduate%,title.ilike.%fresher%,title.ilike.%intern%"
-      );
-    } else if (experienceFilter === "senior") {
-      query = query.or(
-        "title.ilike.%senior%,title.ilike.%lead%,title.ilike.%staff%,title.ilike.%principal%,title.ilike.%director%"
-      );
-    } else if (experienceFilter === "mid") {
-      query = query.not("title", "ilike", "%senior%").not("title", "ilike", "%intern%");
-    }
-
-    const from = (currentPage - 1) * jobsPerPage;
-    const to = from + jobsPerPage - 1;
-
-    query = query.order("id", { ascending: true }).range(from, to);
-
-    query.then(({ data, count, error }) => {
-      if (!isMounted) return;
-      if (!error && data) {
-        const mapped: Job[] = data.map((d: any) => ({
-          id: d.id,
-          title: d.title,
-          company: d.company,
-          location: d.location,
-          date: d.date || "Today",
-          salary: d.salary_text || "Competitive",
-          category: d.category || "software",
-          remote: d.remote_scope === "remote",
-          country: d.country || "United States",
-          type: d.job_type === "full-time" ? "Full-time" : d.job_type,
-          directSource: true,
-          applyUrl: d.apply_url || "#",
-        }));
-        setJobs(mapped);
-        if (count !== null) setTotalJobs(count);
-      }
-      setLoading(false);
-    });
+    runFetch();
 
     return () => {
       isMounted = false;
@@ -394,7 +449,9 @@ function JobSearchContent() {
     remoteOnly,
     experienceFilter,
     salaryFilter,
+    dateFilter,
     currentPage,
+    retryCount,
   ]);
 
   const handleToggleCategory = (slug: string) => {
@@ -524,17 +581,21 @@ function JobSearchContent() {
               <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleCommitSearch();
                 }}
-                placeholder="Search job title... (Exact search)"
-                className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E4E4E7] rounded-lg text-sm text-[#09090B] focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm min-h-[44px]"
+                placeholder="Search jobs by title or company..."
+                className="w-full pl-10 pr-10 py-2.5 bg-white border border-[#E4E4E7] rounded-lg text-base sm:text-sm text-[#09090B] focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm min-h-[44px]"
               />
-              {searchTerm && (
+              {searchInput && (
                 <button
-                  onClick={() => setSearchTerm("")}
+                  onClick={() => {
+                    setSearchInput("");
+                    setSearchTerm("");
+                    setCurrentPage(1);
+                  }}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
                   <X className="w-4 h-4" />
@@ -543,6 +604,7 @@ function JobSearchContent() {
             </div>
             <button
               type="button"
+              onClick={handleCommitSearch}
               className="hidden sm:inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-neutral-800 transition-colors shadow-sm cursor-pointer min-h-[44px]"
             >
               <Search className="w-4 h-4" />
@@ -592,10 +654,11 @@ function JobSearchContent() {
           {/* Job Count Line & Active Filters Reset */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2">
             <h2 className="text-lg font-bold text-[#09090B]">
-              {totalJobs > 0 ? (
+              {fetchError ? (
+                <span className="text-red-600">Error loading listings</span>
+              ) : totalJobs > 0 ? (
                 <span>
-                  Showing {totalJobs.toLocaleString()} active listings{" "}
-                  <span className="text-sm font-normal text-gray-500">(from 61,065 monitored jobs)</span>
+                  Showing {totalJobs.toLocaleString()} active listings
                 </span>
               ) : (
                 <span>{loading ? "Searching active listings..." : "No matching jobs found"}</span>
@@ -609,7 +672,8 @@ function JobSearchContent() {
                 salaryFilter !== "all" ||
                 experienceFilter !== "all" ||
                 activePillCategory !== null ||
-                searchTerm) && (
+                searchTerm ||
+                searchInput) && (
                 <button
                   onClick={handleResetAllFilters}
                   className="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 cursor-pointer"
@@ -635,6 +699,24 @@ function JobSearchContent() {
                   </div>
                 ))}
               </div>
+            ) : fetchError ? (
+              <div className="bg-white border border-red-200 rounded-xl p-8 sm:p-10 text-center space-y-3 shadow-sm">
+                <div className="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto">
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                <h3 className="text-base font-bold text-gray-900">Database Connection Error</h3>
+                <p className="text-sm text-gray-600 max-w-md mx-auto">{fetchError}</p>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setRetryCount((c) => c + 1)}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors cursor-pointer"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    <span>Retry Request</span>
+                  </button>
+                </div>
+              </div>
             ) : jobs.length === 0 ? (
               <div className="bg-white border border-[#E4E4E7] rounded-xl p-12 text-center space-y-3">
                 <p className="text-gray-500 text-base">No listings match your current filter selections.</p>
@@ -651,15 +733,15 @@ function JobSearchContent() {
                   key={job.id}
                   className="bg-white border border-[#E4E4E7] rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-150 space-y-4"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                    <div className="space-y-1.5">
-                      {/* Job Title: text-2xl semibold (Unblurred) */}
-                      <h3 className="text-2xl font-semibold text-[#09090B] tracking-tight hover:text-[#2563EB] cursor-pointer">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+                    <div className="space-y-1.5 flex-1 min-w-0">
+                      {/* Job Title: text-xl sm:text-2xl semibold with wrap (Unblurred) */}
+                      <h3 className="text-xl sm:text-2xl font-semibold text-[#09090B] tracking-tight hover:text-[#2563EB] cursor-pointer break-words">
                         {job.title}
                       </h3>
 
                       {/* Company Name, Location, Date */}
-                      <div className="flex flex-wrap items-center gap-2.5 text-sm text-[#4B5563]">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 text-xs sm:text-sm text-[#4B5563]">
                         {/* Company Name (Blurred if !isPro) */}
                         <span
                           onClick={!isPro ? handleGatedAction : undefined}
@@ -737,13 +819,13 @@ function JobSearchContent() {
                       </div>
                     </div>
 
-                    {/* Action buttons: Direct Apply Link + Outline pill More */}
-                    <div className="flex items-center gap-2 sm:flex-col sm:items-end">
+                    {/* Action buttons: Direct Apply Link + Outline pill More (full width on mobile under details) */}
+                    <div className="flex items-center gap-2 sm:flex-col sm:items-end w-full sm:w-auto pt-2 sm:pt-0">
                       {/* Direct Apply button */}
                       <button
                         type="button"
                         onClick={(e) => handleApplyClick(e, job.applyUrl)}
-                        className="inline-flex items-center gap-1.5 px-5 py-2 bg-[#2563EB] hover:bg-blue-700 text-white rounded-full font-semibold text-sm transition-colors shadow-sm cursor-pointer whitespace-nowrap group"
+                        className="flex-1 sm:flex-initial w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 min-h-[44px] bg-[#2563EB] hover:bg-blue-700 text-white rounded-xl sm:rounded-full font-semibold text-sm transition-colors shadow-sm cursor-pointer whitespace-nowrap group"
                       >
                         {!isPro && <Lock className="w-3.5 h-3.5 opacity-80" />}
                         <span>Apply Direct</span>
@@ -754,7 +836,7 @@ function JobSearchContent() {
                       <button
                         type="button"
                         onClick={() => setMoreModalJob(job)}
-                        className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-medium text-xs transition-colors cursor-pointer whitespace-nowrap"
+                        className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-xl sm:rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-medium text-xs transition-colors cursor-pointer whitespace-nowrap shrink-0"
                       >
                         <Layers className="w-3.5 h-3.5" />
                         <span>More</span>
@@ -818,25 +900,38 @@ function JobSearchContent() {
               ))
             )}
 
-            {/* Pagination: Previous | Page 1 | Next > (black button) */}
-            <div className="pt-6 pb-12 flex items-center justify-between">
+            {/* Pagination: Previous | Compact Page Input | Next > */}
+            <div className="pt-6 pb-24 sm:pb-12 flex flex-wrap items-center justify-between gap-3">
               <button
                 disabled={currentPage <= 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="inline-flex items-center gap-1 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed bg-white shadow-sm"
+                className="inline-flex items-center justify-center gap-1 px-3 sm:px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed bg-white shadow-xs cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" />
-                <span>Previous</span>
+                <span className="hidden xs:inline">Previous</span>
+                <span className="xs:hidden">Prev</span>
               </button>
 
-              <span className="text-sm font-semibold text-gray-700">
-                Page {currentPage} of {totalPages}
-              </span>
+              {/* Compact Page Number Input */}
+              <form onSubmit={handlePageInputSubmit} className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-gray-700">
+                <span className="text-gray-500">Page</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={totalPages}
+                  value={pageInput}
+                  onChange={(e) => setPageInput(e.target.value)}
+                  onBlur={() => handlePageInputSubmit()}
+                  className="w-12 h-9 px-1 text-center font-mono font-semibold bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:outline-none text-xs sm:text-sm shadow-xs"
+                  aria-label="Current page number"
+                />
+                <span className="text-gray-500">of {totalPages}</span>
+              </form>
 
               <button
                 disabled={currentPage >= totalPages}
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                className="inline-flex items-center gap-1 px-5 py-2 bg-black hover:bg-neutral-800 text-white rounded-md text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm cursor-pointer"
+                className="inline-flex items-center justify-center gap-1 px-4 sm:px-5 py-2 min-h-[44px] bg-black hover:bg-neutral-800 text-white rounded-lg text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-xs cursor-pointer"
               >
                 <span>Next</span>
                 <ChevronRight className="w-4 h-4" />
@@ -987,7 +1082,10 @@ function JobSearchContent() {
           setCurrentPage(1);
         }}
         dateFilter={dateFilter}
-        onChangeDate={(d) => setDateFilter(d)}
+        onChangeDate={(d) => {
+          setDateFilter(d);
+          setCurrentPage(1);
+        }}
         salaryFilter={salaryFilter}
         onChangeSalary={(s) => {
           setSalaryFilter(s);
@@ -999,6 +1097,7 @@ function JobSearchContent() {
           setCurrentPage(1);
         }}
         onResetAll={handleResetAllFilters}
+        availableCountries={availableCountries}
       />
 
       {/* Paywall Modal */}

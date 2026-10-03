@@ -31,12 +31,12 @@ export default function HomePage() {
         <div className="absolute inset-0 pointer-events-none opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]" />
 
         {/* Minimal Hero Header (no nav bar, sits directly on blue hero) */}
-        <div className="w-full max-w-[1340px] mx-auto px-6 sm:px-10 lg:px-14 xl:px-16 pt-4 sm:pt-6 mb-10 sm:mb-14 lg:mb-16 flex items-center justify-between relative z-20">
+        <div className="w-full max-w-[1340px] mx-auto px-4 sm:px-10 lg:px-14 xl:px-16 pt-4 sm:pt-6 mb-8 sm:mb-14 lg:mb-16 flex items-center justify-between relative z-20">
           {/* Left: Round white logo circle */}
           <Link
             href="/"
             aria-label="CareerMonke Home"
-            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white flex items-center justify-center shadow-lg transition-transform hover:scale-105 p-1.5"
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white flex items-center justify-center shadow-lg transition-transform hover:scale-105 p-1.5 min-h-[44px] min-w-[44px]"
           >
             <BrandIcon className="w-11 h-11 sm:w-12 sm:h-12" />
           </Link>
@@ -47,7 +47,7 @@ export default function HomePage() {
 
         {/* Hero Content - centered with 16px rhythm and 32px gap above card panel */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-20 flex flex-col items-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[48px] font-bold leading-tight sm:leading-tight text-white max-w-3xl mx-auto tracking-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-[48px] font-bold leading-tight sm:leading-tight text-white max-w-3xl mx-auto tracking-tight">
             Find jobs not on LinkedIn/Indeed
           </h1>
 
@@ -55,10 +55,10 @@ export default function HomePage() {
             We find jobs posted on company websites.
           </p>
 
-          <div className="mt-4 flex items-center justify-center">
+          <div className="mt-4 flex items-center justify-center w-full max-w-xs sm:max-w-none">
             <button
               onClick={() => setModalOpen(true)}
-              className="inline-flex items-center justify-center gap-2.5 bg-white text-[#09090B] font-bold text-base sm:text-lg px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-white text-[#09090B] font-bold text-base sm:text-lg px-8 sm:px-10 py-3.5 sm:py-4 min-h-[48px] rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer"
             >
               <span>View Jobs</span>
               <ArrowRight className="w-5 h-5 ml-0.5 stroke-[2.5]" />
@@ -209,10 +209,10 @@ export default function HomePage() {
             <p className="text-gray-600 text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
               We scan company career pages across the globe - from Silicon Valley startups to Bangalore scale-ups - and surface openings before they hit the big job boards.
             </p>
-            <div className="pt-2 flex justify-center lg:justify-start">
+            <div className="pt-2 flex justify-center lg:justify-start w-full">
               <Link
                 href="/radar"
-                className="inline-flex items-center justify-center gap-2.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-base sm:text-lg px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-base sm:text-lg px-8 sm:px-10 py-3.5 sm:py-4 min-h-[48px] rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition-all cursor-pointer"
               >
                 <span>View Jobs</span>
                 <ArrowRight className="w-5 h-5 ml-0.5 stroke-[2.5]" />
@@ -251,7 +251,7 @@ export default function HomePage() {
                 href="https://tiktok.com"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-700 hover:text-black border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-gray-700 hover:text-black border border-gray-300 px-3.5 py-2 min-h-[44px] rounded-md hover:bg-gray-50 transition-colors"
               >
                 <span>My TikTok Videos</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -344,7 +344,7 @@ export default function HomePage() {
           <div className="pt-2">
             <a
               href="mailto:contact@careermonke.io"
-              className="inline-flex items-center justify-center bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-medium px-8 py-3 rounded-lg text-sm sm:text-base transition-colors shadow-sm"
+              className="w-full sm:w-auto inline-flex items-center justify-center bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-medium px-8 py-3.5 min-h-[48px] rounded-lg text-sm sm:text-base transition-colors shadow-sm"
             >
               <span>contact@careermonke.io</span>
             </a>

@@ -137,7 +137,7 @@ export default function UserMenu({
       return (
         <Link
           href="/login"
-          className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 text-xs sm:text-sm font-semibold transition-colors ${className}`}
+          className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 min-h-[44px] rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 text-xs sm:text-sm font-semibold transition-colors ${className}`}
         >
           <LogIn className="w-3.5 h-3.5" />
           <span>Login</span>
@@ -170,7 +170,7 @@ export default function UserMenu({
 
   const triggerClass =
     variant === "light"
-      ? `flex items-center gap-2 rounded-md px-2.5 py-1.5 border border-gray-300 hover:bg-gray-50 transition-all text-gray-800 font-semibold text-xs sm:text-sm shadow-xs ${className}`
+      ? `flex items-center gap-2 rounded-md px-2.5 py-1.5 min-h-[44px] border border-gray-300 hover:bg-gray-50 transition-all text-gray-800 font-semibold text-xs sm:text-sm shadow-xs ${className}`
       : `flex items-center gap-2 rounded-xl px-3 h-[46px] sm:h-[50px] border-2 border-white/90 hover:border-white hover:bg-white/10 transition-all text-white font-semibold text-sm shadow-sm ${className}`;
 
   const avatarCircleClass =

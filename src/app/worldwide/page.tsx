@@ -15,21 +15,21 @@ export default function WorldwidePage() {
     <div className="min-h-screen bg-white text-[#09090B] flex flex-col">
       <GuideHeader />
 
-      <main className="flex-1 py-12 sm:py-20">
+      <main className="flex-1 py-10 sm:py-20">
         {/* Centered Header */}
-        <div className="max-w-3xl mx-auto px-6 text-center space-y-6 mb-12 sm:mb-16">
-          <h1 className="text-3xl sm:text-5xl font-bold tracking-tighter text-[#09090B]">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center space-y-4 sm:space-y-6 mb-10 sm:mb-16">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#09090B]">
             Companies Hiring Worldwide
           </h1>
 
-          <p className="text-[#4B5563] text-base md:text-xl max-w-xl mx-auto leading-relaxed">
+          <p className="text-[#4B5563] text-sm sm:text-base md:text-xl max-w-xl mx-auto leading-relaxed">
             Verified distributed organizations actively hiring across global timezones without regional tax or location restrictions.
           </p>
 
           <div className="pt-2">
             <Link
               href="/job-search/all"
-              className="inline-flex items-center gap-2 bg-black hover:bg-neutral-800 text-white font-semibold px-7 py-3.5 min-h-[44px] rounded-lg text-base transition-colors shadow-sm"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-black hover:bg-neutral-800 text-white font-semibold px-7 py-3.5 min-h-[48px] rounded-lg text-sm sm:text-base transition-colors shadow-sm"
             >
               <span>View Jobs on CareerMonke</span>
               <ArrowRight className="w-5 h-5" />
@@ -41,13 +41,13 @@ export default function WorldwidePage() {
           </p>
         </div>
 
-        {/* List ~770px wide: rows with py-4 and divider lines */}
-        <div className="max-w-[770px] mx-auto px-6">
+        {/* List ~770px wide: rows with py-3.5 and divider lines */}
+        <div className="max-w-[770px] mx-auto px-4 sm:px-6">
           <div className="divide-y divide-[#E4E4E7] border-y border-[#E4E4E7]">
             {WORLDWIDE_COMPANIES.map((company) => (
               <div
                 key={company.id}
-                className="py-3.5 min-h-[44px] flex items-center justify-between hover:bg-slate-50/80 px-2 transition-colors group"
+                className="py-3 sm:py-3.5 min-h-[48px] flex items-center justify-between hover:bg-slate-50/80 px-2 transition-colors group"
               >
                 <Link
                   href={`/job-search/all?search=${encodeURIComponent(company.name)}`}

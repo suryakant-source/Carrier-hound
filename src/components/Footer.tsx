@@ -9,14 +9,14 @@ interface FooterProps {
 
 export default function Footer({ isGuide = false }: FooterProps) {
   return (
-    <footer className="relative bg-[#090E34] text-white pt-16 pb-12 overflow-hidden border-t border-slate-800 animate-fadeInUp">
+    <footer className="relative bg-[#090E34] text-white pt-12 sm:pt-16 pb-24 sm:pb-12 overflow-hidden border-t border-slate-800 animate-fadeInUp">
       {/* Faint dot pattern in the top-right corner */}
       <div className="absolute top-0 right-0 pointer-events-none opacity-20">
         <DotPattern width={220} height={160} dotColor="#ffffff" rows={7} cols={10} />
       </div>
 
-      <div className="max-w-content mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 border-b border-slate-800/80">
+      <div className="max-w-content mx-auto px-4 sm:px-6 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-10 sm:pb-12 border-b border-slate-800/80">
           {/* Brand + Tagline */}
           <div className="sm:col-span-2 lg:col-span-6 space-y-4">
             <Link href="/" className="inline-flex items-center gap-2.5 group min-h-[44px]">
@@ -33,19 +33,19 @@ export default function Footer({ isGuide = false }: FooterProps) {
           {/* Quick Links Column */}
           <div className="sm:col-span-1 lg:col-span-3 space-y-3">
             <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-200">Navigation</h4>
-            <ul className="space-y-2 text-sm text-slate-400">
+            <ul className="space-y-1 text-sm text-slate-400">
               <li>
-                <Link href="/job-search/all" className="inline-block py-1 hover:text-white transition-colors">
+                <Link href="/job-search/all" className="inline-flex items-center py-2 sm:py-1 min-h-[44px] sm:min-h-0 hover:text-white transition-colors">
                   Live Job Search
                 </Link>
               </li>
               <li>
-                <Link href="/worldwide" className="inline-block py-1 hover:text-white transition-colors">
+                <Link href="/worldwide" className="inline-flex items-center py-2 sm:py-1 min-h-[44px] sm:min-h-0 hover:text-white transition-colors">
                   Companies Hiring Worldwide
                 </Link>
               </li>
               <li>
-                <Link href="/login" className="inline-block py-1 hover:text-white transition-colors">
+                <Link href="/login" className="inline-flex items-center py-2 sm:py-1 min-h-[44px] sm:min-h-0 hover:text-white transition-colors">
                   Member Sign In
                 </Link>
               </li>
@@ -55,19 +55,19 @@ export default function Footer({ isGuide = false }: FooterProps) {
           {/* Links Column with Support, Privacy, Terms, Socials */}
           <div className="sm:col-span-1 lg:col-span-3 space-y-3">
             <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-200">Links</h4>
-            <ul className="space-y-2 text-sm text-slate-400">
+            <ul className="space-y-1 text-sm text-slate-400">
               <li>
-                <a href="/#contact" className="inline-block py-1 hover:text-white transition-colors">
+                <a href="/#contact" className="inline-flex items-center py-2 sm:py-1 min-h-[44px] sm:min-h-0 hover:text-white transition-colors">
                   Support
                 </a>
               </li>
               <li>
-                <Link href="/privacy-policy" className="inline-block py-1 hover:text-white transition-colors">
+                <Link href="/privacy-policy" className="inline-flex items-center py-2 sm:py-1 min-h-[44px] sm:min-h-0 hover:text-white transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms-and-conditions" className="inline-block py-1 hover:text-white transition-colors">
+                <Link href="/terms-and-conditions" className="inline-flex items-center py-2 sm:py-1 min-h-[44px] sm:min-h-0 hover:text-white transition-colors">
                   Terms & Conditions
                 </Link>
               </li>
@@ -77,7 +77,7 @@ export default function Footer({ isGuide = false }: FooterProps) {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Twitter / X"
-                  className="py-1 hover:text-white transition-colors"
+                  className="inline-flex items-center px-2 py-2 sm:py-1 min-h-[44px] sm:min-h-0 hover:text-white transition-colors"
                 >
                   Twitter
                 </a>
@@ -87,7 +87,7 @@ export default function Footer({ isGuide = false }: FooterProps) {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Facebook"
-                  className="py-1 hover:text-white transition-colors"
+                  className="inline-flex items-center px-2 py-2 sm:py-1 min-h-[44px] sm:min-h-0 hover:text-white transition-colors"
                 >
                   Facebook
                 </a>
@@ -97,7 +97,7 @@ export default function Footer({ isGuide = false }: FooterProps) {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="TikTok"
-                  className="py-1 hover:text-white transition-colors"
+                  className="inline-flex items-center px-2 py-2 sm:py-1 min-h-[44px] sm:min-h-0 hover:text-white transition-colors"
                 >
                   TikTok
                 </a>
@@ -107,16 +107,16 @@ export default function Footer({ isGuide = false }: FooterProps) {
         </div>
 
         {/* Bottom row: copyright */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4 text-center sm:text-left">
           <p>© {new Date().getFullYear()} CareerMonke Inc. All rights reserved.</p>
-          <div className="flex items-center gap-6">
-            <Link href="/privacy-policy" className="hover:text-slate-300 transition-colors">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+            <Link href="/privacy-policy" className="inline-flex items-center min-h-[44px] sm:min-h-0 py-2 sm:py-0 hover:text-slate-300 transition-colors">
               Privacy
             </Link>
-            <Link href="/terms-and-conditions" className="hover:text-slate-300 transition-colors">
+            <Link href="/terms-and-conditions" className="inline-flex items-center min-h-[44px] sm:min-h-0 py-2 sm:py-0 hover:text-slate-300 transition-colors">
               Terms
             </Link>
-            <Link href="/worldwide" className="hover:text-slate-300 transition-colors">
+            <Link href="/worldwide" className="inline-flex items-center min-h-[44px] sm:min-h-0 py-2 sm:py-0 hover:text-slate-300 transition-colors">
               Worldwide Directory
             </Link>
           </div>

@@ -62,17 +62,17 @@ export default function CategoryLandingPage({ params }: PageProps) {
         >
           <div className="absolute inset-0 bg-[#2563EB] -z-10" />
 
-          <div className="max-w-content mx-auto px-6 relative z-10 space-y-5">
+          <div className="max-w-content mx-auto px-4 sm:px-6 relative z-10 space-y-5">
             {/* Breadcrumbs */}
-            <nav className="flex items-center gap-2 text-[0.8rem] text-white/80 font-medium">
-              <Link href="/" className="hover:text-white transition-colors">
+            <nav className="flex items-center gap-2 text-[0.8rem] text-white/80 font-medium overflow-x-auto no-scrollbar">
+              <Link href="/" className="hover:text-white transition-colors shrink-0">
                 Home
               </Link>
-              <ChevronRight className="w-3.5 h-3.5" />
-              <Link href="/remote" className="hover:text-white transition-colors">
+              <ChevronRight className="w-3.5 h-3.5 shrink-0" />
+              <Link href="/remote" className="hover:text-white transition-colors shrink-0">
                 Guides
               </Link>
-              <ChevronRight className="w-3.5 h-3.5" />
+              <ChevronRight className="w-3.5 h-3.5 shrink-0" />
               <span className="text-white truncate">{data.name}</span>
             </nav>
 
@@ -83,26 +83,26 @@ export default function CategoryLandingPage({ params }: PageProps) {
             </div>
 
             {/* 2-line H1 */}
-            <h1 className="text-[clamp(2.1rem,5vw,3rem)] font-bold text-white left-aligned leading-[1.12] max-w-4xl tracking-tight">
+            <h1 className="text-[clamp(1.75rem,5vw,3rem)] font-bold text-white left-aligned leading-[1.12] max-w-4xl tracking-tight">
               {data.title}
             </h1>
 
             {/* Lede */}
-            <p className="text-[1.125rem] leading-[1.44] font-medium text-white/90 max-w-[62ch]">
+            <p className="text-base sm:text-[1.125rem] leading-[1.44] font-medium text-white/90 max-w-[62ch]">
               {data.lede}
             </p>
 
             {/* Action buttons: white "See sample jobs" + ghost "Search every title" */}
-            <div className="pt-2 flex flex-wrap items-center gap-4">
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
               <a
                 href="#sample-jobs"
-                className="inline-flex items-center justify-center bg-white text-[#09090B] font-semibold text-base px-6 py-3 min-h-[44px] rounded-[6px] shadow-sm hover:bg-gray-100 transition-colors"
+                className="w-full sm:w-auto inline-flex items-center justify-center bg-white text-[#09090B] font-semibold text-base px-6 py-3 min-h-[48px] rounded-lg shadow-sm hover:bg-gray-100 transition-colors"
               >
                 See sample jobs
               </a>
               <Link
                 href={`/job-search/all?categories=${data.slug}`}
-                className="inline-flex items-center justify-center bg-transparent border border-white/50 text-white font-medium text-base px-6 py-3 min-h-[44px] rounded-[6px] hover:bg-white/10 transition-colors"
+                className="w-full sm:w-auto inline-flex items-center justify-center bg-transparent border border-white/50 text-white font-medium text-base px-6 py-3 min-h-[48px] rounded-lg hover:bg-white/10 transition-colors"
               >
                 Search every title
               </Link>

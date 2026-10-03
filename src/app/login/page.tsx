@@ -88,10 +88,14 @@ function LoginPageInner() {
     }
   };
 
+  React.useEffect(() => {
+    document.title = "Sign in to CareerMonke | Verified Job Feeds";
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[#F3F4F6] flex flex-col items-center justify-center p-4 sm:p-6 text-[#09090B]">
+    <div className="min-h-[100dvh] bg-[#F3F4F6] flex flex-col items-center justify-center p-4 sm:p-6 text-[#09090B] py-6 sm:py-12 pb-[env(safe-area-inset-bottom,1.5rem)]">
       {/* Back button */}
-      <div className="w-full max-w-[600px] mb-6">
+      <div className="w-full max-w-[600px] mb-4 sm:mb-6">
         <Link
           href="/"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-black transition-colors min-h-[44px] py-2 px-1 -ml-1"
@@ -102,21 +106,21 @@ function LoginPageInner() {
       </div>
 
       {/* Big blue rounded-square app icon with CareerMonke logo */}
-      <div className="w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] rounded-3xl bg-white shadow-xl border border-gray-100 flex items-center justify-center p-3 sm:p-4 mb-6 sm:mb-8 transition-transform hover:scale-105">
-        <BrandIcon className="w-20 h-20 sm:w-24 sm:h-24" />
+      <div className="w-[88px] h-[88px] sm:w-[140px] sm:h-[140px] rounded-2xl sm:rounded-3xl bg-white shadow-lg sm:shadow-xl border border-gray-100 flex items-center justify-center p-2.5 sm:p-4 mb-4 sm:mb-8 transition-transform hover:scale-105">
+        <BrandIcon className="w-14 h-14 sm:w-24 sm:h-24" />
       </div>
 
       {/* Card ~600px wide, 1px border, rounded-xl, thin teal top border */}
       <div className="w-full max-w-[600px] bg-white border border-[#E4E4E7] rounded-xl shadow-sm overflow-hidden border-t-4 border-t-teal-500">
         {/* Tinted top strip */}
-        <div className="bg-[#F8FAFF] border-b border-gray-100 py-3.5 px-6 text-center">
-          <p className="text-sm font-medium text-gray-700">
+        <div className="bg-[#F8FAFF] border-b border-gray-100 py-3 sm:py-3.5 px-4 sm:px-6 text-center">
+          <p className="text-xs sm:text-sm font-medium text-gray-700">
             Enter your email to instantly access verified jobs without waiting.
           </p>
         </div>
 
         {/* Form Body */}
-        <div className="p-6 sm:p-10 space-y-6">
+        <div className="p-5 sm:p-10 space-y-5 sm:space-y-6">
           <div className="text-center space-y-1">
             <h1 className="text-2xl font-bold text-[#09090B]">Sign in to CareerMonke</h1>
             <p className="text-sm text-[#4B5563]">

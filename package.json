@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "ingest": "tsx scripts/ingest.ts",
+    "ingest:dry": "tsx scripts/ingest.ts --dry",
+    "ingest:seed": "tsx scripts/ingest.ts --seed",
+    "ingest:seed:dry": "tsx scripts/ingest.ts --seed --dry",
+    "test:filters": "tsx scripts/test-filters.ts"
   },
   "dependencies": {
     "@netlify/plugin-nextjs": "5.16.0",
@@ -43,6 +48,7 @@
     "postcss": "^8.4.47",
     "puppeteer-core": "^25.12.0",
     "tailwindcss": "^3.4.14",
+    "tsx": "^4.23.15",
     "typescript": "^5.6.3"
   }
 }

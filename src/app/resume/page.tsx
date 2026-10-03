@@ -1,34 +1,68 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import GuideHeader from "@/components/GuideHeader";
 import Footer from "@/components/Footer";
+import Link from "next/link";
 import {
   Check,
   ShieldCheck,
   Zap,
   Sparkles,
-  CreditCard,
   Lock,
   ArrowRight,
-  Star,
   CheckCircle2,
+  Globe2,
+  LogIn,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function ResumePage() {
-  const [selectedPlan, setSelectedPlan] = useState<"lifetime" | "monthly">("lifetime");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [email, setEmail] = useState("");
-  const [cardName, setCardName] = useState("");
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        setCurrentUser(data.user);
+        if (data.user.email) setEmail(data.user.email);
+      } else {
+        const localEmail = typeof window !== "undefined" ? localStorage.getItem("careermonke_user_email") : null;
+        if (localEmail) {
+          setCurrentUser({ email: localEmail, id: "local-user" });
+          setEmail(localEmail);
+        }
+      }
+    });
+  }, []);
+
+  const handleUnlockPro = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanEmail = email.trim();
+    if (!cleanEmail && !currentUser) return;
+
     setIsProcessing(true);
+
+    try {
+      const supabase = createClient();
+      await supabase.auth.updateUser({
+        data: { is_pro: true },
+      });
+    } catch (err) {
+      console.warn("Could not update user metadata", err);
+    }
+
     setTimeout(() => {
       setIsProcessing(false);
       setIsSuccess(true);
-    }, 1200);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("careermonke_pro_active", "true");
+        window.dispatchEvent(new Event("careermonke_pro_updated"));
+      }
+    }, 700);
   };
 
   return (
@@ -47,21 +81,21 @@ export default function ResumePage() {
                 Welcome to Pro Membership!
               </h1>
               <p className="text-sm text-gray-600 max-w-sm mx-auto leading-relaxed">
-                Your account ({email || "candidate@example.com"}) is active with lifetime unindexed company feeds and direct ATS links.
+                Your account ({email || "candidate@example.com"}) is now active with direct ATS feeds, verified compensation data, and priority 3D radar filters.
               </p>
             </div>
             <div className="pt-2">
-              <a
-                href="/job-search/all"
+              <Link
+                href="/radar"
                 className="inline-flex items-center justify-center gap-2 w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3.5 rounded-xl font-bold text-sm shadow-md transition-all"
               >
-                <span>Access Live Job Search</span>
+                <span>Launch 3D Job Radar</span>
                 <ArrowRight className="w-4 h-4" />
-              </a>
+              </Link>
             </div>
           </div>
         ) : (
-          /* Dedicated Paywall Card */
+          /* Dedicated Pro Access Card */
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200/80 animate-fadeInUp">
             {/* Header with Blue Gradient Accent */}
             <div className="bg-gradient-to-br from-[#1E40AF] via-[#2563EB] to-[#3B82F6] text-white p-6 sm:p-10 text-center relative">
@@ -72,198 +106,129 @@ export default function ResumePage() {
                 Unlock Direct ATS Radar & Pro Feeds
               </h1>
               <p className="text-white/90 text-sm sm:text-base mt-3 max-w-lg mx-auto leading-relaxed font-normal">
-                Skip 1,000+ applicant queues on LinkedIn and Indeed. Query 12,000+ company websites directly.
+                Skip 1,000+ applicant queues on third-party aggregators. Query 500+ verified tech company ATS boards directly.
               </p>
             </div>
 
             <div className="p-6 sm:p-10 space-y-8 max-w-2xl mx-auto">
-              {/* Plan Switcher */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Lifetime Plan */}
-                <div
-                  onClick={() => setSelectedPlan("lifetime")}
-                  className={`relative p-5 rounded-xl border-2 cursor-pointer transition-all ${
-                    selectedPlan === "lifetime"
-                      ? "border-[#2563EB] bg-blue-50/50 shadow-md"
-                      : "border-gray-200 hover:border-gray-300 bg-white"
-                  }`}
-                >
-                  <span className="absolute -top-3 right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
-                    Most Popular
-                  </span>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-bold text-gray-900 uppercase tracking-wide">
-                      Lifetime Access
-                    </span>
-                    <div
-                      className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                        selectedPlan === "lifetime"
-                          ? "border-[#2563EB] bg-[#2563EB]"
-                          : "border-gray-300"
-                      }`}
-                    >
-                      {selectedPlan === "lifetime" && <Check className="w-3 h-3 text-white" />}
-                    </div>
-                  </div>
-                  <div className="flex items-baseline gap-2 my-1">
-                    <span className="text-3xl font-black text-gray-900">$29</span>
-                    <span className="text-sm text-gray-400 line-through">$89</span>
-                  </div>
-                  <div className="text-xs text-gray-600 font-medium mt-1">
-                    Pay once • Unlimited lifetime access
-                  </div>
+              {/* Feature Checklist Grounded in Real Data */}
+              <div className="bg-blue-50/50 p-6 rounded-xl border border-blue-100/80">
+                <div className="text-xs font-bold text-blue-900 uppercase tracking-wider mb-4">
+                  Included in your CareerMonke Pro Pass:
                 </div>
-
-                {/* Monthly Plan */}
-                <div
-                  onClick={() => setSelectedPlan("monthly")}
-                  className={`p-5 rounded-xl border-2 cursor-pointer transition-all ${
-                    selectedPlan === "monthly"
-                      ? "border-[#2563EB] bg-blue-50/50 shadow-md"
-                      : "border-gray-200 hover:border-gray-300 bg-white"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-bold text-gray-900 uppercase tracking-wide">
-                      Monthly Pass
-                    </span>
-                    <div
-                      className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                        selectedPlan === "monthly"
-                          ? "border-[#2563EB] bg-[#2563EB]"
-                          : "border-gray-300"
-                      }`}
-                    >
-                      {selectedPlan === "monthly" && <Check className="w-3 h-3 text-white" />}
-                    </div>
-                  </div>
-                  <div className="flex items-baseline gap-2 my-1">
-                    <span className="text-3xl font-black text-gray-900">$9</span>
-                    <span className="text-sm text-gray-500">/month</span>
-                  </div>
-                  <div className="text-xs text-gray-600 font-medium mt-1">
-                    Cancel anytime in 1 click
-                  </div>
-                </div>
-              </div>
-
-              {/* Feature Checklist */}
-              <div className="bg-gray-50 p-5 rounded-xl border border-gray-200/80">
-                <div className="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">
-                  Included in your Pro Pass:
-                </div>
-                <ul className="space-y-2.5 text-xs sm:text-sm text-gray-700">
+                <ul className="space-y-3 text-xs sm:text-sm text-gray-700">
                   <li className="flex items-start gap-2.5">
                     <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span>
-                      <strong>Direct company career links:</strong> Lever, Greenhouse, Ashby endpoints updated every 15 minutes.
+                      <strong className="text-gray-900">Direct Company ATS Endpoints:</strong> Over 16,000 active openings scraped from Greenhouse, Lever, Ashby, and SmartRecruiters daily.
                     </span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span>
-                      <strong>Resume direct ATS matcher:</strong> Target exact job keywords and pass automated filters.
+                      <strong className="text-gray-900">Unmasked Verified Salaries:</strong> Full compensation bands and equity expectations verified from official employer listings.
                     </span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span>
-                      <strong>Zero middleman spam:</strong> No agency brokers, ghost positions, or expired listings.
+                      <strong className="text-gray-900">Zero Middleman Spam:</strong> 100% direct company career portals only—no agency brokers, ghost postings, or dead links.
                     </span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span>
-                      <strong>Transparent compensation:</strong> Verified salary bands and location remote eligibility.
+                      <strong className="text-gray-900">Global Tech Hub Radar:</strong> 3D geographic density across 37 tech hubs plus 1,600+ unrestricted Worldwide Remote roles.
                     </span>
                   </li>
                 </ul>
               </div>
 
-              {/* Checkout Form */}
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Work or Personal Email
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="candidate@example.com"
-                    className="w-full h-11 px-3.5 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">
-                      Card Number
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        required
-                        defaultValue="4242 •••• •••• 4242"
-                        className="w-full h-11 pl-9 pr-3 rounded-lg border border-gray-300 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      <CreditCard className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                    </div>
+              {/* Action Form & Sticky Trigger */}
+              {!currentUser ? (
+                <div className="space-y-4 text-center p-5 sm:p-6 bg-slate-50 rounded-xl border border-slate-200">
+                  <div className="space-y-1.5">
+                    <h3 className="font-bold text-gray-900 text-base">Sign In Required to Activate Pro</h3>
+                    <p className="text-xs text-gray-600 max-w-md mx-auto">
+                      Please sign in with your email or Google account to bind your Pro access to your profile.
+                    </p>
                   </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">
-                        Expiry
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        defaultValue="12/28"
-                        className="w-full h-11 px-3 rounded-lg border border-gray-300 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">
-                        CVC
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        defaultValue="891"
-                        className="w-full h-11 px-3 rounded-lg border border-gray-300 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
+                  <div className="sticky bottom-0 z-20 sm:static bg-slate-50/95 sm:bg-transparent backdrop-blur-xs sm:backdrop-blur-none p-2 sm:p-0 -mx-5 sm:mx-0 border-t sm:border-t-0 border-slate-200 pb-[env(safe-area-inset-bottom,1rem)] sm:pb-0">
+                    <Link
+                      href="/login?next=/resume"
+                      className="inline-flex items-center justify-center gap-2 w-full py-4 min-h-[48px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transition-all"
+                    >
+                      <LogIn className="w-4 h-4" />
+                      <span>Sign In to Continue</span>
+                    </Link>
                   </div>
                 </div>
+              ) : (
+                <form onSubmit={handleUnlockPro} className="space-y-4">
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+                    <span className="text-slate-500 font-medium">Logged in account:</span>
+                    <span className="font-mono font-semibold text-slate-800 truncate ml-2">{email || "Authenticated User"}</span>
+                  </div>
 
-                <button
-                  type="submit"
-                  disabled={isProcessing}
-                  className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-4 rounded-xl font-bold text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer mt-3 disabled:opacity-75"
-                >
-                  {isProcessing ? (
-                    <span>Activating membership...</span>
-                  ) : (
-                    <>
-                      <span>
-                        Complete Purchase • {selectedPlan === "lifetime" ? "$29 One-Time" : "$9/Month"}
-                      </span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
+                  {/* Sticky Action Button on Mobile */}
+                  <div className="sticky bottom-0 z-20 sm:static bg-white/95 sm:bg-transparent backdrop-blur-xs sm:backdrop-blur-none p-2 sm:p-0 -mx-6 sm:mx-0 border-t sm:border-t-0 border-gray-200 pb-[env(safe-area-inset-bottom,1rem)] sm:pb-0">
+                    <button
+                      type="submit"
+                      disabled={isProcessing}
+                      className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-4 min-h-[48px] rounded-xl font-bold text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                    >
+                      {isProcessing ? (
+                        <span>Activating Pro Membership...</span>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4 text-yellow-300" />
+                          <span>Unlock Pro Access</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              )}
 
-                {/* Trust Signals */}
-                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs text-gray-500 pt-2 text-center">
-                  <span className="flex items-center gap-1.5 font-medium">
-                    <Lock className="w-3.5 h-3.5 text-emerald-600" /> 256-Bit SSL Encrypted
+              {/* Preview Below the Form */}
+              <div className="mt-8 p-5 sm:p-6 bg-slate-900 text-white rounded-2xl border border-slate-800 space-y-4 shadow-lg text-left">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+                    <span className="text-xs font-mono uppercase tracking-wider text-cyan-300 font-semibold">
+                      AI Resume ATS Match Preview
+                    </span>
+                  </div>
+                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                    Score: 94/100
                   </span>
-                  <span className="hidden sm:inline">•</span>
-                  <span>7-Day Full Money Back Guarantee</span>
                 </div>
-              </form>
+
+                <div className="space-y-2 text-xs text-slate-300">
+                  <div className="flex items-center justify-between text-slate-400">
+                    <span>Keyword Match (Verified ATS Portals)</span>
+                    <span className="text-emerald-400 font-bold">Optimal Tier</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                    <div className="w-[94%] h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full" />
+                  </div>
+                  <p className="text-[11px] text-slate-400 leading-relaxed pt-1">
+                    Direct requisition telemetry confirms unmasked salary bands, hiring team contacts, and direct Greenhouse / Lever endpoints.
+                  </p>
+                </div>
+              </div>
+
+              {/* Trust Signals */}
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs text-gray-500 pt-2 text-center">
+                <span className="flex items-center gap-1.5 font-medium">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Official Company ATS Verified
+                </span>
+                <span className="hidden sm:inline">•</span>
+                <span className="flex items-center gap-1.5 font-medium">
+                  <Globe2 className="w-3.5 h-3.5 text-cyan-600" /> 16,000+ Active Roles
+                </span>
+              </div>
             </div>
           </div>
         )}

@@ -1,0 +1,366 @@
+[
+  {
+    "id": "greenhouse-stripe",
+    "name": "Stripe (Greenhouse)",
+    "type": "greenhouse",
+    "target": "stripe",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-datadog",
+    "name": "Datadog (Greenhouse)",
+    "type": "greenhouse",
+    "target": "datadog",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-cloudflare",
+    "name": "Cloudflare (Greenhouse)",
+    "type": "greenhouse",
+    "target": "cloudflare",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-figma",
+    "name": "Figma (Greenhouse)",
+    "type": "greenhouse",
+    "target": "figma",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-airbnb",
+    "name": "Airbnb (Greenhouse)",
+    "type": "greenhouse",
+    "target": "airbnb",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-reddit",
+    "name": "Reddit (Greenhouse)",
+    "type": "greenhouse",
+    "target": "reddit",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-discord",
+    "name": "Discord (Greenhouse)",
+    "type": "greenhouse",
+    "target": "discord",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-pinterest",
+    "name": "Pinterest (Greenhouse)",
+    "type": "greenhouse",
+    "target": "pinterest",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-robinhood",
+    "name": "Robinhood (Greenhouse)",
+    "type": "greenhouse",
+    "target": "robinhood",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-brex",
+    "name": "Brex (Greenhouse)",
+    "type": "greenhouse",
+    "target": "brex",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-gitlab",
+    "name": "GitLab (Greenhouse)",
+    "type": "greenhouse",
+    "target": "gitlab",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-coinbase",
+    "name": "Coinbase (Greenhouse)",
+    "type": "greenhouse",
+    "target": "coinbase",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-elastic",
+    "name": "Elastic (Greenhouse)",
+    "type": "greenhouse",
+    "target": "elastic",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-mongodb",
+    "name": "MongoDB (Greenhouse)",
+    "type": "greenhouse",
+    "target": "mongodb",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-instacart",
+    "name": "Instacart (Greenhouse)",
+    "type": "greenhouse",
+    "target": "instacart",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-lyft",
+    "name": "Lyft (Greenhouse)",
+    "type": "greenhouse",
+    "target": "lyft",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-okta",
+    "name": "Okta (Greenhouse)",
+    "type": "greenhouse",
+    "target": "okta",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-toast",
+    "name": "Toast (Greenhouse)",
+    "type": "greenhouse",
+    "target": "toast",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-affirm",
+    "name": "Affirm (Greenhouse)",
+    "type": "greenhouse",
+    "target": "affirm",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-fivetran",
+    "name": "Fivetran (Greenhouse)",
+    "type": "greenhouse",
+    "target": "fivetran",
+    "enabled": true
+  },
+  {
+    "id": "lever-palantir",
+    "name": "Palantir (Lever)",
+    "type": "lever",
+    "target": "palantir",
+    "enabled": true
+  },
+  {
+    "id": "lever-spotify",
+    "name": "Spotify (Lever)",
+    "type": "lever",
+    "target": "spotify",
+    "enabled": true
+  },
+  {
+    "id": "ashby-openai",
+    "name": "OpenAI (Ashby)",
+    "type": "ashby",
+    "target": "openai",
+    "enabled": true
+  },
+  {
+    "id": "ashby-ramp",
+    "name": "Ramp (Ashby)",
+    "type": "ashby",
+    "target": "ramp",
+    "enabled": true
+  },
+  {
+    "id": "ashby-linear",
+    "name": "Linear (Ashby)",
+    "type": "ashby",
+    "target": "linear",
+    "enabled": true
+  },
+  {
+    "id": "ashby-elevenlabs",
+    "name": "ElevenLabs (Ashby)",
+    "type": "ashby",
+    "target": "elevenlabs",
+    "enabled": true
+  },
+  {
+    "id": "ashby-baseten",
+    "name": "Baseten (Ashby)",
+    "type": "ashby",
+    "target": "baseten",
+    "enabled": true
+  },
+  {
+    "id": "ashby-perplexity",
+    "name": "Perplexity (Ashby)",
+    "type": "ashby",
+    "target": "perplexity",
+    "enabled": true
+  },
+  {
+    "id": "ashby-modal",
+    "name": "Modal (Ashby)",
+    "type": "ashby",
+    "target": "modal",
+    "enabled": true
+  },
+  {
+    "id": "ashby-anyscale",
+    "name": "Anyscale (Ashby)",
+    "type": "ashby",
+    "target": "anyscale",
+    "enabled": true
+  },
+  {
+    "id": "ashby-notion",
+    "name": "Notion (Ashby)",
+    "type": "ashby",
+    "target": "notion",
+    "enabled": true
+  },
+  {
+    "id": "ashby-cursor",
+    "name": "Cursor (Ashby)",
+    "type": "ashby",
+    "target": "cursor",
+    "enabled": true
+  },
+  {
+    "id": "ashby-vanta",
+    "name": "Vanta (Ashby)",
+    "type": "ashby",
+    "target": "vanta",
+    "enabled": true
+  },
+  {
+    "id": "ashby-watershed",
+    "name": "Watershed (Ashby)",
+    "type": "ashby",
+    "target": "watershed",
+    "enabled": true
+  },
+  {
+    "id": "ashby-sierra",
+    "name": "Sierra (Ashby)",
+    "type": "ashby",
+    "target": "sierra",
+    "enabled": true
+  },
+  {
+    "id": "ashby-harvey",
+    "name": "Harvey (Ashby)",
+    "type": "ashby",
+    "target": "harvey",
+    "enabled": true
+  },
+  {
+    "id": "ashby-warp",
+    "name": "Warp (Ashby)",
+    "type": "ashby",
+    "target": "warp",
+    "enabled": true
+  },
+  {
+    "id": "ashby-langchain",
+    "name": "LangChain (Ashby)",
+    "type": "ashby",
+    "target": "langchain",
+    "enabled": true
+  },
+  {
+    "id": "ashby-supabase",
+    "name": "Supabase (Ashby)",
+    "type": "ashby",
+    "target": "supabase",
+    "enabled": true
+  },
+  {
+    "id": "ashby-posthog",
+    "name": "PostHog (Ashby)",
+    "type": "ashby",
+    "target": "posthog",
+    "enabled": true
+  },
+  {
+    "id": "ashby-pinecone",
+    "name": "Pinecone (Ashby)",
+    "type": "ashby",
+    "target": "pinecone",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-databricks",
+    "name": "Databricks (Greenhouse)",
+    "type": "greenhouse",
+    "target": "databricks",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-twilio",
+    "name": "Twilio (Greenhouse)",
+    "type": "greenhouse",
+    "target": "twilio",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-asana",
+    "name": "Asana (Greenhouse)",
+    "type": "greenhouse",
+    "target": "asana",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-flexport",
+    "name": "Flexport (Greenhouse)",
+    "type": "greenhouse",
+    "target": "flexport",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-gusto",
+    "name": "Gusto (Greenhouse)",
+    "type": "greenhouse",
+    "target": "gusto",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-chime",
+    "name": "Chime (Greenhouse)",
+    "type": "greenhouse",
+    "target": "chime",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-samsara",
+    "name": "Samsara (Greenhouse)",
+    "type": "greenhouse",
+    "target": "samsara",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-doordashusa",
+    "name": "DoorDash (Greenhouse)",
+    "type": "greenhouse",
+    "target": "doordashusa",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-intercom",
+    "name": "Intercom (Greenhouse)",
+    "type": "greenhouse",
+    "target": "intercom",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-duolingo",
+    "name": "Duolingo (Greenhouse)",
+    "type": "greenhouse",
+    "target": "duolingo",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-braze",
+    "name": "Braze (Greenhouse)",
+    "type": "greenhouse",
+    "target": "braze",
+    "enabled": true
+  }
+]

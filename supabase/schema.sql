@@ -9,16 +9,26 @@ create table if not exists public.jobs (
   company       text        not null,
   title         text        not null,
   location      text        not null,
+  remote        boolean     default false,
   remote_scope  text        check (remote_scope in ('remote', 'hybrid', 'onsite', 'any')),
-  job_type      text        check (job_type in ('full-time', 'part-time', 'contract', 'internship')),
+  job_type      text        check (job_type in ('job', 'internship', 'full-time', 'part-time', 'contract', 'other')),
   salary_text   text,                          -- e.g. "$120k–$160k" or null = "Not listed"
+  salary_min    numeric,
+  salary_max    numeric,
+  currency      text        default 'USD',
   description   text,                          -- Auth-gated — never returned to guests
   skills        text[],                        -- Auth-gated — never returned to guests
   apply_url     text,                          -- Auth-gated — direct ATS link
+  source        text,                          -- e.g. 'greenhouse', 'lever', 'ashby', 'remotive'
+  source_job_id text,                          -- ID from source system
   source_url    text,                          -- The careers page this job was scraped from
+  posted_at     timestamptz default now(),
+  expires_at    timestamptz,
   first_seen_at timestamptz default now(),
   last_seen_at  timestamptz default now(),
-  status        text        default 'active' check (status in ('active', 'expired'))
+  is_active     boolean     default true,
+  status        text        default 'active' check (status in ('active', 'expired')),
+  created_at    timestamptz default now()
 );
 
 -- ── PROFILES TABLE ───────────────────────────────────────────────────────────
@@ -40,7 +50,7 @@ drop policy if exists "jobs_public_read" on public.jobs;
 create policy "jobs_public_read"
   on public.jobs
   for select
-  using (status = 'active');
+  using (is_active = true or status = 'active');
 
 -- Profiles: owner can read their own profile
 drop policy if exists "profiles_owner_select" on public.profiles;
@@ -67,11 +77,25 @@ create policy "profiles_owner_update"
 create index if not exists jobs_status_idx
   on public.jobs (status);
 
+create index if not exists jobs_is_active_idx
+  on public.jobs (is_active);
+
 create index if not exists jobs_first_seen_idx
   on public.jobs (first_seen_at desc);
 
+create index if not exists jobs_posted_at_idx
+  on public.jobs (posted_at desc);
+
+create index if not exists jobs_last_seen_at_idx
+  on public.jobs (last_seen_at desc);
+
 create index if not exists jobs_company_idx
   on public.jobs (company);
+
+-- Unique index on (source, source_job_id) for reliable deduplication & upserts
+create unique index if not exists jobs_source_source_job_id_unique
+  on public.jobs (source, source_job_id)
+  where source is not null and source_job_id is not null;
 
 -- Prevent duplicate jobs from the same ATS (same apply URL = same job)
 create unique index if not exists jobs_apply_url_unique

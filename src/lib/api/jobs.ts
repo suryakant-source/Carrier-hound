@@ -1,0 +1,313 @@
+import { createClient } from "@/lib/supabase/client";
+import { expandCategoryFilter, normalizeCategorySlug } from "@/lib/taxonomy";
+import type { Job } from "@/data/jobs";
+
+export interface SearchJobsParams {
+  q?: string;
+  city?: string;
+  cat?: string;
+  categories?: string[];
+  country?: string;
+  remote?: boolean;
+  salary?: string;
+  experience?: string;
+  date?: string;
+  sort?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface SearchJobsResult {
+  jobs: Job[];
+  total: number;
+  totalPages: number;
+  page: number;
+  pageSize: number;
+  facets: {
+    categories: Record<string, number>;
+    countries: Record<string, number>;
+  };
+  availableCountries: string[];
+}
+
+// Allowlisted values
+const ALLOWED_SALARY = new Set(["all", "100k", "150k", "200k"]);
+const ALLOWED_EXPERIENCE = new Set(["all", "fresher", "mid", "senior"]);
+const ALLOWED_DATE = new Set(["all", "24h", "7d", "30d"]);
+
+// Card fields only — no description or skills bloat
+const CARD_FIELDS =
+  "id, title, company, location, remote_scope, job_type, salary_text, first_seen_at, last_seen_at, status, category, country, date, apply_url";
+
+export async function searchJobs(params: SearchJobsParams = {}): Promise<SearchJobsResult> {
+  const supabase = createClient();
+
+  // Parameter validation and allowlisting
+  const q = (params.q || "").replace(/[,()]/g, " ").replace(/\s+/g, " ").trim();
+  const city = (params.city || "").replace(/[,()]/g, " ").replace(/\s+/g, " ").trim();
+  const salary = ALLOWED_SALARY.has(params.salary || "") ? params.salary! : "all";
+  const experience = ALLOWED_EXPERIENCE.has(params.experience || "") ? params.experience! : "all";
+  const date = ALLOWED_DATE.has(params.date || "") ? params.date! : "all";
+  const country = params.country && params.country !== "all" ? params.country : "all";
+  const remoteOnly = Boolean(params.remote);
+
+  const page = Math.max(1, params.page || 1);
+  const pageSize = Math.min(50, Math.max(1, params.pageSize || 10));
+
+  // Consolidate categories
+  const categoryTokens: string[] = [];
+  if (params.cat && params.cat !== "all") categoryTokens.push(params.cat);
+  if (params.categories && params.categories.length > 0) {
+    categoryTokens.push(...params.categories);
+  }
+
+  // 1. First attempt: call RPC `get_jobs_with_facets`
+  try {
+    const { data: rpcData, error: rpcError } = await supabase.rpc("get_jobs_with_facets", {
+      p_q: q || null,
+      p_categories: categoryTokens.length > 0 ? expandCategoryFilter(categoryTokens) : null,
+      p_country: country !== "all" ? country : null,
+      p_remote_only: remoteOnly,
+      p_salary: salary !== "all" ? salary : null,
+      p_experience: experience !== "all" ? experience : null,
+      p_date: date !== "all" ? date : null,
+      p_page: page,
+      p_page_size: pageSize,
+    });
+
+    if (!rpcError && rpcData && typeof rpcData === "object") {
+      const mappedJobs: Job[] = (rpcData.jobs || []).map((d: any) => ({
+        id: d.id,
+        title: d.title,
+        company: d.company,
+        location: d.location,
+        date: d.date || (d.first_seen_at ? new Date(d.first_seen_at).toLocaleDateString() : "Today"),
+        salary: d.salary_text || "Competitive",
+        category: d.category || "software",
+        remote: d.remote === true || d.remote_scope === "remote",
+        country: d.country || "United States",
+        type:
+          d.job_type === "full-time"
+            ? "Full-time"
+            : d.job_type === "job"
+            ? "Full-time"
+            : d.job_type || "Full-time",
+        directSource: true,
+        applyUrl: d.apply_url || "#",
+      }));
+
+      return {
+        jobs: mappedJobs,
+        total: rpcData.total || 0,
+        totalPages: rpcData.total_pages || 1,
+        page: rpcData.page || page,
+        pageSize: rpcData.page_size || pageSize,
+        facets: {
+          categories: rpcData.facets?.categories || {},
+          countries: rpcData.facets?.countries || {},
+        },
+        availableCountries: rpcData.available_countries || [],
+      };
+    }
+  } catch {
+    // RPC not present in DB schema yet, proceed to direct PostgREST query
+  }
+
+  // 2. Direct PostgREST query (card fields only, status=active)
+  let query = supabase.from("jobs").select(CARD_FIELDS, { count: "exact" }).eq("status", "active");
+
+  if (q) {
+    query = query.or(`title.ilike.%${q}%,company.ilike.%${q}%`);
+  }
+
+  if (city) {
+    query = query.ilike("location", `%${city}%`);
+  }
+
+  if (categoryTokens.length > 0) {
+    if (categoryTokens.includes("trending")) {
+      query = query.in("company", [
+        "OpenAI",
+        "Stripe",
+        "Linear",
+        "ElevenLabs",
+        "Perplexity AI",
+        "Baseten",
+        "Cohere",
+        "Notion",
+      ]);
+    } else if (categoryTokens.includes("internships")) {
+      query = query.or("title.ilike.%intern%,job_type.ilike.%intern%");
+    } else if (categoryTokens.includes("remote")) {
+      query = query.eq("remote_scope", "remote");
+    } else if (categoryTokens.includes("fresher")) {
+      query = query.or(
+        "title.ilike.%junior%,title.ilike.%entry%,title.ilike.%associate%,title.ilike.%graduate%,title.ilike.%fresher%,title.ilike.%intern%"
+      );
+    } else {
+      const slugs = expandCategoryFilter(categoryTokens);
+      if (slugs.length > 0) {
+        query = query.in("category", slugs);
+      }
+    }
+  }
+
+  if (country !== "all") {
+    query = query.eq("country", country);
+  }
+
+  if (remoteOnly) {
+    query = query.eq("remote_scope", "remote");
+    if (country !== "all" && country.toLowerCase() === "india") {
+      query = query.or("country.eq.India,location.ilike.%worldwide%,location.ilike.%india%");
+    }
+  }
+
+  if (date !== "all") {
+    const ms =
+      date === "24h"
+        ? 24 * 60 * 60 * 1000
+        : date === "7d"
+        ? 7 * 24 * 60 * 60 * 1000
+        : date === "30d"
+        ? 30 * 24 * 60 * 60 * 1000
+        : 0;
+    if (ms > 0) {
+      const cutoff = new Date(Date.now() - ms).toISOString();
+      query = query.gte("first_seen_at", cutoff);
+    }
+  }
+
+  if (experience === "fresher") {
+    query = query.or(
+      "title.ilike.%junior%,title.ilike.%entry%,title.ilike.%associate%,title.ilike.%graduate%,title.ilike.%fresher%,title.ilike.%intern%"
+    );
+  } else if (experience === "senior") {
+    query = query.or(
+      "title.ilike.%senior%,title.ilike.%lead%,title.ilike.%staff%,title.ilike.%principal%,title.ilike.%director%"
+    );
+  } else if (experience === "mid") {
+    query = query.or(
+      "title.ilike.%mid %,title.ilike.%mid-level%,title.ilike.%intermediate%,title.ilike.%level 2%,title.ilike.%l2%,title.ilike.%sde 2%,title.ilike.%sde ii%"
+    );
+  }
+
+  if (salary !== "all") {
+    const p200Prefixes = [
+      "$200", "$205", "$210", "$215", "$220", "$225", "$230", "$235", "$240", "$245",
+      "$250", "$255", "$260", "$265", "$270", "$275", "$280", "$285", "$290", "$295",
+      "$300", "$310", "$320", "$330", "$340", "$350", "$360", "$370", "$380", "$390",
+      "$400", "$450", "$500"
+    ];
+    const p150Prefixes = [
+      "$150", "$155", "$160", "$165", "$170", "$175", "$180", "$185", "$190", "$195"
+    ];
+    const p100Prefixes = [
+      "$100", "$105", "$110", "$115", "$120", "$125", "$130", "$135", "$140", "$145"
+    ];
+
+    if (salary === "200k") {
+      query = query.or(p200Prefixes.map((p) => `salary_text.ilike.${p}%`).join(","));
+    } else if (salary === "150k") {
+      const orClauses = [...p150Prefixes, ...p200Prefixes].map((p) => `salary_text.ilike.${p}%`).join(",");
+      query = query.or(orClauses);
+    } else if (salary === "100k") {
+      const orClauses = [...p100Prefixes, ...p150Prefixes, ...p200Prefixes].map((p) => `salary_text.ilike.${p}%`).join(",");
+      query = query.or(orClauses);
+    }
+  }
+
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  query = query
+    .order("first_seen_at", { ascending: false })
+    .order("id", { ascending: false })
+    .range(from, to);
+
+  const { data, count, error } = await query;
+
+  if (error) {
+    throw error;
+  }
+
+  const total = count || 0;
+  const totalPages = Math.ceil(total / pageSize) || 1;
+
+  const mappedJobs: Job[] = (data || []).map((d: any) => ({
+    id: d.id,
+    title: d.title,
+    company: d.company,
+    location: d.location,
+    date: d.date || (d.first_seen_at ? new Date(d.first_seen_at).toLocaleDateString() : "Today"),
+    salary: d.salary_text || "Competitive",
+    category: d.category || "software",
+    remote: d.remote === true || d.remote_scope === "remote",
+    country: d.country || "United States",
+    type:
+      d.job_type === "full-time"
+        ? "Full-time"
+        : d.job_type === "job"
+        ? "Full-time"
+        : d.job_type || "Full-time",
+    directSource: true,
+    applyUrl: d.apply_url || "#",
+  }));
+
+  // Calculate facet counts for categories and countries based on current filtered results
+  let facetQuery = supabase.from("jobs").select("category, country").eq("status", "active");
+  if (q) {
+    facetQuery = facetQuery.or(`title.ilike.%${q}%,company.ilike.%${q}%`);
+  }
+  if (remoteOnly) {
+    facetQuery = facetQuery.eq("remote_scope", "remote");
+  }
+  facetQuery = facetQuery.limit(1000);
+
+  const { data: facetData } = await facetQuery;
+  const categoryFacets: Record<string, number> = {};
+  const countryFacets: Record<string, number> = {};
+  const availableSet = new Set<string>();
+
+  if (facetData) {
+    facetData.forEach((row: any) => {
+      if (row.category) {
+        const canonical = normalizeCategorySlug(row.category);
+        categoryFacets[canonical] = (categoryFacets[canonical] || 0) + 1;
+      }
+      if (row.country) {
+        countryFacets[row.country] = (countryFacets[row.country] || 0) + 1;
+        availableSet.add(row.country);
+      }
+    });
+  }
+
+  const availableCountries =
+    availableSet.size > 0
+      ? Array.from(availableSet).sort()
+      : [
+          "Australia",
+          "Canada",
+          "France",
+          "Germany",
+          "India",
+          "Remote",
+          "Sweden",
+          "Switzerland",
+          "United Kingdom",
+          "United States",
+        ];
+
+  return {
+    jobs: mappedJobs,
+    total,
+    totalPages,
+    page,
+    pageSize,
+    facets: {
+      categories: categoryFacets,
+      countries: countryFacets,
+    },
+    availableCountries,
+  };
+}

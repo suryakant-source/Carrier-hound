@@ -1,0 +1,3518 @@
+[
+  {
+    "id": "stripe",
+    "name": "Stripe",
+    "type": "greenhouse",
+    "target": "stripe",
+    "enabled": true
+  },
+  {
+    "id": "datadog",
+    "name": "Datadog",
+    "type": "greenhouse",
+    "target": "datadog",
+    "enabled": true
+  },
+  {
+    "id": "cloudflare",
+    "name": "Cloudflare",
+    "type": "greenhouse",
+    "target": "cloudflare",
+    "enabled": true
+  },
+  {
+    "id": "figma",
+    "name": "Figma",
+    "type": "greenhouse",
+    "target": "figma",
+    "enabled": true
+  },
+  {
+    "id": "airbnb",
+    "name": "Airbnb",
+    "type": "greenhouse",
+    "target": "airbnb",
+    "enabled": true
+  },
+  {
+    "id": "reddit",
+    "name": "Reddit",
+    "type": "greenhouse",
+    "target": "reddit",
+    "enabled": true
+  },
+  {
+    "id": "discord",
+    "name": "Discord",
+    "type": "greenhouse",
+    "target": "discord",
+    "enabled": true
+  },
+  {
+    "id": "pinterest",
+    "name": "Pinterest",
+    "type": "greenhouse",
+    "target": "pinterest",
+    "enabled": true
+  },
+  {
+    "id": "robinhood",
+    "name": "Robinhood",
+    "type": "greenhouse",
+    "target": "robinhood",
+    "enabled": true
+  },
+  {
+    "id": "brex",
+    "name": "Brex",
+    "type": "greenhouse",
+    "target": "brex",
+    "enabled": true
+  },
+  {
+    "id": "gitlab",
+    "name": "GitLab",
+    "type": "greenhouse",
+    "target": "gitlab",
+    "enabled": true
+  },
+  {
+    "id": "coinbase",
+    "name": "Coinbase",
+    "type": "greenhouse",
+    "target": "coinbase",
+    "enabled": true
+  },
+  {
+    "id": "elastic",
+    "name": "Elastic",
+    "type": "greenhouse",
+    "target": "elastic",
+    "enabled": true
+  },
+  {
+    "id": "mongodb",
+    "name": "MongoDB",
+    "type": "greenhouse",
+    "target": "mongodb",
+    "enabled": true
+  },
+  {
+    "id": "instacart",
+    "name": "Instacart",
+    "type": "greenhouse",
+    "target": "instacart",
+    "enabled": true
+  },
+  {
+    "id": "lyft",
+    "name": "Lyft",
+    "type": "greenhouse",
+    "target": "lyft",
+    "enabled": true
+  },
+  {
+    "id": "okta",
+    "name": "Okta",
+    "type": "greenhouse",
+    "target": "okta",
+    "enabled": true
+  },
+  {
+    "id": "toast",
+    "name": "Toast",
+    "type": "greenhouse",
+    "target": "toast",
+    "enabled": true
+  },
+  {
+    "id": "affirm",
+    "name": "Affirm",
+    "type": "greenhouse",
+    "target": "affirm",
+    "enabled": true
+  },
+  {
+    "id": "fivetran",
+    "name": "Fivetran",
+    "type": "greenhouse",
+    "target": "fivetran",
+    "enabled": true
+  },
+  {
+    "id": "palantir",
+    "name": "Palantir",
+    "type": "lever",
+    "target": "palantir",
+    "enabled": true
+  },
+  {
+    "id": "spotify",
+    "name": "Spotify",
+    "type": "lever",
+    "target": "spotify",
+    "enabled": true
+  },
+  {
+    "id": "openai",
+    "name": "OpenAI",
+    "type": "ashby",
+    "target": "openai",
+    "enabled": true
+  },
+  {
+    "id": "ramp",
+    "name": "Ramp",
+    "type": "ashby",
+    "target": "ramp",
+    "enabled": true
+  },
+  {
+    "id": "linear",
+    "name": "Linear",
+    "type": "ashby",
+    "target": "linear",
+    "enabled": true
+  },
+  {
+    "id": "elevenlabs",
+    "name": "ElevenLabs",
+    "type": "ashby",
+    "target": "elevenlabs",
+    "enabled": true
+  },
+  {
+    "id": "baseten",
+    "name": "Baseten",
+    "type": "ashby",
+    "target": "baseten",
+    "enabled": true
+  },
+  {
+    "id": "perplexity",
+    "name": "Perplexity",
+    "type": "ashby",
+    "target": "perplexity",
+    "enabled": true
+  },
+  {
+    "id": "modal",
+    "name": "Modal",
+    "type": "ashby",
+    "target": "modal",
+    "enabled": true
+  },
+  {
+    "id": "anyscale",
+    "name": "Anyscale",
+    "type": "ashby",
+    "target": "anyscale",
+    "enabled": true
+  },
+  {
+    "id": "notion",
+    "name": "Notion",
+    "type": "ashby",
+    "target": "notion",
+    "enabled": true
+  },
+  {
+    "id": "cursor",
+    "name": "Cursor",
+    "type": "ashby",
+    "target": "cursor",
+    "enabled": true
+  },
+  {
+    "id": "vanta",
+    "name": "Vanta",
+    "type": "ashby",
+    "target": "vanta",
+    "enabled": true
+  },
+  {
+    "id": "watershed",
+    "name": "Watershed",
+    "type": "ashby",
+    "target": "watershed",
+    "enabled": true
+  },
+  {
+    "id": "sierra",
+    "name": "Sierra",
+    "type": "ashby",
+    "target": "sierra",
+    "enabled": true
+  },
+  {
+    "id": "harvey",
+    "name": "Harvey",
+    "type": "ashby",
+    "target": "harvey",
+    "enabled": true
+  },
+  {
+    "id": "warp",
+    "name": "Warp",
+    "type": "ashby",
+    "target": "warp",
+    "enabled": true
+  },
+  {
+    "id": "langchain",
+    "name": "LangChain",
+    "type": "ashby",
+    "target": "langchain",
+    "enabled": true
+  },
+  {
+    "id": "supabase",
+    "name": "Supabase",
+    "type": "ashby",
+    "target": "supabase",
+    "enabled": true
+  },
+  {
+    "id": "posthog",
+    "name": "PostHog",
+    "type": "ashby",
+    "target": "posthog",
+    "enabled": true
+  },
+  {
+    "id": "pinecone",
+    "name": "Pinecone",
+    "type": "ashby",
+    "target": "pinecone",
+    "enabled": true
+  },
+  {
+    "id": "databricks",
+    "name": "Databricks",
+    "type": "greenhouse",
+    "target": "databricks",
+    "enabled": true
+  },
+  {
+    "id": "twilio",
+    "name": "Twilio",
+    "type": "greenhouse",
+    "target": "twilio",
+    "enabled": true
+  },
+  {
+    "id": "asana",
+    "name": "Asana",
+    "type": "greenhouse",
+    "target": "asana",
+    "enabled": true
+  },
+  {
+    "id": "flexport",
+    "name": "Flexport",
+    "type": "greenhouse",
+    "target": "flexport",
+    "enabled": true
+  },
+  {
+    "id": "gusto",
+    "name": "Gusto",
+    "type": "greenhouse",
+    "target": "gusto",
+    "enabled": true
+  },
+  {
+    "id": "chime",
+    "name": "Chime",
+    "type": "greenhouse",
+    "target": "chime",
+    "enabled": true
+  },
+  {
+    "id": "samsara",
+    "name": "Samsara",
+    "type": "greenhouse",
+    "target": "samsara",
+    "enabled": true
+  },
+  {
+    "id": "doordashusa",
+    "name": "DoorDash",
+    "type": "greenhouse",
+    "target": "doordashusa",
+    "enabled": true
+  },
+  {
+    "id": "intercom",
+    "name": "Intercom",
+    "type": "greenhouse",
+    "target": "intercom",
+    "enabled": true
+  },
+  {
+    "id": "duolingo",
+    "name": "Duolingo",
+    "type": "greenhouse",
+    "target": "duolingo",
+    "enabled": true
+  },
+  {
+    "id": "braze",
+    "name": "Braze",
+    "type": "greenhouse",
+    "target": "braze",
+    "enabled": true
+  },
+  {
+    "id": "runway",
+    "name": "Runway",
+    "type": "ashby",
+    "target": "runway",
+    "enabled": true
+  },
+  {
+    "id": "anthropic",
+    "name": "Anthropic",
+    "type": "greenhouse",
+    "target": "anthropic",
+    "enabled": true
+  },
+  {
+    "id": "scaleai",
+    "name": "Scale AI",
+    "type": "greenhouse",
+    "target": "scaleai",
+    "enabled": true
+  },
+  {
+    "id": "cohere",
+    "name": "Cohere",
+    "type": "ashby",
+    "target": "cohere",
+    "enabled": true
+  },
+  {
+    "id": "midjourney",
+    "name": "Midjourney",
+    "type": "ashby",
+    "target": "midjourney",
+    "enabled": true
+  },
+  {
+    "id": "replit",
+    "name": "Replit",
+    "type": "ashby",
+    "target": "replit",
+    "enabled": true
+  },
+  {
+    "id": "llamaindex",
+    "name": "LlamaIndex",
+    "type": "ashby",
+    "target": "llamaindex",
+    "enabled": true
+  },
+  {
+    "id": "deepgram",
+    "name": "Deepgram",
+    "type": "ashby",
+    "target": "deepgram",
+    "enabled": true
+  },
+  {
+    "id": "vercel",
+    "name": "Vercel",
+    "type": "greenhouse",
+    "target": "vercel",
+    "enabled": true
+  },
+  {
+    "id": "character",
+    "name": "Character.ai",
+    "type": "ashby",
+    "target": "character",
+    "enabled": true
+  },
+  {
+    "id": "neon",
+    "name": "Neon",
+    "type": "ashby",
+    "target": "neon",
+    "enabled": true
+  },
+  {
+    "id": "synthesia",
+    "name": "Synthesia",
+    "type": "ashby",
+    "target": "synthesia",
+    "enabled": true
+  },
+  {
+    "id": "planetscale",
+    "name": "PlanetScale",
+    "type": "greenhouse",
+    "target": "planetscale",
+    "enabled": true
+  },
+  {
+    "id": "launchdarkly",
+    "name": "LaunchDarkly",
+    "type": "greenhouse",
+    "target": "launchdarkly",
+    "enabled": true
+  },
+  {
+    "id": "tailscale",
+    "name": "Tailscale",
+    "type": "greenhouse",
+    "target": "tailscale",
+    "enabled": true
+  },
+  {
+    "id": "temporal",
+    "name": "Temporal",
+    "type": "ashby",
+    "target": "temporal",
+    "enabled": true
+  },
+  {
+    "id": "sentry",
+    "name": "Sentry",
+    "type": "ashby",
+    "target": "sentry",
+    "enabled": true
+  },
+  {
+    "id": "bitwarden",
+    "name": "Bitwarden",
+    "type": "greenhouse",
+    "target": "bitwarden",
+    "enabled": true
+  },
+  {
+    "id": "grafanalabs",
+    "name": "Grafana Labs",
+    "type": "greenhouse",
+    "target": "grafanalabs",
+    "enabled": true
+  },
+  {
+    "id": "honeycomb",
+    "name": "Honeycomb",
+    "type": "greenhouse",
+    "target": "honeycomb",
+    "enabled": true
+  },
+  {
+    "id": "together",
+    "name": "Together AI",
+    "type": "smartrecruiters",
+    "target": "together",
+    "enabled": true
+  },
+  {
+    "id": "infisical",
+    "name": "Infisical",
+    "type": "ashby",
+    "target": "infisical",
+    "enabled": true
+  },
+  {
+    "id": "1password",
+    "name": "1Password",
+    "type": "ashby",
+    "target": "1password",
+    "enabled": true
+  },
+  {
+    "id": "doppler",
+    "name": "Doppler",
+    "type": "ashby",
+    "target": "doppler",
+    "enabled": true
+  },
+  {
+    "id": "starburst",
+    "name": "Starburst Data",
+    "type": "greenhouse",
+    "target": "starburst",
+    "enabled": true
+  },
+  {
+    "id": "clickhouse",
+    "name": "ClickHouse",
+    "type": "ashby",
+    "target": "clickhouse",
+    "enabled": true
+  },
+  {
+    "id": "huggingface",
+    "name": "Hugging Face",
+    "type": "workable",
+    "target": "huggingface",
+    "enabled": true
+  },
+  {
+    "id": "docker",
+    "name": "Docker",
+    "type": "ashby",
+    "target": "docker",
+    "enabled": true
+  },
+  {
+    "id": "fastly",
+    "name": "Fastly",
+    "type": "greenhouse",
+    "target": "fastly",
+    "enabled": true
+  },
+  {
+    "id": "confluent",
+    "name": "Confluent",
+    "type": "ashby",
+    "target": "confluent",
+    "enabled": true
+  },
+  {
+    "id": "cockroachlabs",
+    "name": "Cockroach Labs",
+    "type": "greenhouse",
+    "target": "cockroachlabs",
+    "enabled": true
+  },
+  {
+    "id": "snowflake",
+    "name": "Snowflake",
+    "type": "ashby",
+    "target": "snowflake",
+    "enabled": true
+  },
+  {
+    "id": "webflow",
+    "name": "Webflow",
+    "type": "greenhouse",
+    "target": "webflow",
+    "enabled": true
+  },
+  {
+    "id": "zapier",
+    "name": "Zapier",
+    "type": "ashby",
+    "target": "zapier",
+    "enabled": true
+  },
+  {
+    "id": "miro",
+    "name": "Miro",
+    "type": "ashby",
+    "target": "miro",
+    "enabled": true
+  },
+  {
+    "id": "airtable",
+    "name": "Airtable",
+    "type": "greenhouse",
+    "target": "airtable",
+    "enabled": true
+  },
+  {
+    "id": "clickup",
+    "name": "ClickUp",
+    "type": "ashby",
+    "target": "clickup",
+    "enabled": true
+  },
+  {
+    "id": "canva",
+    "name": "Canva",
+    "type": "smartrecruiters",
+    "target": "canva",
+    "enabled": true
+  },
+  {
+    "id": "dropbox",
+    "name": "Dropbox",
+    "type": "greenhouse",
+    "target": "dropbox",
+    "enabled": true
+  },
+  {
+    "id": "klaviyo",
+    "name": "Klaviyo",
+    "type": "greenhouse",
+    "target": "klaviyo",
+    "enabled": true
+  },
+  {
+    "id": "mixpanel",
+    "name": "Mixpanel",
+    "type": "greenhouse",
+    "target": "mixpanel",
+    "enabled": true
+  },
+  {
+    "id": "plaid",
+    "name": "Plaid",
+    "type": "ashby",
+    "target": "plaid",
+    "enabled": true
+  },
+  {
+    "id": "amplitude",
+    "name": "Amplitude",
+    "type": "ashby",
+    "target": "amplitude",
+    "enabled": true
+  },
+  {
+    "id": "freshworks",
+    "name": "Freshworks",
+    "type": "smartrecruiters",
+    "target": "freshworks",
+    "enabled": true
+  },
+  {
+    "id": "monzo",
+    "name": "Monzo",
+    "type": "greenhouse",
+    "target": "monzo",
+    "enabled": true
+  },
+  {
+    "id": "mercury",
+    "name": "Mercury",
+    "type": "greenhouse",
+    "target": "mercury",
+    "enabled": true
+  },
+  {
+    "id": "bigcommerce",
+    "name": "BigCommerce",
+    "type": "smartrecruiters",
+    "target": "bigcommerce",
+    "enabled": true
+  },
+  {
+    "id": "carta",
+    "name": "Carta",
+    "type": "greenhouse",
+    "target": "carta",
+    "enabled": true
+  },
+  {
+    "id": "remote",
+    "name": "Remote",
+    "type": "greenhouse",
+    "target": "remote",
+    "enabled": true
+  },
+  {
+    "id": "lattice",
+    "name": "Lattice",
+    "type": "greenhouse",
+    "target": "lattice",
+    "enabled": true
+  },
+  {
+    "id": "cultureamp",
+    "name": "Culture Amp",
+    "type": "greenhouse",
+    "target": "cultureamp",
+    "enabled": true
+  },
+  {
+    "id": "zscaler",
+    "name": "Zscaler",
+    "type": "greenhouse",
+    "target": "zscaler",
+    "enabled": true
+  },
+  {
+    "id": "secureframe",
+    "name": "Secureframe",
+    "type": "ashby",
+    "target": "secureframe",
+    "enabled": true
+  },
+  {
+    "id": "snyk",
+    "name": "Snyk",
+    "type": "ashby",
+    "target": "snyk",
+    "enabled": true
+  },
+  {
+    "id": "chainguard",
+    "name": "Chainguard",
+    "type": "greenhouse",
+    "target": "chainguard",
+    "enabled": true
+  },
+  {
+    "id": "coursera",
+    "name": "Coursera",
+    "type": "greenhouse",
+    "target": "coursera",
+    "enabled": true
+  },
+  {
+    "id": "drata",
+    "name": "Drata",
+    "type": "ashby",
+    "target": "drata",
+    "enabled": true
+  },
+  {
+    "id": "udemy",
+    "name": "Udemy",
+    "type": "greenhouse",
+    "target": "udemy",
+    "enabled": true
+  },
+  {
+    "id": "twitch",
+    "name": "Twitch",
+    "type": "greenhouse",
+    "target": "twitch",
+    "enabled": true
+  },
+  {
+    "id": "riotgames",
+    "name": "Riot Games",
+    "type": "greenhouse",
+    "target": "riotgames",
+    "enabled": true
+  },
+  {
+    "id": "epicgames",
+    "name": "Epic Games",
+    "type": "greenhouse",
+    "target": "epicgames",
+    "enabled": true
+  },
+  {
+    "id": "roblox",
+    "name": "Roblox",
+    "type": "greenhouse",
+    "target": "roblox",
+    "enabled": true
+  },
+  {
+    "id": "scopely",
+    "name": "Scopely",
+    "type": "greenhouse",
+    "target": "scopely",
+    "enabled": true
+  },
+  {
+    "id": "motive",
+    "name": "Motive",
+    "type": "greenhouse",
+    "target": "motive",
+    "enabled": true
+  },
+  {
+    "id": "deliveroo",
+    "name": "Deliveroo",
+    "type": "greenhouse",
+    "target": "deliveroo",
+    "enabled": true
+  },
+  {
+    "id": "hopper",
+    "name": "Hopper",
+    "type": "ashby",
+    "target": "hopper",
+    "enabled": true
+  },
+  {
+    "id": "faire",
+    "name": "Faire",
+    "type": "greenhouse",
+    "target": "faire",
+    "enabled": true
+  },
+  {
+    "id": "stockx",
+    "name": "StockX",
+    "type": "greenhouse",
+    "target": "stockx",
+    "enabled": true
+  },
+  {
+    "id": "seatgeek",
+    "name": "SeatGeek",
+    "type": "greenhouse",
+    "target": "seatgeek",
+    "enabled": true
+  },
+  {
+    "id": "sofi",
+    "name": "SoFi",
+    "type": "greenhouse",
+    "target": "sofi",
+    "enabled": true
+  },
+  {
+    "id": "betterment",
+    "name": "Betterment",
+    "type": "greenhouse",
+    "target": "betterment",
+    "enabled": true
+  },
+  {
+    "id": "swiggy",
+    "name": "Swiggy",
+    "type": "smartrecruiters",
+    "target": "swiggy",
+    "enabled": true
+  },
+  {
+    "id": "wayfair",
+    "name": "Wayfair",
+    "type": "smartrecruiters",
+    "target": "wayfair",
+    "enabled": true
+  },
+  {
+    "id": "wise",
+    "name": "Wise",
+    "type": "smartrecruiters",
+    "target": "wise",
+    "enabled": true
+  },
+  {
+    "id": "alloy",
+    "name": "Alloy",
+    "type": "greenhouse",
+    "target": "alloy",
+    "enabled": true
+  },
+  {
+    "id": "moderntreasury",
+    "name": "Modern Treasury",
+    "type": "ashby",
+    "target": "moderntreasury",
+    "enabled": true
+  },
+  {
+    "id": "melio",
+    "name": "Melio",
+    "type": "greenhouse",
+    "target": "melio",
+    "enabled": true
+  },
+  {
+    "id": "unit",
+    "name": "Unit",
+    "type": "ashby",
+    "target": "unit",
+    "enabled": true
+  },
+  {
+    "id": "render",
+    "name": "Render",
+    "type": "ashby",
+    "target": "render",
+    "enabled": true
+  },
+  {
+    "id": "netlify",
+    "name": "Netlify",
+    "type": "greenhouse",
+    "target": "netlify",
+    "enabled": true
+  },
+  {
+    "id": "railway",
+    "name": "Railway",
+    "type": "ashby",
+    "target": "railway",
+    "enabled": true
+  },
+  {
+    "id": "weaviate",
+    "name": "Weaviate",
+    "type": "ashby",
+    "target": "weaviate",
+    "enabled": true
+  },
+  {
+    "id": "redis",
+    "name": "Redis",
+    "type": "ashby",
+    "target": "redis",
+    "enabled": true
+  },
+  {
+    "id": "neo4j",
+    "name": "Neo4j",
+    "type": "greenhouse",
+    "target": "neo4j",
+    "enabled": true
+  },
+  {
+    "id": "newrelic",
+    "name": "New Relic",
+    "type": "greenhouse",
+    "target": "newrelic",
+    "enabled": true
+  },
+  {
+    "id": "sumologic",
+    "name": "Sumo Logic",
+    "type": "greenhouse",
+    "target": "sumologic",
+    "enabled": true
+  },
+  {
+    "id": "axiom",
+    "name": "Axiom",
+    "type": "ashby",
+    "target": "axiom",
+    "enabled": true
+  },
+  {
+    "id": "netskope",
+    "name": "Netskope",
+    "type": "greenhouse",
+    "target": "netskope",
+    "enabled": true
+  },
+  {
+    "id": "workato",
+    "name": "Workato",
+    "type": "greenhouse",
+    "target": "workato",
+    "enabled": true
+  },
+  {
+    "id": "orcasecurity",
+    "name": "Orca Security",
+    "type": "greenhouse",
+    "target": "orcasecurity",
+    "enabled": true
+  },
+  {
+    "id": "axonius",
+    "name": "Axonius",
+    "type": "greenhouse",
+    "target": "axonius",
+    "enabled": true
+  },
+  {
+    "id": "abnormalsecurity",
+    "name": "Abnormal Security",
+    "type": "greenhouse",
+    "target": "abnormalsecurity",
+    "enabled": true
+  },
+  {
+    "id": "huntress",
+    "name": "Huntress",
+    "type": "greenhouse",
+    "target": "huntress",
+    "enabled": true
+  },
+  {
+    "id": "expel",
+    "name": "Expel",
+    "type": "greenhouse",
+    "target": "expel",
+    "enabled": true
+  },
+  {
+    "id": "oscar",
+    "name": "Oscar Health",
+    "type": "greenhouse",
+    "target": "oscar",
+    "enabled": true
+  },
+  {
+    "id": "catonetworks",
+    "name": "Cato Networks",
+    "type": "greenhouse",
+    "target": "catonetworks",
+    "enabled": true
+  },
+  {
+    "id": "mavenclinic",
+    "name": "Maven Clinic",
+    "type": "greenhouse",
+    "target": "mavenclinic",
+    "enabled": true
+  },
+  {
+    "id": "ginkgobioworks",
+    "name": "Ginkgo Bioworks",
+    "type": "greenhouse",
+    "target": "ginkgobioworks",
+    "enabled": true
+  },
+  {
+    "id": "benchling",
+    "name": "Benchling",
+    "type": "ashby",
+    "target": "benchling",
+    "enabled": true
+  },
+  {
+    "id": "komodohealth",
+    "name": "Komodo Health",
+    "type": "greenhouse",
+    "target": "komodohealth",
+    "enabled": true
+  },
+  {
+    "id": "calm",
+    "name": "Calm",
+    "type": "greenhouse",
+    "target": "calm",
+    "enabled": true
+  },
+  {
+    "id": "substack",
+    "name": "Substack",
+    "type": "ashby",
+    "target": "substack",
+    "enabled": true
+  },
+  {
+    "id": "strava",
+    "name": "Strava",
+    "type": "ashby",
+    "target": "strava",
+    "enabled": true
+  },
+  {
+    "id": "medium",
+    "name": "Medium",
+    "type": "greenhouse",
+    "target": "medium",
+    "enabled": true
+  },
+  {
+    "id": "patreon",
+    "name": "Patreon",
+    "type": "ashby",
+    "target": "patreon",
+    "enabled": true
+  },
+  {
+    "id": "masterclass",
+    "name": "MasterClass",
+    "type": "greenhouse",
+    "target": "masterclass",
+    "enabled": true
+  },
+  {
+    "id": "able",
+    "name": "Able",
+    "type": "greenhouse",
+    "target": "able",
+    "enabled": true
+  },
+  {
+    "id": "acumen",
+    "name": "Acumen",
+    "type": "greenhouse",
+    "target": "acumen",
+    "enabled": true
+  },
+  {
+    "id": "matchgroup",
+    "name": "Match Group",
+    "type": "lever",
+    "target": "matchgroup",
+    "enabled": true
+  },
+  {
+    "id": "skillshare",
+    "name": "Skillshare",
+    "type": "workable",
+    "target": "skillshare",
+    "enabled": true
+  },
+  {
+    "id": "accenture",
+    "name": "Accenture",
+    "type": "recruitee",
+    "target": "accenture",
+    "enabled": true
+  },
+  {
+    "id": "adaface",
+    "name": "Adaface",
+    "type": "smartrecruiters",
+    "target": "adaface",
+    "enabled": true
+  },
+  {
+    "id": "adyen",
+    "name": "Adyen",
+    "type": "greenhouse",
+    "target": "adyen",
+    "enabled": true
+  },
+  {
+    "id": "adthena",
+    "name": "Adthena",
+    "type": "ashby",
+    "target": "adthena",
+    "enabled": true
+  },
+  {
+    "id": "algolia",
+    "name": "Algolia",
+    "type": "greenhouse",
+    "target": "algolia",
+    "enabled": true
+  },
+  {
+    "id": "alphasights",
+    "name": "AlphaSights",
+    "type": "greenhouse",
+    "target": "alphasights",
+    "enabled": true
+  },
+  {
+    "id": "almabase",
+    "name": "Almabase",
+    "type": "ashby",
+    "target": "almabase",
+    "enabled": true
+  },
+  {
+    "id": "allegro",
+    "name": "Allegro",
+    "type": "smartrecruiters",
+    "target": "allegro",
+    "enabled": true
+  },
+  {
+    "id": "applied",
+    "name": "Applied",
+    "type": "ashby",
+    "target": "applied",
+    "enabled": true
+  },
+  {
+    "id": "artsy",
+    "name": "Artsy",
+    "type": "ashby",
+    "target": "artsy",
+    "enabled": true
+  },
+  {
+    "id": "articulate",
+    "name": "Articulate",
+    "type": "lever",
+    "target": "articulate",
+    "enabled": true
+  },
+  {
+    "id": "atlan",
+    "name": "Atlan",
+    "type": "ashby",
+    "target": "atlan",
+    "enabled": true
+  },
+  {
+    "id": "autoscout24",
+    "name": "AutoScout24",
+    "type": "greenhouse",
+    "target": "autoscout24",
+    "enabled": true
+  },
+  {
+    "id": "asos",
+    "name": "ASOS",
+    "type": "smartrecruiters",
+    "target": "asos",
+    "enabled": true
+  },
+  {
+    "id": "axios",
+    "name": "Axios",
+    "type": "greenhouse",
+    "target": "axios",
+    "enabled": true
+  },
+  {
+    "id": "ataccama",
+    "name": "Ataccama",
+    "type": "lever",
+    "target": "ataccama",
+    "enabled": true
+  },
+  {
+    "id": "b12",
+    "name": "B12",
+    "type": "greenhouse",
+    "target": "b12",
+    "enabled": true
+  },
+  {
+    "id": "auto1",
+    "name": "Auto1",
+    "type": "smartrecruiters",
+    "target": "auto1",
+    "enabled": true
+  },
+  {
+    "id": "bitpanda",
+    "name": "Bitpanda",
+    "type": "greenhouse",
+    "target": "bitpanda",
+    "enabled": true
+  },
+  {
+    "id": "bigbinary",
+    "name": "BigBinary",
+    "type": "smartrecruiters",
+    "target": "bigbinary",
+    "enabled": true
+  },
+  {
+    "id": "brightwheel",
+    "name": "brightwheel",
+    "type": "ashby",
+    "target": "brightwheel",
+    "enabled": true
+  },
+  {
+    "id": "bugcrowd",
+    "name": "Bugcrowd",
+    "type": "greenhouse",
+    "target": "bugcrowd",
+    "enabled": true
+  },
+  {
+    "id": "buildkite",
+    "name": "Buildkite",
+    "type": "greenhouse",
+    "target": "buildkite",
+    "enabled": true
+  },
+  {
+    "id": "buffer",
+    "name": "Buffer",
+    "type": "ashby",
+    "target": "buffer",
+    "enabled": true
+  },
+  {
+    "id": "cabify",
+    "name": "Cabify",
+    "type": "greenhouse",
+    "target": "cabify",
+    "enabled": true
+  },
+  {
+    "id": "calendly",
+    "name": "Calendly",
+    "type": "greenhouse",
+    "target": "calendly",
+    "enabled": true
+  },
+  {
+    "id": "caravelo",
+    "name": "Caravelo",
+    "type": "smartrecruiters",
+    "target": "caravelo",
+    "enabled": true
+  },
+  {
+    "id": "checkr",
+    "name": "Checkr",
+    "type": "greenhouse",
+    "target": "checkr",
+    "enabled": true
+  },
+  {
+    "id": "circleci",
+    "name": "CircleCI",
+    "type": "greenhouse",
+    "target": "circleci",
+    "enabled": true
+  },
+  {
+    "id": "clipboard",
+    "name": "Clipboard",
+    "type": "ashby",
+    "target": "clipboard",
+    "enabled": true
+  },
+  {
+    "id": "close",
+    "name": "Close",
+    "type": "ashby",
+    "target": "close",
+    "enabled": true
+  },
+  {
+    "id": "colonist",
+    "name": "Colonist",
+    "type": "ashby",
+    "target": "colonist",
+    "enabled": true
+  },
+  {
+    "id": "collabora",
+    "name": "Collabora",
+    "type": "lever",
+    "target": "collabora",
+    "enabled": true
+  },
+  {
+    "id": "contentful",
+    "name": "Contentful",
+    "type": "greenhouse",
+    "target": "contentful",
+    "enabled": true
+  },
+  {
+    "id": "contentsquare",
+    "name": "ContentSquare",
+    "type": "lever",
+    "target": "contentsquare",
+    "enabled": true
+  },
+  {
+    "id": "convious",
+    "name": "Convious",
+    "type": "recruitee",
+    "target": "convious",
+    "enabled": true
+  },
+  {
+    "id": "datachef",
+    "name": "DataChef",
+    "type": "smartrecruiters",
+    "target": "datachef",
+    "enabled": true
+  },
+  {
+    "id": "digitalservice",
+    "name": "DigitalService",
+    "type": "greenhouse",
+    "target": "digitalservice",
+    "enabled": true
+  },
+  {
+    "id": "doctolib",
+    "name": "Doctolib",
+    "type": "greenhouse",
+    "target": "doctolib",
+    "enabled": true
+  },
+  {
+    "id": "emarketer",
+    "name": "eMarketer",
+    "type": "greenhouse",
+    "target": "emarketer",
+    "enabled": true
+  },
+  {
+    "id": "endava",
+    "name": "Endava",
+    "type": "smartrecruiters",
+    "target": "endava",
+    "enabled": true
+  },
+  {
+    "id": "extend",
+    "name": "Extend",
+    "type": "greenhouse",
+    "target": "extend",
+    "enabled": true
+  },
+  {
+    "id": "fonoa",
+    "name": "Fonoa",
+    "type": "ashby",
+    "target": "fonoa",
+    "enabled": true
+  },
+  {
+    "id": "form3",
+    "name": "Form3",
+    "type": "greenhouse",
+    "target": "form3",
+    "enabled": true
+  },
+  {
+    "id": "founders",
+    "name": "Founders",
+    "type": "greenhouse",
+    "target": "founders",
+    "enabled": true
+  },
+  {
+    "id": "freetrade",
+    "name": "Freetrade",
+    "type": "ashby",
+    "target": "freetrade",
+    "enabled": true
+  },
+  {
+    "id": "gemini",
+    "name": "Gemini",
+    "type": "greenhouse",
+    "target": "gemini",
+    "enabled": true
+  },
+  {
+    "id": "funda",
+    "name": "Funda",
+    "type": "recruitee",
+    "target": "funda",
+    "enabled": true
+  },
+  {
+    "id": "gcore",
+    "name": "Gcore",
+    "type": "smartrecruiters",
+    "target": "gcore",
+    "enabled": true
+  },
+  {
+    "id": "gocardless",
+    "name": "GoCardless",
+    "type": "greenhouse",
+    "target": "gocardless",
+    "enabled": true
+  },
+  {
+    "id": "gridscale",
+    "name": "Gridscale",
+    "type": "recruitee",
+    "target": "gridscale",
+    "enabled": true
+  },
+  {
+    "id": "hellofresh",
+    "name": "HelloFresh",
+    "type": "greenhouse",
+    "target": "hellofresh",
+    "enabled": true
+  },
+  {
+    "id": "hinge-health",
+    "name": "Hinge Health",
+    "type": "ashby",
+    "target": "hinge-health",
+    "enabled": true
+  },
+  {
+    "id": "hologram",
+    "name": "Hologram",
+    "type": "greenhouse",
+    "target": "hologram",
+    "enabled": true
+  },
+  {
+    "id": "homelight",
+    "name": "HomeLight",
+    "type": "greenhouse",
+    "target": "homelight",
+    "enabled": true
+  },
+  {
+    "id": "housemarque",
+    "name": "Housemarque",
+    "type": "greenhouse",
+    "target": "housemarque",
+    "enabled": true
+  },
+  {
+    "id": "hoxhunt",
+    "name": "HoxHunt",
+    "type": "ashby",
+    "target": "hoxhunt",
+    "enabled": true
+  },
+  {
+    "id": "ideo",
+    "name": "IDEO",
+    "type": "greenhouse",
+    "target": "ideo",
+    "enabled": true
+  },
+  {
+    "id": "scout24",
+    "name": "ImmobilienScout24",
+    "type": "greenhouse",
+    "target": "scout24",
+    "enabled": true
+  },
+  {
+    "id": "infosum",
+    "name": "InfoSum",
+    "type": "greenhouse",
+    "target": "infosum",
+    "enabled": true
+  },
+  {
+    "id": "influxdata",
+    "name": "InfluxData",
+    "type": "ashby",
+    "target": "influxdata",
+    "enabled": true
+  },
+  {
+    "id": "jamasoftware",
+    "name": "Jamasoftware",
+    "type": "greenhouse",
+    "target": "jamasoftware",
+    "enabled": true
+  },
+  {
+    "id": "justwatch",
+    "name": "JustWatch",
+    "type": "lever",
+    "target": "justwatch",
+    "enabled": true
+  },
+  {
+    "id": "kataai",
+    "name": "Kata.ai",
+    "type": "smartrecruiters",
+    "target": "kataai",
+    "enabled": true
+  },
+  {
+    "id": "jobtome",
+    "name": "Jobtome",
+    "type": "recruitee",
+    "target": "jobtome",
+    "enabled": true
+  },
+  {
+    "id": "kinsta",
+    "name": "Kinsta",
+    "type": "lever",
+    "target": "kinsta",
+    "enabled": true
+  },
+  {
+    "id": "kong",
+    "name": "Kong",
+    "type": "ashby",
+    "target": "kong",
+    "enabled": true
+  },
+  {
+    "id": "kungfuai",
+    "name": "KUNGFU.AI",
+    "type": "greenhouse",
+    "target": "kungfuai",
+    "enabled": true
+  },
+  {
+    "id": "kodify",
+    "name": "Kodify",
+    "type": "recruitee",
+    "target": "kodify",
+    "enabled": true
+  },
+  {
+    "id": "litmus",
+    "name": "Litmus",
+    "type": "ashby",
+    "target": "litmus",
+    "enabled": true
+  },
+  {
+    "id": "lob",
+    "name": "Lob",
+    "type": "greenhouse",
+    "target": "lob",
+    "enabled": true
+  },
+  {
+    "id": "mattermost",
+    "name": "Mattermost",
+    "type": "greenhouse",
+    "target": "mattermost",
+    "enabled": true
+  },
+  {
+    "id": "mapbox",
+    "name": "Mapbox",
+    "type": "ashby",
+    "target": "mapbox",
+    "enabled": true
+  },
+  {
+    "id": "meltwater",
+    "name": "Meltwater",
+    "type": "recruitee",
+    "target": "meltwater",
+    "enabled": true
+  },
+  {
+    "id": "mixmax",
+    "name": "Mixmax",
+    "type": "greenhouse",
+    "target": "mixmax",
+    "enabled": true
+  },
+  {
+    "id": "mozilla",
+    "name": "Mozilla",
+    "type": "greenhouse",
+    "target": "mozilla",
+    "enabled": true
+  },
+  {
+    "id": "myheritage",
+    "name": "MyHeritage",
+    "type": "greenhouse",
+    "target": "myheritage",
+    "enabled": true
+  },
+  {
+    "id": "mux",
+    "name": "Mux",
+    "type": "ashby",
+    "target": "mux",
+    "enabled": true
+  },
+  {
+    "id": "nerdwallet",
+    "name": "NerdWallet",
+    "type": "ashby",
+    "target": "nerdwallet",
+    "enabled": true
+  },
+  {
+    "id": "nimble",
+    "name": "Nimble",
+    "type": "recruitee",
+    "target": "nimble",
+    "enabled": true
+  },
+  {
+    "id": "nmbrs",
+    "name": "Nmbrs",
+    "type": "recruitee",
+    "target": "nmbrs",
+    "enabled": true
+  },
+  {
+    "id": "noyo",
+    "name": "Noyo",
+    "type": "ashby",
+    "target": "noyo",
+    "enabled": true
+  },
+  {
+    "id": "nubank",
+    "name": "Nubank",
+    "type": "ashby",
+    "target": "nubank",
+    "enabled": true
+  },
+  {
+    "id": "numberly",
+    "name": "numberly",
+    "type": "smartrecruiters",
+    "target": "numberly",
+    "enabled": true
+  },
+  {
+    "id": "odeko",
+    "name": "Odeko",
+    "type": "greenhouse",
+    "target": "odeko",
+    "enabled": true
+  },
+  {
+    "id": "pagerduty",
+    "name": "PagerDuty",
+    "type": "greenhouse",
+    "target": "pagerduty",
+    "enabled": true
+  },
+  {
+    "id": "permutive",
+    "name": "Permutive",
+    "type": "ashby",
+    "target": "permutive",
+    "enabled": true
+  },
+  {
+    "id": "persona",
+    "name": "Persona",
+    "type": "ashby",
+    "target": "persona",
+    "enabled": true
+  },
+  {
+    "id": "philo",
+    "name": "Philo",
+    "type": "ashby",
+    "target": "philo",
+    "enabled": true
+  },
+  {
+    "id": "platformsh",
+    "name": "Platform.sh",
+    "type": "greenhouse",
+    "target": "platformsh",
+    "enabled": true
+  },
+  {
+    "id": "plane",
+    "name": "Plane",
+    "type": "ashby",
+    "target": "plane",
+    "enabled": true
+  },
+  {
+    "id": "pleo",
+    "name": "Pleo",
+    "type": "ashby",
+    "target": "pleo",
+    "enabled": true
+  },
+  {
+    "id": "poki",
+    "name": "Poki",
+    "type": "ashby",
+    "target": "poki",
+    "enabled": true
+  },
+  {
+    "id": "primary",
+    "name": "Primary",
+    "type": "ashby",
+    "target": "primary",
+    "enabled": true
+  },
+  {
+    "id": "prokeep",
+    "name": "Prokeep",
+    "type": "ashby",
+    "target": "prokeep",
+    "enabled": true
+  },
+  {
+    "id": "qonto",
+    "name": "Qonto",
+    "type": "ashby",
+    "target": "qonto",
+    "enabled": true
+  },
+  {
+    "id": "ragnarson",
+    "name": "Ragnarson",
+    "type": "recruitee",
+    "target": "ragnarson",
+    "enabled": true
+  },
+  {
+    "id": "reaktor",
+    "name": "Reaktor",
+    "type": "ashby",
+    "target": "reaktor",
+    "enabled": true
+  },
+  {
+    "id": "salesloft",
+    "name": "Salesloft",
+    "type": "greenhouse",
+    "target": "salesloft",
+    "enabled": true
+  },
+  {
+    "id": "seesaw",
+    "name": "Seesaw",
+    "type": "greenhouse",
+    "target": "seesaw",
+    "enabled": true
+  },
+  {
+    "id": "searchapi",
+    "name": "SearchApi",
+    "type": "ashby",
+    "target": "searchapi",
+    "enabled": true
+  },
+  {
+    "id": "sensor-tower",
+    "name": "Sensor Tower",
+    "type": "ashby",
+    "target": "sensor-tower",
+    "enabled": true
+  },
+  {
+    "id": "sertis",
+    "name": "Sertis",
+    "type": "greenhouse",
+    "target": "sertis",
+    "enabled": true
+  },
+  {
+    "id": "signal-ai",
+    "name": "Signal AI",
+    "type": "ashby",
+    "target": "signal-ai",
+    "enabled": true
+  },
+  {
+    "id": "sixt",
+    "name": "Sixt",
+    "type": "greenhouse",
+    "target": "sixt",
+    "enabled": true
+  },
+  {
+    "id": "signoz",
+    "name": "SigNoz",
+    "type": "ashby",
+    "target": "signoz",
+    "enabled": true
+  },
+  {
+    "id": "smartlyio",
+    "name": "Smartly.io",
+    "type": "greenhouse",
+    "target": "smartlyio",
+    "enabled": true
+  },
+  {
+    "id": "spreedly",
+    "name": "Spreedly",
+    "type": "lever",
+    "target": "spreedly",
+    "enabled": true
+  },
+  {
+    "id": "splice",
+    "name": "Splice",
+    "type": "smartrecruiters",
+    "target": "splice",
+    "enabled": true
+  },
+  {
+    "id": "sumup",
+    "name": "SumUp",
+    "type": "greenhouse",
+    "target": "sumup",
+    "enabled": true
+  },
+  {
+    "id": "strv",
+    "name": "STRV",
+    "type": "recruitee",
+    "target": "strv",
+    "enabled": true
+  },
+  {
+    "id": "svix",
+    "name": "Svix",
+    "type": "ashby",
+    "target": "svix",
+    "enabled": true
+  },
+  {
+    "id": "symplicity",
+    "name": "Symplicity",
+    "type": "lever",
+    "target": "symplicity",
+    "enabled": true
+  },
+  {
+    "id": "swisscom",
+    "name": "Swisscom",
+    "type": "recruitee",
+    "target": "swisscom",
+    "enabled": true
+  },
+  {
+    "id": "textio",
+    "name": "Textio",
+    "type": "greenhouse",
+    "target": "textio",
+    "enabled": true
+  },
+  {
+    "id": "tes",
+    "name": "Tes",
+    "type": "recruitee",
+    "target": "tes",
+    "enabled": true
+  },
+  {
+    "id": "thoughtworks",
+    "name": "ThoughtWorks",
+    "type": "greenhouse",
+    "target": "thoughtworks",
+    "enabled": true
+  },
+  {
+    "id": "tooploox",
+    "name": "Tooploox",
+    "type": "ashby",
+    "target": "tooploox",
+    "enabled": true
+  },
+  {
+    "id": "top-hat",
+    "name": "Top Hat",
+    "type": "ashby",
+    "target": "top-hat",
+    "enabled": true
+  },
+  {
+    "id": "trivago",
+    "name": "Trivago",
+    "type": "greenhouse",
+    "target": "trivago",
+    "enabled": true
+  },
+  {
+    "id": "uberall",
+    "name": "uberall",
+    "type": "ashby",
+    "target": "uberall",
+    "enabled": true
+  },
+  {
+    "id": "unbounce",
+    "name": "Unbounce",
+    "type": "greenhouse",
+    "target": "unbounce",
+    "enabled": true
+  },
+  {
+    "id": "updater",
+    "name": "Updater",
+    "type": "greenhouse",
+    "target": "updater",
+    "enabled": true
+  },
+  {
+    "id": "verve",
+    "name": "Verve",
+    "type": "greenhouse",
+    "target": "verve",
+    "enabled": true
+  },
+  {
+    "id": "vtex",
+    "name": "VTEX",
+    "type": "greenhouse",
+    "target": "vtex",
+    "enabled": true
+  },
+  {
+    "id": "waymark",
+    "name": "Waymark",
+    "type": "greenhouse",
+    "target": "waymark",
+    "enabled": true
+  },
+  {
+    "id": "wealthsimple",
+    "name": "Wealthsimple",
+    "type": "ashby",
+    "target": "wealthsimple",
+    "enabled": true
+  },
+  {
+    "id": "weploy",
+    "name": "Weploy",
+    "type": "greenhouse",
+    "target": "weploy",
+    "enabled": true
+  },
+  {
+    "id": "wheely",
+    "name": "Wheely",
+    "type": "greenhouse",
+    "target": "wheely",
+    "enabled": true
+  },
+  {
+    "id": "xplor",
+    "name": "Xplor",
+    "type": "smartrecruiters",
+    "target": "xplor",
+    "enabled": true
+  },
+  {
+    "id": "yld",
+    "name": "YLD",
+    "type": "greenhouse",
+    "target": "yld",
+    "enabled": true
+  },
+  {
+    "id": "wealthfront",
+    "name": "Wealthfront",
+    "type": "lever",
+    "target": "wealthfront",
+    "enabled": true
+  },
+  {
+    "id": "acquia",
+    "name": "Acquia",
+    "type": "greenhouse",
+    "target": "acquia",
+    "enabled": true
+  },
+  {
+    "id": "aerostrat",
+    "name": "Aerostrat",
+    "type": "lever",
+    "target": "aerostrat",
+    "enabled": true
+  },
+  {
+    "id": "aestudio",
+    "name": "Aestudio",
+    "type": "greenhouse",
+    "target": "aestudio",
+    "enabled": true
+  },
+  {
+    "id": "airbyte",
+    "name": "Airbyte",
+    "type": "ashby",
+    "target": "airbyte",
+    "enabled": true
+  },
+  {
+    "id": "activecampaign",
+    "name": "Activecampaign",
+    "type": "lever",
+    "target": "activecampaign",
+    "enabled": true
+  },
+  {
+    "id": "airgarage",
+    "name": "Airgarage",
+    "type": "ashby",
+    "target": "airgarage",
+    "enabled": true
+  },
+  {
+    "id": "andela",
+    "name": "Andela",
+    "type": "ashby",
+    "target": "andela",
+    "enabled": true
+  },
+  {
+    "id": "appinio",
+    "name": "Appinio",
+    "type": "greenhouse",
+    "target": "appinio",
+    "enabled": true
+  },
+  {
+    "id": "astronomer",
+    "name": "Astronomer",
+    "type": "ashby",
+    "target": "astronomer",
+    "enabled": true
+  },
+  {
+    "id": "appen",
+    "name": "Appen",
+    "type": "lever",
+    "target": "appen",
+    "enabled": true
+  },
+  {
+    "id": "betterup",
+    "name": "Betterup",
+    "type": "ashby",
+    "target": "betterup",
+    "enabled": true
+  },
+  {
+    "id": "brave",
+    "name": "Brave",
+    "type": "greenhouse",
+    "target": "brave",
+    "enabled": true
+  },
+  {
+    "id": "calibre",
+    "name": "Calibre",
+    "type": "ashby",
+    "target": "calibre",
+    "enabled": true
+  },
+  {
+    "id": "bounteous",
+    "name": "Bounteous",
+    "type": "lever",
+    "target": "bounteous",
+    "enabled": true
+  },
+  {
+    "id": "britecore",
+    "name": "Britecore",
+    "type": "lever",
+    "target": "britecore",
+    "enabled": true
+  },
+  {
+    "id": "canonical",
+    "name": "Canonical",
+    "type": "greenhouse",
+    "target": "canonical",
+    "enabled": true
+  },
+  {
+    "id": "capchase",
+    "name": "Capchase",
+    "type": "ashby",
+    "target": "capchase",
+    "enabled": true
+  },
+  {
+    "id": "checkly",
+    "name": "Checkly",
+    "type": "ashby",
+    "target": "checkly",
+    "enabled": true
+  },
+  {
+    "id": "caremessage",
+    "name": "Caremessage",
+    "type": "ashby",
+    "target": "caremessage",
+    "enabled": true
+  },
+  {
+    "id": "clootrack",
+    "name": "Clootrack",
+    "type": "smartrecruiters",
+    "target": "clootrack",
+    "enabled": true
+  },
+  {
+    "id": "consensys",
+    "name": "Consensys",
+    "type": "greenhouse",
+    "target": "consensys",
+    "enabled": true
+  },
+  {
+    "id": "comet",
+    "name": "Comet",
+    "type": "greenhouse",
+    "target": "comet",
+    "enabled": true
+  },
+  {
+    "id": "datacamp",
+    "name": "Datacamp",
+    "type": "greenhouse",
+    "target": "datacamp",
+    "enabled": true
+  },
+  {
+    "id": "dave",
+    "name": "Dave",
+    "type": "ashby",
+    "target": "dave",
+    "enabled": true
+  },
+  {
+    "id": "dashlane",
+    "name": "Dashlane",
+    "type": "greenhouse",
+    "target": "dashlane",
+    "enabled": true
+  },
+  {
+    "id": "doximity",
+    "name": "Doximity",
+    "type": "greenhouse",
+    "target": "doximity",
+    "enabled": true
+  },
+  {
+    "id": "ebury",
+    "name": "Ebury",
+    "type": "greenhouse",
+    "target": "ebury",
+    "enabled": true
+  },
+  {
+    "id": "dribbble",
+    "name": "Dribbble",
+    "type": "smartrecruiters",
+    "target": "dribbble",
+    "enabled": true
+  },
+  {
+    "id": "doit",
+    "name": "Doit",
+    "type": "smartrecruiters",
+    "target": "doit",
+    "enabled": true
+  },
+  {
+    "id": "envoy",
+    "name": "Envoy",
+    "type": "ashby",
+    "target": "envoy",
+    "enabled": true
+  },
+  {
+    "id": "fingerprint",
+    "name": "Fingerprint",
+    "type": "greenhouse",
+    "target": "fingerprint",
+    "enabled": true
+  },
+  {
+    "id": "findem",
+    "name": "Findem",
+    "type": "lever",
+    "target": "findem",
+    "enabled": true
+  },
+  {
+    "id": "flip",
+    "name": "Flip",
+    "type": "greenhouse",
+    "target": "flip",
+    "enabled": true
+  },
+  {
+    "id": "fleetio",
+    "name": "Fleetio",
+    "type": "greenhouse",
+    "target": "fleetio",
+    "enabled": true
+  },
+  {
+    "id": "fiverr",
+    "name": "Fiverr",
+    "type": "smartrecruiters",
+    "target": "fiverr",
+    "enabled": true
+  },
+  {
+    "id": "godaddy",
+    "name": "Godaddy",
+    "type": "greenhouse",
+    "target": "godaddy",
+    "enabled": true
+  },
+  {
+    "id": "gitbook",
+    "name": "Gitbook",
+    "type": "ashby",
+    "target": "gitbook",
+    "enabled": true
+  },
+  {
+    "id": "gohiring",
+    "name": "Gohiring",
+    "type": "greenhouse",
+    "target": "gohiring",
+    "enabled": true
+  },
+  {
+    "id": "gremlin",
+    "name": "Gremlin",
+    "type": "greenhouse",
+    "target": "gremlin",
+    "enabled": true
+  },
+  {
+    "id": "hudl",
+    "name": "Hudl",
+    "type": "greenhouse",
+    "target": "hudl",
+    "enabled": true
+  },
+  {
+    "id": "headway",
+    "name": "Headway",
+    "type": "ashby",
+    "target": "headway",
+    "enabled": true
+  },
+  {
+    "id": "instructure",
+    "name": "Instructure",
+    "type": "ashby",
+    "target": "instructure",
+    "enabled": true
+  },
+  {
+    "id": "intevity",
+    "name": "Intevity",
+    "type": "smartrecruiters",
+    "target": "intevity",
+    "enabled": true
+  },
+  {
+    "id": "joor",
+    "name": "Joor",
+    "type": "ashby",
+    "target": "joor",
+    "enabled": true
+  },
+  {
+    "id": "karat",
+    "name": "Karat",
+    "type": "greenhouse",
+    "target": "karat",
+    "enabled": true
+  },
+  {
+    "id": "kentik",
+    "name": "Kentik",
+    "type": "greenhouse",
+    "target": "kentik",
+    "enabled": true
+  },
+  {
+    "id": "kestra",
+    "name": "Kestra",
+    "type": "ashby",
+    "target": "kestra",
+    "enabled": true
+  },
+  {
+    "id": "kindred",
+    "name": "Kindred",
+    "type": "ashby",
+    "target": "kindred",
+    "enabled": true
+  },
+  {
+    "id": "labelbox",
+    "name": "Labelbox",
+    "type": "greenhouse",
+    "target": "labelbox",
+    "enabled": true
+  },
+  {
+    "id": "lightspeed",
+    "name": "Lightspeed",
+    "type": "ashby",
+    "target": "lightspeed",
+    "enabled": true
+  },
+  {
+    "id": "lifen",
+    "name": "Lifen",
+    "type": "ashby",
+    "target": "lifen",
+    "enabled": true
+  },
+  {
+    "id": "liveperson",
+    "name": "Liveperson",
+    "type": "greenhouse",
+    "target": "liveperson",
+    "enabled": true
+  },
+  {
+    "id": "luxor",
+    "name": "Luxor",
+    "type": "ashby",
+    "target": "luxor",
+    "enabled": true
+  },
+  {
+    "id": "logrocket",
+    "name": "Logrocket",
+    "type": "lever",
+    "target": "logrocket",
+    "enabled": true
+  },
+  {
+    "id": "mailerlite",
+    "name": "Mailerlite",
+    "type": "recruitee",
+    "target": "mailerlite",
+    "enabled": true
+  },
+  {
+    "id": "madewithlove",
+    "name": "Madewithlove",
+    "type": "recruitee",
+    "target": "madewithlove",
+    "enabled": true
+  },
+  {
+    "id": "meridianlink",
+    "name": "Meridianlink",
+    "type": "ashby",
+    "target": "meridianlink",
+    "enabled": true
+  },
+  {
+    "id": "metalab",
+    "name": "Metalab",
+    "type": "greenhouse",
+    "target": "metalab",
+    "enabled": true
+  },
+  {
+    "id": "mindful",
+    "name": "Mindful",
+    "type": "lever",
+    "target": "mindful",
+    "enabled": true
+  },
+  {
+    "id": "nearform",
+    "name": "Nearform",
+    "type": "greenhouse",
+    "target": "nearform",
+    "enabled": true
+  },
+  {
+    "id": "nuna",
+    "name": "Nuna",
+    "type": "ashby",
+    "target": "nuna",
+    "enabled": true
+  },
+  {
+    "id": "oddball",
+    "name": "Oddball",
+    "type": "greenhouse",
+    "target": "oddball",
+    "enabled": true
+  },
+  {
+    "id": "olo",
+    "name": "Olo",
+    "type": "lever",
+    "target": "olo",
+    "enabled": true
+  },
+  {
+    "id": "openrouter",
+    "name": "Openrouter",
+    "type": "ashby",
+    "target": "openrouter",
+    "enabled": true
+  },
+  {
+    "id": "openzeppelin",
+    "name": "Openzeppelin",
+    "type": "greenhouse",
+    "target": "openzeppelin",
+    "enabled": true
+  },
+  {
+    "id": "paypay",
+    "name": "Paypay",
+    "type": "greenhouse",
+    "target": "paypay",
+    "enabled": true
+  },
+  {
+    "id": "payscale",
+    "name": "Payscale",
+    "type": "ashby",
+    "target": "payscale",
+    "enabled": true
+  },
+  {
+    "id": "percona",
+    "name": "Percona",
+    "type": "ashby",
+    "target": "percona",
+    "enabled": true
+  },
+  {
+    "id": "prelude",
+    "name": "Prelude",
+    "type": "ashby",
+    "target": "prelude",
+    "enabled": true
+  },
+  {
+    "id": "primer",
+    "name": "Primer",
+    "type": "ashby",
+    "target": "primer",
+    "enabled": true
+  },
+  {
+    "id": "procurify",
+    "name": "Procurify",
+    "type": "ashby",
+    "target": "procurify",
+    "enabled": true
+  },
+  {
+    "id": "quora",
+    "name": "Quora",
+    "type": "ashby",
+    "target": "quora",
+    "enabled": true
+  },
+  {
+    "id": "recharge",
+    "name": "Recharge",
+    "type": "ashby",
+    "target": "recharge",
+    "enabled": true
+  },
+  {
+    "id": "raft",
+    "name": "Raft",
+    "type": "greenhouse",
+    "target": "raft",
+    "enabled": true
+  },
+  {
+    "id": "resend",
+    "name": "Resend",
+    "type": "ashby",
+    "target": "resend",
+    "enabled": true
+  },
+  {
+    "id": "revenuecat",
+    "name": "Revenuecat",
+    "type": "ashby",
+    "target": "revenuecat",
+    "enabled": true
+  },
+  {
+    "id": "renofi",
+    "name": "Renofi",
+    "type": "lever",
+    "target": "renofi",
+    "enabled": true
+  },
+  {
+    "id": "scandit",
+    "name": "Scandit",
+    "type": "greenhouse",
+    "target": "scandit",
+    "enabled": true
+  },
+  {
+    "id": "securityscorecard",
+    "name": "Securityscorecard",
+    "type": "greenhouse",
+    "target": "securityscorecard",
+    "enabled": true
+  },
+  {
+    "id": "spruce",
+    "name": "Spruce",
+    "type": "ashby",
+    "target": "spruce",
+    "enabled": true
+  },
+  {
+    "id": "streamnative",
+    "name": "Streamnative",
+    "type": "greenhouse",
+    "target": "streamnative",
+    "enabled": true
+  },
+  {
+    "id": "teamsnap",
+    "name": "Teamsnap",
+    "type": "lever",
+    "target": "teamsnap",
+    "enabled": true
+  },
+  {
+    "id": "testgorilla",
+    "name": "Testgorilla",
+    "type": "ashby",
+    "target": "testgorilla",
+    "enabled": true
+  },
+  {
+    "id": "thorn",
+    "name": "Thorn",
+    "type": "greenhouse",
+    "target": "thorn",
+    "enabled": true
+  },
+  {
+    "id": "tide",
+    "name": "Tide",
+    "type": "greenhouse",
+    "target": "tide",
+    "enabled": true
+  },
+  {
+    "id": "turing",
+    "name": "Turing",
+    "type": "greenhouse",
+    "target": "turing",
+    "enabled": true
+  },
+  {
+    "id": "truelogic",
+    "name": "Truelogic",
+    "type": "ashby",
+    "target": "truelogic",
+    "enabled": true
+  },
+  {
+    "id": "turtlemint",
+    "name": "Turtlemint",
+    "type": "smartrecruiters",
+    "target": "turtlemint",
+    "enabled": true
+  },
+  {
+    "id": "udacity",
+    "name": "Udacity",
+    "type": "greenhouse",
+    "target": "udacity",
+    "enabled": true
+  },
+  {
+    "id": "valimail",
+    "name": "Valimail",
+    "type": "greenhouse",
+    "target": "valimail",
+    "enabled": true
+  },
+  {
+    "id": "vshn",
+    "name": "Vshn",
+    "type": "recruitee",
+    "target": "vshn",
+    "enabled": true
+  },
+  {
+    "id": "webfx",
+    "name": "Webfx",
+    "type": "ashby",
+    "target": "webfx",
+    "enabled": true
+  },
+  {
+    "id": "wizeline",
+    "name": "Wizeline",
+    "type": "greenhouse",
+    "target": "wizeline",
+    "enabled": true
+  },
+  {
+    "id": "yazio",
+    "name": "Yazio",
+    "type": "ashby",
+    "target": "yazio",
+    "enabled": true
+  },
+  {
+    "id": "workos",
+    "name": "Workos",
+    "type": "ashby",
+    "target": "workos",
+    "enabled": true
+  },
+  {
+    "id": "cloudbeds",
+    "name": "Cloudbeds",
+    "type": "greenhouse",
+    "target": "cloudbeds",
+    "enabled": true
+  },
+  {
+    "id": "ghost",
+    "name": "Ghost",
+    "type": "greenhouse",
+    "target": "ghost",
+    "enabled": true
+  },
+  {
+    "id": "gradle",
+    "name": "Gradle",
+    "type": "greenhouse",
+    "target": "gradle",
+    "enabled": true
+  },
+  {
+    "id": "upwork",
+    "name": "Upwork",
+    "type": "greenhouse",
+    "target": "upwork",
+    "enabled": true
+  },
+  {
+    "id": "wikimedia",
+    "name": "Wikimedia",
+    "type": "greenhouse",
+    "target": "wikimedia",
+    "enabled": true
+  },
+  {
+    "id": "saasgroup",
+    "name": "SaasGroup",
+    "type": "greenhouse",
+    "target": "saasgroup",
+    "enabled": true
+  },
+  {
+    "id": "remotive",
+    "name": "Remotive",
+    "type": "smartrecruiters",
+    "target": "remotive",
+    "enabled": true
+  },
+  {
+    "id": "poolside",
+    "name": "Poolside",
+    "type": "ashby",
+    "target": "poolside",
+    "enabled": true
+  },
+  {
+    "id": "suno",
+    "name": "Suno",
+    "type": "ashby",
+    "target": "suno",
+    "enabled": true
+  },
+  {
+    "id": "heygen",
+    "name": "HeyGen",
+    "type": "greenhouse",
+    "target": "heygen",
+    "enabled": true
+  },
+  {
+    "id": "udio",
+    "name": "Udio",
+    "type": "greenhouse",
+    "target": "udio",
+    "enabled": true
+  },
+  {
+    "id": "ro",
+    "name": "Ro",
+    "type": "lever",
+    "target": "ro",
+    "enabled": true
+  },
+  {
+    "id": "ideogram",
+    "name": "Ideogram",
+    "type": "ashby",
+    "target": "ideogram",
+    "enabled": true
+  },
+  {
+    "id": "tavus",
+    "name": "Tavus",
+    "type": "ashby",
+    "target": "tavus",
+    "enabled": true
+  },
+  {
+    "id": "pika",
+    "name": "Pika",
+    "type": "ashby",
+    "target": "pika",
+    "enabled": true
+  },
+  {
+    "id": "descript",
+    "name": "Descript",
+    "type": "greenhouse",
+    "target": "descript",
+    "enabled": true
+  },
+  {
+    "id": "etched",
+    "name": "Etched",
+    "type": "ashby",
+    "target": "etched",
+    "enabled": true
+  },
+  {
+    "id": "lumaai",
+    "name": "Luma AI",
+    "type": "ashby",
+    "target": "lumaai",
+    "enabled": true
+  },
+  {
+    "id": "tenstorrent",
+    "name": "Tenstorrent",
+    "type": "greenhouse",
+    "target": "tenstorrent",
+    "enabled": true
+  },
+  {
+    "id": "upbound",
+    "name": "Upbound",
+    "type": "greenhouse",
+    "target": "upbound",
+    "enabled": true
+  },
+  {
+    "id": "cognition",
+    "name": "Cognition",
+    "type": "ashby",
+    "target": "cognition",
+    "enabled": true
+  },
+  {
+    "id": "depot",
+    "name": "Depot",
+    "type": "ashby",
+    "target": "depot",
+    "enabled": true
+  },
+  {
+    "id": "cerebras",
+    "name": "Cerebras",
+    "type": "ashby",
+    "target": "cerebras",
+    "enabled": true
+  },
+  {
+    "id": "tigera",
+    "name": "Tigera",
+    "type": "greenhouse",
+    "target": "tigera",
+    "enabled": true
+  },
+  {
+    "id": "lightmatter",
+    "name": "Lightmatter",
+    "type": "greenhouse",
+    "target": "lightmatter",
+    "enabled": true
+  },
+  {
+    "id": "cred",
+    "name": "CRED",
+    "type": "lever",
+    "target": "cred",
+    "enabled": true
+  },
+  {
+    "id": "groww",
+    "name": "Groww",
+    "type": "greenhouse",
+    "target": "groww",
+    "enabled": true
+  },
+  {
+    "id": "navi",
+    "name": "Navi",
+    "type": "ashby",
+    "target": "navi",
+    "enabled": true
+  },
+  {
+    "id": "slice",
+    "name": "Slice",
+    "type": "greenhouse",
+    "target": "slice",
+    "enabled": true
+  },
+  {
+    "id": "meesho",
+    "name": "Meesho",
+    "type": "lever",
+    "target": "meesho",
+    "enabled": true
+  },
+  {
+    "id": "inmobi",
+    "name": "InMobi",
+    "type": "greenhouse",
+    "target": "inmobi",
+    "enabled": true
+  },
+  {
+    "id": "cars24",
+    "name": "Cars24",
+    "type": "smartrecruiters",
+    "target": "cars24",
+    "enabled": true
+  },
+  {
+    "id": "porter",
+    "name": "Porter",
+    "type": "greenhouse",
+    "target": "porter",
+    "enabled": true
+  },
+  {
+    "id": "highradius",
+    "name": "HighRadius",
+    "type": "greenhouse",
+    "target": "highradius",
+    "enabled": true
+  },
+  {
+    "id": "oyster",
+    "name": "Oyster HR",
+    "type": "ashby",
+    "target": "oyster",
+    "enabled": true
+  },
+  {
+    "id": "druva",
+    "name": "Druva",
+    "type": "greenhouse",
+    "target": "druva",
+    "enabled": true
+  },
+  {
+    "id": "betterhelp",
+    "name": "BetterHelp",
+    "type": "greenhouse",
+    "target": "betterhelp",
+    "enabled": true
+  },
+  {
+    "id": "talkspace",
+    "name": "Talkspace",
+    "type": "greenhouse",
+    "target": "talkspace",
+    "enabled": true
+  },
+  {
+    "id": "carrotfertility",
+    "name": "Carrot Fertility",
+    "type": "greenhouse",
+    "target": "carrotfertility",
+    "enabled": true
+  },
+  {
+    "id": "multiplier",
+    "name": "Multiplier",
+    "type": "recruitee",
+    "target": "multiplier",
+    "enabled": true
+  },
+  {
+    "id": "servicenow",
+    "name": "ServiceNow",
+    "type": "smartrecruiters",
+    "target": "servicenow",
+    "enabled": true
+  },
+  {
+    "id": "westerndigital",
+    "name": "Western Digital",
+    "type": "smartrecruiters",
+    "target": "westerndigital",
+    "enabled": true
+  },
+  {
+    "id": "adzuna",
+    "name": "Adzuna",
+    "type": "recruitee",
+    "target": "adzuna",
+    "enabled": true
+  },
+  {
+    "id": "alan",
+    "name": "Alan",
+    "type": "ashby",
+    "target": "alan",
+    "enabled": true
+  },
+  {
+    "id": "aha",
+    "name": "Aha",
+    "type": "workable",
+    "target": "aha",
+    "enabled": true
+  },
+  {
+    "id": "anomali",
+    "name": "Anomali",
+    "type": "lever",
+    "target": "anomali",
+    "enabled": true
+  },
+  {
+    "id": "ifit",
+    "name": "Ifit",
+    "type": "greenhouse",
+    "target": "ifit",
+    "enabled": true
+  },
+  {
+    "id": "superside",
+    "name": "Superside",
+    "type": "lever",
+    "target": "superside",
+    "enabled": true
+  },
+  {
+    "id": "kahoot",
+    "name": "Kahoot!",
+    "type": "workable",
+    "target": "kahoot",
+    "enabled": true
+  },
+  {
+    "id": "celonis",
+    "name": "Celonis",
+    "type": "greenhouse",
+    "target": "celonis",
+    "enabled": true
+  },
+  {
+    "id": "deliveryhero",
+    "name": "Delivery Hero",
+    "type": "smartrecruiters",
+    "target": "deliveryhero",
+    "enabled": true
+  },
+  {
+    "id": "personio",
+    "name": "Personio",
+    "type": "recruitee",
+    "target": "personio",
+    "enabled": true
+  },
+  {
+    "id": "trustpilot",
+    "name": "Trustpilot",
+    "type": "greenhouse",
+    "target": "trustpilot",
+    "enabled": true
+  },
+  {
+    "id": "babbel",
+    "name": "Babbel",
+    "type": "ashby",
+    "target": "babbel",
+    "enabled": true
+  },
+  {
+    "id": "supercell",
+    "name": "Supercell",
+    "type": "ashby",
+    "target": "supercell",
+    "enabled": true
+  },
+  {
+    "id": "traderepublic",
+    "name": "Trade Republic",
+    "type": "greenhouse",
+    "target": "traderepublic",
+    "enabled": true
+  },
+  {
+    "id": "mollie",
+    "name": "Mollie",
+    "type": "ashby",
+    "target": "mollie",
+    "enabled": true
+  },
+  {
+    "id": "deepl",
+    "name": "DeepL",
+    "type": "ashby",
+    "target": "deepl",
+    "enabled": true
+  },
+  {
+    "id": "wolt",
+    "name": "Wolt",
+    "type": "greenhouse",
+    "target": "wolt",
+    "enabled": true
+  },
+  {
+    "id": "blablacar",
+    "name": "BlaBlaCar",
+    "type": "lever",
+    "target": "blablacar",
+    "enabled": true
+  },
+  {
+    "id": "n26",
+    "name": "N26",
+    "type": "greenhouse",
+    "target": "n26",
+    "enabled": true
+  },
+  {
+    "id": "hex",
+    "name": "Hex",
+    "type": "ashby",
+    "target": "hex",
+    "enabled": true
+  },
+  {
+    "id": "gamma",
+    "name": "Gamma",
+    "type": "ashby",
+    "target": "gamma",
+    "enabled": true
+  },
+  {
+    "id": "cube",
+    "name": "Cube",
+    "type": "ashby",
+    "target": "cube",
+    "enabled": true
+  },
+  {
+    "id": "customerio",
+    "name": "Customer.io",
+    "type": "greenhouse",
+    "target": "customerio",
+    "enabled": true
+  },
+  {
+    "id": "hightouch",
+    "name": "Hightouch",
+    "type": "ashby",
+    "target": "hightouch",
+    "enabled": true
+  },
+  {
+    "id": "deepnote",
+    "name": "Deepnote",
+    "type": "ashby",
+    "target": "deepnote",
+    "enabled": true
+  },
+  {
+    "id": "lightdash",
+    "name": "Lightdash",
+    "type": "ashby",
+    "target": "lightdash",
+    "enabled": true
+  },
+  {
+    "id": "knock",
+    "name": "Knock",
+    "type": "ashby",
+    "target": "knock",
+    "enabled": true
+  },
+  {
+    "id": "bigid",
+    "name": "BigID",
+    "type": "greenhouse",
+    "target": "bigid",
+    "enabled": true
+  },
+  {
+    "id": "metabase",
+    "name": "Metabase",
+    "type": "lever",
+    "target": "metabase",
+    "enabled": true
+  },
+  {
+    "id": "onetrust",
+    "name": "OneTrust",
+    "type": "greenhouse",
+    "target": "onetrust",
+    "enabled": true
+  },
+  {
+    "id": "armorcode",
+    "name": "ArmorCode",
+    "type": "greenhouse",
+    "target": "armorcode",
+    "enabled": true
+  },
+  {
+    "id": "apiiro",
+    "name": "Apiiro",
+    "type": "greenhouse",
+    "target": "apiiro",
+    "enabled": true
+  },
+  {
+    "id": "bunq",
+    "name": "bunq",
+    "type": "recruitee",
+    "target": "bunq",
+    "enabled": true
+  },
+  {
+    "id": "alpaca",
+    "name": "Alpaca",
+    "type": "greenhouse",
+    "target": "alpaca",
+    "enabled": true
+  },
+  {
+    "id": "drivewealth",
+    "name": "DriveWealth",
+    "type": "greenhouse",
+    "target": "drivewealth",
+    "enabled": true
+  },
+  {
+    "id": "upguard",
+    "name": "UpGuard",
+    "type": "ashby",
+    "target": "upguard",
+    "enabled": true
+  },
+  {
+    "id": "datagrail",
+    "name": "DataGrail",
+    "type": "greenhouse",
+    "target": "datagrail",
+    "enabled": true
+  },
+  {
+    "id": "lithic",
+    "name": "Lithic",
+    "type": "greenhouse",
+    "target": "lithic",
+    "enabled": true
+  },
+  {
+    "id": "column",
+    "name": "Column",
+    "type": "ashby",
+    "target": "column",
+    "enabled": true
+  },
+  {
+    "id": "sardine",
+    "name": "Sardine",
+    "type": "ashby",
+    "target": "sardine",
+    "enabled": true
+  },
+  {
+    "id": "endorlabs",
+    "name": "Endor Labs",
+    "type": "greenhouse",
+    "target": "endorlabs",
+    "enabled": true
+  },
+  {
+    "id": "securiti",
+    "name": "Securiti",
+    "type": "smartrecruiters",
+    "target": "securiti",
+    "enabled": true
+  },
+  {
+    "id": "idnow",
+    "name": "IDnow",
+    "type": "greenhouse",
+    "target": "idnow",
+    "enabled": true
+  },
+  {
+    "id": "veriff",
+    "name": "Veriff",
+    "type": "greenhouse",
+    "target": "veriff",
+    "enabled": true
+  },
+  {
+    "id": "clearco",
+    "name": "Clearco",
+    "type": "ashby",
+    "target": "clearco",
+    "enabled": true
+  },
+  {
+    "id": "trulioo",
+    "name": "Trulioo",
+    "type": "ashby",
+    "target": "trulioo",
+    "enabled": true
+  },
+  {
+    "id": "jumio",
+    "name": "Jumio",
+    "type": "smartrecruiters",
+    "target": "jumio",
+    "enabled": true
+  },
+  {
+    "id": "socure",
+    "name": "Socure",
+    "type": "ashby",
+    "target": "socure",
+    "enabled": true
+  },
+  {
+    "id": "intent",
+    "name": "Intent",
+    "type": "recruitee",
+    "target": "intent",
+    "enabled": true
+  },
+  {
+    "id": "namecheap",
+    "name": "Namecheap",
+    "type": "recruitee",
+    "target": "namecheap",
+    "enabled": true
+  },
+  {
+    "id": "sonatype",
+    "name": "Sonatype",
+    "type": "lever",
+    "target": "sonatype",
+    "enabled": true
+  },
+  {
+    "id": "zensurance",
+    "name": "Zensurance",
+    "type": "lever",
+    "target": "zensurance",
+    "enabled": true
+  },
+  {
+    "id": "sysdig",
+    "name": "Sysdig",
+    "type": "lever",
+    "target": "sysdig",
+    "enabled": true
+  },
+  {
+    "id": "sanity",
+    "name": "Sanity",
+    "type": "ashby",
+    "target": "https://api.ashbyhq.com/posting-api/job-board/sanity",
+    "enabled": true,
+    "jobCount": 34
+  },
+  {
+    "id": "writer",
+    "name": "Writer",
+    "type": "ashby",
+    "target": "https://api.ashbyhq.com/posting-api/job-board/writer",
+    "enabled": true,
+    "jobCount": 48
+  },
+  {
+    "id": "stabilityai",
+    "name": "Stability AI",
+    "type": "greenhouse",
+    "target": "https://boards-api.greenhouse.io/v1/boards/stabilityai/jobs?content=true",
+    "enabled": true,
+    "jobCount": 6
+  },
+  {
+    "id": "montecarlodata",
+    "name": "Monte Carlo",
+    "type": "ashby",
+    "target": "https://api.ashbyhq.com/posting-api/job-board/montecarlodata",
+    "enabled": true,
+    "jobCount": 6
+  },
+  {
+    "id": "motherduck",
+    "name": "MotherDuck",
+    "type": "ashby",
+    "target": "https://api.ashbyhq.com/posting-api/job-board/motherduck",
+    "enabled": true,
+    "jobCount": 3
+  },
+  {
+    "id": "snorkelai",
+    "name": "Snorkel AI",
+    "type": "greenhouse",
+    "target": "https://boards-api.greenhouse.io/v1/boards/snorkelai/jobs?content=true",
+    "enabled": true,
+    "jobCount": 39
+  },
+  {
+    "id": "roboflow",
+    "name": "Roboflow",
+    "type": "ashby",
+    "target": "https://api.ashbyhq.com/posting-api/job-board/roboflow",
+    "enabled": true,
+    "jobCount": 36
+  },
+  {
+    "id": "voxel51",
+    "name": "Voxel51",
+    "type": "greenhouse",
+    "target": "https://boards-api.greenhouse.io/v1/boards/voxel51/jobs?content=true",
+    "enabled": true,
+    "jobCount": 2
+  },
+  {
+    "id": "twingate",
+    "name": "Twingate",
+    "type": "lever",
+    "target": "https://api.lever.co/v0/postings/twingate?mode=json",
+    "enabled": true,
+    "jobCount": 1
+  },
+  {
+    "id": "pennylane",
+    "name": "Pennylane",
+    "type": "ashby",
+    "target": "https://api.ashbyhq.com/posting-api/job-board/pennylane",
+    "enabled": true,
+    "jobCount": 149
+  },
+  {
+    "id": "swile",
+    "name": "Swile",
+    "type": "lever",
+    "target": "https://api.lever.co/v0/postings/swile?mode=json",
+    "enabled": true,
+    "jobCount": 31
+  },
+  {
+    "id": "backmarket",
+    "name": "Back Market",
+    "type": "ashby",
+    "target": "https://api.ashbyhq.com/posting-api/job-board/backmarket",
+    "enabled": true,
+    "jobCount": 34
+  },
+  {
+    "id": "brevo",
+    "name": "Sendinblue / Brevo",
+    "type": "lever",
+    "target": "https://api.lever.co/v0/postings/brevo?mode=json",
+    "enabled": true,
+    "jobCount": 22
+  },
+  {
+    "id": "dataiku",
+    "name": "Dataiku",
+    "type": "greenhouse",
+    "target": "https://boards-api.greenhouse.io/v1/boards/dataiku/jobs?content=true",
+    "enabled": true,
+    "jobCount": 22
+  },
+  {
+    "id": "clerk",
+    "name": "Clerk",
+    "type": "ashby",
+    "target": "https://api.ashbyhq.com/posting-api/job-board/clerk",
+    "enabled": true,
+    "jobCount": 2
+  },
+  {
+    "id": "tinybird",
+    "name": "Tinybird",
+    "type": "lever",
+    "target": "https://api.lever.co/v0/postings/tinybird?mode=json",
+    "enabled": true,
+    "jobCount": 1
+  }
+]

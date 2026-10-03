@@ -1,0 +1,156 @@
+[
+  {
+    "id": "greenhouse-stripe",
+    "name": "Stripe (Greenhouse)",
+    "type": "greenhouse",
+    "target": "stripe",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-datadog",
+    "name": "Datadog (Greenhouse)",
+    "type": "greenhouse",
+    "target": "datadog",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-cloudflare",
+    "name": "Cloudflare (Greenhouse)",
+    "type": "greenhouse",
+    "target": "cloudflare",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-figma",
+    "name": "Figma (Greenhouse)",
+    "type": "greenhouse",
+    "target": "figma",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-airbnb",
+    "name": "Airbnb (Greenhouse)",
+    "type": "greenhouse",
+    "target": "airbnb",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-reddit",
+    "name": "Reddit (Greenhouse)",
+    "type": "greenhouse",
+    "target": "reddit",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-discord",
+    "name": "Discord (Greenhouse)",
+    "type": "greenhouse",
+    "target": "discord",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-pinterest",
+    "name": "Pinterest (Greenhouse)",
+    "type": "greenhouse",
+    "target": "pinterest",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-robinhood",
+    "name": "Robinhood (Greenhouse)",
+    "type": "greenhouse",
+    "target": "robinhood",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-brex",
+    "name": "Brex (Greenhouse)",
+    "type": "greenhouse",
+    "target": "brex",
+    "enabled": true
+  },
+  {
+    "id": "greenhouse-gitlab",
+    "name": "GitLab (Greenhouse)",
+    "type": "greenhouse",
+    "target": "gitlab",
+    "enabled": true
+  },
+  {
+    "id": "ashby-openai",
+    "name": "OpenAI (Ashby)",
+    "type": "ashby",
+    "target": "openai",
+    "enabled": true
+  },
+  {
+    "id": "ashby-ramp",
+    "name": "Ramp (Ashby)",
+    "type": "ashby",
+    "target": "ramp",
+    "enabled": true
+  },
+  {
+    "id": "ashby-linear",
+    "name": "Linear (Ashby)",
+    "type": "ashby",
+    "target": "linear",
+    "enabled": true
+  },
+  {
+    "id": "ashby-perplexity",
+    "name": "Perplexity AI (Ashby)",
+    "type": "ashby",
+    "target": "perplexity",
+    "enabled": true
+  },
+  {
+    "id": "ashby-baseten",
+    "name": "Baseten (Ashby)",
+    "type": "ashby",
+    "target": "baseten",
+    "enabled": true
+  },
+  {
+    "id": "ashby-elevenlabs",
+    "name": "ElevenLabs (Ashby)",
+    "type": "ashby",
+    "target": "elevenlabs",
+    "enabled": true
+  },
+  {
+    "id": "lever-palantir",
+    "name": "Palantir (Lever)",
+    "type": "lever",
+    "target": "palantir",
+    "enabled": true
+  },
+  {
+    "id": "api-remotive",
+    "name": "Remotive Remote Jobs API",
+    "type": "remotive",
+    "target": "https://remotive.com/api/remote-jobs?limit=100",
+    "enabled": true
+  },
+  {
+    "id": "api-arbeitnow",
+    "name": "Arbeitnow Job Board API",
+    "type": "arbeitnow",
+    "target": "https://www.arbeitnow.com/api/job-board-api",
+    "enabled": true
+  },
+  {
+    "id": "api-remoteok",
+    "name": "RemoteOK API",
+    "type": "remoteok",
+    "target": "https://remoteok.com/api",
+    "enabled": true
+  },
+  {
+    "id": "rss-weworkremotely",
+    "name": "We Work Remotely (Programming RSS)",
+    "type": "weworkremotely",
+    "target": "https://weworkremotely.com/categories/remote-programming-jobs.rss",
+    "enabled": true
+  }
+]
