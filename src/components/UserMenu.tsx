@@ -222,6 +222,20 @@ export default function UserMenu({
             </div>
             <div className="p-1.5 space-y-0.5">
               <Link
+                href="/dashboard"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-medium"
+              >
+                <span>Dashboard</span>
+              </Link>
+              <Link
+                href="/jobs"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-medium"
+              >
+                <span>Browse All Jobs</span>
+              </Link>
+              <Link
                 href="/tracker"
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-medium"
@@ -234,13 +248,6 @@ export default function UserMenu({
                 className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-medium"
               >
                 <span>Resume & Facts (ATS)</span>
-              </Link>
-              <Link
-                href="/job-search/all"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-medium"
-              >
-                <span>Browse All Jobs</span>
               </Link>
               <Link
                 href="/radar"

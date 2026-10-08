@@ -1,702 +1,364 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 import BrandIcon from "@/components/BrandIcon";
 import DotPattern from "@/components/DotPattern";
+import AvatarStack from "@/components/AvatarStack";
+import ProductScreenshotMock from "@/components/ProductScreenshotMock";
+import { FaqHomeItem } from "@/components/FaqItems";
+import { WhiteHeroButton } from "@/components/Buttons";
+import CategorySelectModal from "@/components/CategorySelectModal";
 import Footer from "@/components/Footer";
-import { getAuthUser } from "@/lib/auth/session";
-import {
-  ArrowRight,
-  Check,
-  X,
-  Sparkles,
-  ShieldCheck,
-  Briefcase,
-  Target,
-  FileText,
-  LayoutGrid,
-  Globe,
-  Lock,
-  ChevronDown,
-  Building,
-  MapPin,
-  Calendar,
-  ExternalLink,
-  HelpCircle
-} from "lucide-react";
+import WireframeDottedGlobe from "@/components/ui/wireframe-dotted-globe";
+import GlobeLiveStats from "@/components/GlobeLiveStats";
+import { Testimonials } from "@/components/testimonials";
+import { TestimonialMarqueeDemo } from "@/components/ui/marquee-01";
+import UserMenu from "@/components/UserMenu";
+import { X, Check, ArrowRight } from "lucide-react";
 
 export default function HomePage() {
-  const router = useRouter();
-
-  // Redirect signed-in users directly to Dashboard
-  useEffect(() => {
-    getAuthUser().then((user) => {
-      if (user) {
-        router.replace("/dashboard");
-      }
-    });
-  }, [router]);
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-white text-[#09090B] flex flex-col selection:bg-blue-100 selection:text-blue-900">
       {/* ========================================================================= */}
-      {/* 1. PUBLIC HEADER                                                          */}
+      {/* 1. HERO SECTION (Blue #2563EB, centered) with overlay header              */}
       {/* ========================================================================= */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center p-0.5 shadow-xs border border-gray-100">
-              <BrandIcon className="w-7 h-7" />
-            </div>
-            <span className="text-xl font-black text-blue-600 tracking-tight">CareerMonke</span>
+      <section className="relative bg-[#2563EB] text-white pt-6 overflow-hidden">
+        {/* Background Subtle Gradient & Dots */}
+        <div className="absolute inset-0 pointer-events-none opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]" />
+
+        {/* Minimal Hero Header (no nav bar, sits directly on blue hero) */}
+        <div className="w-full max-w-[1340px] mx-auto px-4 sm:px-10 lg:px-14 xl:px-16 pt-4 sm:pt-6 mb-8 sm:mb-14 lg:mb-16 flex items-center justify-between relative z-20">
+          {/* Left: Round white logo circle */}
+          <Link
+            href="/"
+            aria-label="CareerMonke Home"
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white flex items-center justify-center shadow-lg transition-transform hover:scale-105 p-1.5 min-h-[44px] min-w-[44px]"
+          >
+            <BrandIcon className="w-11 h-11 sm:w-12 sm:h-12" />
           </Link>
 
-          {/* Nav links */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
-            <a href="#how-it-works" className="hover:text-blue-600 transition-colors">
-              How it works
-            </a>
-            <a href="#preview" className="hover:text-blue-600 transition-colors">
-              Jobs preview
-            </a>
-            <a href="#pricing" className="hover:text-blue-600 transition-colors">
-              Pricing
-            </a>
-            <Link href="/remote" className="hover:text-blue-600 transition-colors">
-              Resources
-            </Link>
-            <Link href="/worldwide" className="hover:text-blue-600 transition-colors">
-              Companies
-            </Link>
-          </nav>
+          {/* Right: Auth-aware Sign In / User Menu */}
+          <UserMenu />
+        </div>
 
-          {/* Right CTAs */}
-          <div className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-blue-600 px-3 py-2 transition"
+        {/* Hero Content - centered with 16px rhythm and 32px gap above card panel */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-20 flex flex-col items-center">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-[48px] font-bold leading-tight sm:leading-tight text-white max-w-3xl mx-auto tracking-tight">
+            Find jobs not on LinkedIn/Indeed
+          </h1>
+
+          <p className="mt-4 text-white/90 text-sm sm:text-base md:text-lg max-w-xl mx-auto font-normal leading-relaxed">
+            We find jobs posted on company websites.
+          </p>
+
+          <div className="mt-4 flex items-center justify-center w-full max-w-xs sm:max-w-none">
+            <button
+              onClick={() => setModalOpen(true)}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-white text-[#09090B] font-bold text-base sm:text-lg px-8 sm:px-10 py-3.5 sm:py-4 min-h-[48px] rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer"
             >
-              Sign In
-            </Link>
-            <Link
-              href="/signup"
-              className="inline-flex items-center justify-center bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.98] text-white px-4 sm:px-5 py-2.5 min-h-[40px] rounded-xl text-xs sm:text-sm font-bold transition shadow-xs cursor-pointer"
-            >
-              <span>Get started</span>
-              <ArrowRight className="w-3.5 h-3.5 ml-1" />
-            </Link>
+              <span>View Jobs</span>
+              <ArrowRight className="w-5 h-5 ml-0.5 stroke-[2.5]" />
+            </button>
+          </div>
+
+          <div className="mt-4">
+            <AvatarStack
+              peopleCount="8,573"
+              jobsCount="4.5 million"
+              textColor="text-white"
+            />
           </div>
         </div>
-      </header>
 
-      <main className="flex-1">
-        {/* ========================================================================= */}
-        {/* 2. HERO SECTION                                                           */}
-        {/* ========================================================================= */}
-        <section className="relative bg-[#2563EB] text-white pt-16 pb-20 sm:pt-24 sm:pb-28 overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]" />
+        {/* Product Screenshot Mock nested inside hero on blue background, flush with section bottom (32px mt-8 below social-proof line) */}
+        <div className="mt-8 max-w-[960px] mx-auto px-3 sm:px-6 relative z-20 pb-0">
+          {/* Dotted grid pattern behind top-right corner */}
+          <div className="absolute -top-6 -right-1 sm:-top-8 sm:-right-4 pointer-events-none z-0">
+            <DotPattern width={160} height={100} dotColor="rgba(255, 255, 255, 0.45)" rows={5} cols={8} />
+          </div>
 
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-20 flex flex-col items-center space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-white shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Direct ATS Scraping • Updated Every 15 Minutes</span>
+          {/* Dotted grid pattern behind bottom-left corner */}
+          <div className="absolute -bottom-6 -left-1 sm:-bottom-8 sm:-left-4 pointer-events-none z-0">
+            <DotPattern width={160} height={100} dotColor="rgba(255, 255, 255, 0.45)" rows={5} cols={8} />
+          </div>
+
+          <div className="relative z-10">
+            <ProductScreenshotMock />
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 3. PROBLEM VS SOLUTION (Centered H2 + 2 columns)                          */}
+      {/* ========================================================================= */}
+      <section className="pt-20 pb-12 lg:pt-[120px] lg:pb-[90px] max-w-content mx-auto px-6">
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
+          <h2 className="text-3xl font-bold text-[#09090B] sm:text-4xl md:text-[40px] md:leading-[1.2]">
+            Tired of getting auto-rejections?
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {/* Left card: LinkedIn / Indeed */}
+          <div className="bg-white border border-[#E4E4E7] rounded-xl p-7 shadow-sm">
+            <span className="mb-5 block text-xl font-medium text-dark pb-4 border-b border-gray-100">
+              <a href="https://www.linkedin.com/jobs" target="_blank" rel="noreferrer noopener" className="hover:underline">LinkedIn</a>
+              {" / "}
+              <a href="https://www.indeed.com/" target="_blank" rel="noreferrer noopener" className="hover:underline">Indeed</a>
+            </span>
+            <ul className="space-y-4">
+              {[
+                "\"Posted 1 hour ago, over 200 applicants.\"",
+                "Low reply rate for interviews.",
+                "Advertised jobs = low quality jobs.",
+                "Recruiter fees. Companies prefer direct applicants.",
+                "Fake jobs.",
+              ].map((item, idx) => (
+                <li key={idx} className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <X className="w-3.5 h-3.5 text-red-600 stroke-[3]" />
+                  </div>
+                  <span className="text-base text-gray-700 leading-snug">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Right card: CareerMonke */}
+          <div className="bg-white border border-[#E4E4E7] rounded-xl p-7 shadow-sm">
+            <span className="mb-5 block text-xl font-medium text-dark pb-4 border-b border-gray-100">
+              CareerMonke
+            </span>
+            <ul className="space-y-4">
+              {[
+                "Less competition.",
+                "High reply rate for interviews.",
+                "Jobs that aren't being advertised.",
+                "Apply directly to the hiring team.",
+                "Real jobs.",
+              ].map((item, idx) => (
+                <li key={idx} className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
+                  </div>
+                  <span className="text-base text-[#09090B] font-medium leading-snug">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 4. MARQUEE TESTIMONIALS (Dual-row auto-scrolling marquee)                 */}
+      {/* ========================================================================= */}
+      <section className="py-14 sm:py-20 bg-white w-full overflow-hidden border-t border-gray-100">
+        <div className="max-w-3xl mx-auto px-6 text-center mb-10 sm:mb-12">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-blue-100 text-[#2563EB] bg-blue-50/80 mb-3 shadow-xs">
+            <span>Wall of Love</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#09090B] tracking-tight">
+            Loved by job seekers skipping the crowd
+          </h2>
+          <p className="mt-2.5 text-sm sm:text-base text-gray-600 max-w-xl mx-auto">
+            See how professionals bypass recruiter markups and public job board spam to land direct offers.
+          </p>
+        </div>
+        <TestimonialMarqueeDemo />
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 5. CTA BAND (Blue #2563EB, Free Preview style)                            */}
+      {/* ========================================================================= */}
+      <section className="bg-[#2563EB] text-white py-16 sm:py-20 lg:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]" />
+        <div className="max-w-3xl mx-auto px-6 text-center relative z-10 space-y-4 sm:space-y-5">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+            Free Preview
+          </h2>
+          <p className="text-white/90 text-base sm:text-lg max-w-xl mx-auto leading-relaxed font-normal">
+            Find jobs you can&apos;t find on job sites. Start applying directly to companies. No more middle-men!
+          </p>
+          <div className="pt-2">
+            <WhiteHeroButton onClick={() => setModalOpen(true)} className="px-8 min-w-[210px]">
+              View Jobs (Preview Only)
+            </WhiteHeroButton>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 5B. GLOBAL COVERAGE SECTION (Dotted Wireframe Globe + Details)            */}
+      {/* ========================================================================= */}
+      <section className="max-w-6xl mx-auto px-4 py-16 sm:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-10 lg:gap-12">
+          {/* Right-side text block (stacked first on mobile via order-1) */}
+          <div className="order-1 lg:order-2 space-y-5 text-center lg:text-left">
+            <div>
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border border-gray-200 text-gray-700 bg-white shadow-sm">
+                Global coverage
+              </span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-[42px] font-bold text-[#09090B] tracking-tight leading-tight">
+              Hidden jobs from every corner of the map
+            </h2>
+            <p className="text-gray-600 text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
+              We scan company career pages across the globe - from Silicon Valley startups to Bangalore scale-ups - and surface openings before they hit the big job boards.
+            </p>
+            <div className="pt-2 flex justify-center lg:justify-start w-full">
+              <Link
+                href="/radar"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-base sm:text-lg px-8 sm:px-10 py-3.5 sm:py-4 min-h-[48px] rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition-all cursor-pointer"
+              >
+                <span>View Jobs</span>
+                <ArrowRight className="w-5 h-5 ml-0.5 stroke-[2.5]" />
+              </Link>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black leading-tight tracking-tight text-white max-w-3xl">
-              Find jobs directly from company career pages.
-            </h1>
+            {/* LIVE STATS row directly under View Jobs button */}
+            <GlobeLiveStats />
+          </div>
 
-            <p className="text-white/90 text-sm sm:text-base md:text-lg max-w-2xl leading-relaxed">
-              We continuously scan official ATS feeds (Greenhouse, Lever, Ashby, Workday) to uncover open requisitions before they reach crowded public job boards.
-            </p>
+          {/* Left-side globe (stacked below on mobile via order-2) */}
+          <div className="order-2 lg:order-1 w-full max-w-[480px] mx-auto lg:max-w-none">
+            <WireframeDottedGlobe />
+          </div>
+        </div>
+      </section>
 
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md pt-2">
-              <Link
-                href="/signup"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-[#09090B] font-bold text-base px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 active:scale-[0.98] transition cursor-pointer min-h-[48px]"
-              >
-                <span>Get started free</span>
-                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-              </Link>
+      {/* ========================================================================= */}
+      {/* 6. FOUNDER CARD (Centered bordered card ~670px)                           */}
+      {/* ========================================================================= */}
+      <section className="pt-16 pb-12 lg:pt-20 lg:pb-16 max-w-content mx-auto px-6 w-full">
+        <div className="max-w-[670px] mx-auto bg-white border border-[#E4E4E7] rounded-xl p-8 sm:p-10 shadow-sm">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
+            {/* Left: Round photo + My TikTok Videos button */}
+            <div className="flex flex-col items-center flex-shrink-0 space-y-3">
+              <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-blue-500 shadow-md">
+                <Image
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&h=240&q=80"
+                  alt="Roman - Creator of CareerMonke"
+                  fill
+                  className="object-cover"
+                  sizes="112px"
+                />
+              </div>
               <a
-                href="#preview"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-base px-6 py-4 rounded-xl border border-white/20 transition cursor-pointer min-h-[48px]"
+                href="https://tiktok.com"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-gray-700 hover:text-black border border-gray-300 px-3.5 py-2 min-h-[44px] rounded-md hover:bg-gray-50 transition-colors"
               >
-                <span>See sample jobs</span>
+                <span>My TikTok Videos</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </a>
             </div>
 
-            <p className="text-white/70 text-xs pt-2">
-              No credit card required • Connect resume for verified match scores
-            </p>
-          </div>
-        </section>
-
-        {/* ========================================================================= */}
-        {/* 3. PRODUCT PREVIEW (Labelled Sample Data)                                 */}
-        {/* ========================================================================= */}
-        <section id="preview" className="py-16 sm:py-24 max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12 space-y-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
-              Product Preview
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-              What you get inside CareerMonke
-            </h2>
-            <p className="text-slate-600 text-xs sm:text-sm">
-              SAMPLE DATA PREVIEW • Clear fit diagnostics, deterministic gap analysis, and real pipeline tracking.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Card 1: Sample Job with Locked Pro Details */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs space-y-4 flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
-                    Sample Job Card
-                  </span>
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span>88% Sample Fit</span>
-                  </span>
-                </div>
-
-                <div>
-                  <h3 className="font-bold text-base text-slate-900">Senior Full-Stack Engineer</h3>
-                  {/* Company Name (Blurred for Guest) */}
-                  <div className="flex items-center gap-1.5 mt-1 text-xs">
-                    <Building className="w-3.5 h-3.5 text-slate-400" />
-                    <span className="filter blur-[5px] select-none text-slate-700 font-semibold">
-                      Stripe Technologies
-                    </span>
-                    <span className="text-[10px] text-blue-600 font-bold ml-1 flex items-center gap-0.5">
-                      <Lock className="w-2.5 h-2.5" />
-                      <span>Pro</span>
-                    </span>
-                  </div>
-                </div>
-
-                <div className="text-xs text-slate-500 flex items-center gap-3">
-                  <span className="flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-slate-400" />
-                    <span>Worldwide Remote</span>
-                  </span>
-                  <span>•</span>
-                  <span>Scraped 18m ago</span>
-                </div>
-
-                <p className="text-xs text-slate-600 line-clamp-3">
-                  Building next-generation payment APIs and merchant dashboard infrastructure using TypeScript, React, and distributed cloud services.
-                </p>
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-[11px] text-slate-400">Greenhouse ATS Source</span>
-                <Link
-                  href="/signup"
-                  className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1"
-                >
-                  <span>Unlock Details</span>
-                  <ArrowRight className="w-3 h-3" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Card 2: Deterministic Fit Diagnostics */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
-                  Fit Diagnostics
-                </span>
-                <Target className="w-4 h-4 text-blue-600" />
-              </div>
-
-              <div className="space-y-3">
-                <h4 className="font-bold text-sm text-slate-900">Deterministic Match Breakdown</h4>
-                <p className="text-[11px] text-slate-500">
-                  Computed against confirmed resume facts. No hallucinations.
-                </p>
-
-                <div className="space-y-2 pt-1">
-                  <div className="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-100 text-xs">
-                    <span className="font-bold text-emerald-800 block text-[11px] mb-1">
-                      ✓ Why You Fit (Matched Skills)
-                    </span>
-                    <div className="flex flex-wrap gap-1">
-                      {["React", "TypeScript", "Node.js", "PostgreSQL"].map((s) => (
-                        <span key={s} className="bg-white text-emerald-700 px-1.5 py-0.5 rounded text-[10px] font-semibold border border-emerald-200">
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="p-2.5 rounded-xl bg-amber-50/70 border border-amber-100 text-xs">
-                    <span className="font-bold text-amber-800 block text-[11px] mb-1">
-                      ⚠ Skill Gaps to Address
-                    </span>
-                    <div className="flex flex-wrap gap-1">
-                      {["GraphQL", "Distributed Systems"].map((s) => (
-                        <span key={s} className="bg-white text-amber-700 px-1.5 py-0.5 rounded text-[10px] font-semibold border border-amber-200">
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-2 text-[11px] text-slate-400">
-                Formula: Skills (50%) + Title (25%) + Exp (15%) + Remote (10%)
-              </div>
-            </div>
-
-            {/* Card 3: Kanban Application Tracker Sample */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs space-y-4 flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
-                    Application Tracker
-                  </span>
-                  <LayoutGrid className="w-4 h-4 text-blue-600" />
-                </div>
-
-                <h4 className="font-bold text-sm text-slate-900">Personal Pipeline Board</h4>
-                <p className="text-[11px] text-slate-500">
-                  Track direct career page applications through every stage.
-                </p>
-
-                <div className="space-y-2 pt-1">
-                  <div className="p-2 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-between text-xs">
-                    <div className="font-bold text-blue-900">Staff Backend Engineer</div>
-                    <span className="px-2 py-0.5 bg-blue-600 text-white rounded text-[10px] font-bold">
-                      Interview
-                    </span>
-                  </div>
-                  <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-between text-xs">
-                    <div className="font-bold text-emerald-900">Lead Product Architect</div>
-                    <span className="px-2 py-0.5 bg-emerald-600 text-white rounded text-[10px] font-bold">
-                      Applied (Direct)
-                    </span>
-                  </div>
-                  <div className="p-2 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
-                    <div className="font-bold text-slate-700">Senior Cloud Specialist</div>
-                    <span className="px-2 py-0.5 bg-slate-200 text-slate-700 rounded text-[10px] font-bold">
-                      Saved
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 text-[11px] text-slate-400">
-                You apply directly on employer portals — we never auto-submit.
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ========================================================================= */}
-        {/* 4. HOW IT WORKS (3 Clear Steps)                                           */}
-        {/* ========================================================================= */}
-        <section id="how-it-works" className="py-16 sm:py-24 bg-slate-50 border-y border-slate-200/80">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6">
-            <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16 space-y-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
-                Simple Workflow
-              </span>
-              <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-                How CareerMonke Works
-              </h2>
-              <p className="text-slate-600 text-xs sm:text-sm">
-                No recruiter middle-men. No ghost aggregators. Three straightforward steps.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Step 1 */}
-              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs space-y-4">
-                <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-xs">
-                  1
-                </div>
-                <h3 className="font-bold text-base text-slate-900">
-                  Set Preferences & Confirm Resume
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Upload your PDF or Word resume. Our deterministic fact extractor pulls verified skills and timeline for your confirmation. You can also skip and match purely by role goals.
-                </p>
-                <div className="text-[11px] font-semibold text-blue-700 bg-blue-50/70 p-2 rounded-lg">
-                  ✓ Never invents facts or credentials
-                </div>
-              </div>
-
-              {/* Step 2 */}
-              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs space-y-4">
-                <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-xs">
-                  2
-                </div>
-                <h3 className="font-bold text-base text-slate-900">
-                  Discover Live Feeds & Prepare
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Our crawler checks employer ATS systems every 15 minutes. Review deterministic fit diagnostics and generate 1-click tailored ATS cover letters and clean exports.
-                </p>
-                <div className="text-[11px] font-semibold text-blue-700 bg-blue-50/70 p-2 rounded-lg">
-                  ✓ Clean single-column ATS resume export
-                </div>
-              </div>
-
-              {/* Step 3 */}
-              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs space-y-4">
-                <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-xs">
-                  3
-                </div>
-                <h3 className="font-bold text-base text-slate-900">
-                  Apply Directly & Track Pipeline
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Submit directly on the official employer site. We <strong>never automatically blast applications</strong> without your control. Once submitted, confirm and manage notes in your Kanban board.
-                </p>
-                <div className="text-[11px] font-semibold text-emerald-700 bg-emerald-50/70 p-2 rounded-lg">
-                  ✓ 100% direct official application
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ========================================================================= */}
-        {/* 5. KEY FEATURES                                                           */}
-        {/* ========================================================================= */}
-        <section className="py-16 sm:py-24 max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16 space-y-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
-              Full Feature Set
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-              Engineered for the Modern Job Hunt
-            </h2>
-            <p className="text-slate-600 text-xs sm:text-sm">
-              Everything you need to bypass job board spam and get noticed by hiring managers.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-3">
-              <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                <Briefcase className="w-5 h-5" />
-              </div>
-              <h3 className="font-bold text-sm text-slate-900">Direct ATS Postings</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Direct requisitions from Greenhouse, Lever, Ashby, and Workday. No expired ghost jobs or recruiter reposts.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-3">
-              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                <Target className="w-5 h-5" />
-              </div>
-              <h3 className="font-bold text-sm text-slate-900">Deterministic Fit Diagnostics</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Clear 0-100% match scores with exact breakdown of why you fit and specific skill gaps to cover.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-3">
-              <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                <FileText className="w-5 h-5" />
-              </div>
-              <h3 className="font-bold text-sm text-slate-900">ATS Resume & Cover Letter</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                1-click job-tailored cover letter and clean single-column ATS Word/PDF export without tables that break parsers.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-3">
-              <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
-                <LayoutGrid className="w-5 h-5" />
-              </div>
-              <h3 className="font-bold text-sm text-slate-900">Application Kanban Tracker</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Track Saved, Applied, Interview, Offer, and Rejected stages with date logs and personal interview notes.
-              </p>
-            </div>
-          </div>
-
-          {/* Optional Explore Callout: 3D Radar */}
-          <div className="mt-8 p-5 rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-                <span className="font-bold text-sm text-cyan-200">Optional Visual Explore Tool</span>
-              </div>
-              <p className="text-xs text-slate-300">
-                Want to explore tech hiring clusters geographically? Check out our interactive 3D Global Job Radar.
-              </p>
-            </div>
-            <Link
-              href="/radar"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition shadow-xs self-start sm:self-auto"
-            >
-              <Globe className="w-4 h-4" />
-              <span>Explore 3D Radar</span>
-            </Link>
-          </div>
-        </section>
-
-        {/* ========================================================================= */}
-        {/* 6. COVERAGE & REAL REFRESH                                                */}
-        {/* ========================================================================= */}
-        <section className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200/80">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-10">
-              <div className="space-y-4">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
-                  Real Coverage
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-                  Global & Remote Hiring Requisitions
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  We monitor over 500 tech companies and verified remote employers across North America, Europe, India, and worldwide hubs. Listings are updated in real-time batches every 15 minutes.
-                </p>
-
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  <div className="p-3 rounded-xl bg-white border border-slate-200">
-                    <div className="font-bold text-base text-slate-900">500+</div>
-                    <div className="text-[11px] text-slate-500">Connected Career Portals</div>
-                  </div>
-                  <div className="p-3 rounded-xl bg-white border border-slate-200">
-                    <div className="font-bold text-base text-slate-900">15 Mins</div>
-                    <div className="text-[11px] text-slate-500">Ingestion Synchronization</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs space-y-4">
-                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-500">
-                  Supported Categories & Roles
-                </h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {[
-                    "Frontend & React",
-                    "Full-Stack Development",
-                    "Backend (Go, Python, Java)",
-                    "Data Science & AI/ML",
-                    "DevOps & Kubernetes",
-                    "Product Management",
-                    "UI/UX & Product Design",
-                    "Engineering Management",
-                    "Sales & Business Development",
-                    "Operations & Growth"
-                  ].map((cat) => (
-                    <span key={cat} className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700">
-                      {cat}
-                    </span>
-                  ))}
-                </div>
-                <div className="pt-2 text-xs text-slate-500 flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Filtered for active remote eligibility and verified hiring portals.</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ========================================================================= */}
-        {/* 7. FREE VS PRO PRICING                                                    */}
-        {/* ========================================================================= */}
-        <section id="pricing" className="py-16 sm:py-24 max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16 space-y-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
-              Fair Pricing
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-              Transparent Access Rules
-            </h2>
-            <p className="text-slate-600 text-xs sm:text-sm">
-              Explore freely. Upgrade to Pro when you&apos;re ready to unmask direct hiring companies and unlock 1-click ATS applications.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-4xl mx-auto">
-            {/* Free Plan */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-2xs flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
-                <div className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-700">
-                  Free Forever
-                </div>
-                <div>
-                  <div className="text-3xl font-black text-slate-900">$0</div>
-                  <div className="text-xs text-slate-500">No credit card needed</div>
-                </div>
-
-                <ul className="space-y-2.5 text-xs text-slate-700">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Search and filter all job titles & roles</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Deterministic fit diagnostics on confirmed resume</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>5 saved application tracker slots</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>1 clean ATS resume export</span>
-                  </li>
-                  <li className="flex items-center gap-2 text-slate-400">
-                    <X className="w-4 h-4 text-slate-300 shrink-0" />
-                    <span>Company names & direct apply links locked</span>
-                  </li>
-                </ul>
-              </div>
-
-              <Link
-                href="/signup"
-                className="w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-bold text-center transition cursor-pointer"
-              >
-                Start Free
-              </Link>
-            </div>
-
-            {/* Pro Plan */}
-            <div className="bg-white rounded-2xl border-2 border-blue-600 p-6 sm:p-8 shadow-md relative flex flex-col justify-between space-y-6">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-0.5 rounded-full shadow-xs">
-                Recommended
-              </div>
-
-              <div className="space-y-4">
-                <div className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-blue-50 text-blue-700">
-                  CareerMonke Pro
-                </div>
-                <div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-black text-slate-900">₹199 / mo</span>
-                    <span className="text-xs text-slate-400">(Domestic)</span>
-                  </div>
-                  <div className="text-xs text-slate-500">$9 / month for International</div>
-                </div>
-
-                <ul className="space-y-2.5 text-xs text-slate-700">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <strong className="text-slate-900">Unlocked company names & direct ATS links</strong>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Unblurred salary & exact office locations</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Unlimited application tracker pipeline</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Unlimited AI-tailored cover letters & ATS versions</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Daily automated AI matching digest scan</span>
-                  </li>
-                </ul>
-              </div>
-
-              <Link
-                href="/signup?upgrade=true"
-                className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-xs sm:text-sm font-bold text-center transition shadow-xs cursor-pointer"
-              >
-                Upgrade to Pro
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* ========================================================================= */}
-        {/* 8. FAQ                                                                    */}
-        {/* ========================================================================= */}
-        <section className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200/80">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-10 space-y-1">
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-xs text-slate-500">
-                Clear answers regarding your privacy, data, and access.
-              </p>
-            </div>
-
+            {/* Right: Name, role, story, 3 stats */}
             <div className="space-y-4">
-              {[
-                {
-                  q: "How is my resume privacy protected?",
-                  a: "Your resume is parsed to extract verifiable factual attributes (skills, job titles, education). We never sell your resume to recruiters, and facts are saved only after you review and confirm them. You can delete your resume data at any time from Settings."
-                },
-                {
-                  q: "How fresh are the job postings?",
-                  a: "We continuously synchronize with company ATS feeds (Greenhouse, Lever, Ashby, Workday) every 15 minutes. When a requisition is closed by an employer, it is updated immediately so you don't waste time on stale listings."
-                },
-                {
-                  q: "Does CareerMonke automatically submit applications for me?",
-                  a: "No, and for good reason: automated application bots get candidates blacklisted. CareerMonke uncovers the direct ATS link and prepares your tailored cover letter and ATS resume, but you submit directly to the employer's official page."
-                },
-                {
-                  q: "What is the difference between Free and Pro?",
-                  a: "Free allows you to browse all positions, compute match scores on your confirmed resume, and track up to 5 jobs. Pro unlocks company names, direct 1-click ATS application links, unlimited tracker slots, and tailored cover letters."
-                },
-                {
-                  q: "Can I cancel my subscription anytime?",
-                  a: "Yes. There are no annual lock-ins. You can cancel your subscription with one click in your billing settings. You retain access until the end of your billing cycle."
-                }
-              ].map((item, idx) => (
-                <div key={idx} className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-2xs space-y-1.5">
-                  <h4 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                    <HelpCircle className="w-4 h-4 text-blue-600 shrink-0" />
-                    <span>{item.q}</span>
-                  </h4>
-                  <p className="text-xs text-slate-600 leading-relaxed pl-6">
-                    {item.a}
-                  </p>
+              <div>
+                <h3 className="text-2xl font-bold text-[#09090B]">Roman here, saying hello.</h3>
+                <p className="text-sm font-medium text-gray-500">Creator of CareerMonke</p>
+              </div>
+
+              <p className="text-[#4B5563] text-base leading-relaxed">
+                I wasn&apos;t getting anywhere with LinkedIn, but it wasn&apos;t my fault. A lot of job postings aren&apos;t even real, and it&apos;s too competitive. My friend showed me a simpler way: apply directly to company websites. So I built this tool to find hidden jobs.
+              </p>
+
+              {/* 3 Stats: 17M+ Views / 70K+ Followers / 900k+ Likes */}
+              <div className="pt-2 border-t border-gray-100 grid grid-cols-3 gap-3 text-center sm:text-left">
+                <div>
+                  <div className="text-lg font-bold text-[#09090B]">17M+</div>
+                  <div className="text-xs text-gray-500">Views</div>
                 </div>
-              ))}
+                <div>
+                  <div className="text-lg font-bold text-[#09090B]">70K+</div>
+                  <div className="text-xs text-gray-500">Followers</div>
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-[#09090B]">900k+</div>
+                  <div className="text-xs text-gray-500">Likes</div>
+                </div>
+              </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ========================================================================= */}
-        {/* 9. FINAL CTA                                                              */}
-        {/* ========================================================================= */}
-        <section className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16 sm:py-20 text-center">
-          <div className="max-w-3xl mx-auto px-4 space-y-5">
-            <h2 className="text-2xl sm:text-4xl font-bold tracking-tight">
-              Ready to skip the crowd and apply directly?
+      {/* ========================================================================= */}
+      {/* 7. SCROLLING WALL OF LOVE (8,573 job seekers are using Career Hound)     */}
+      {/* ========================================================================= */}
+      <Testimonials />
+
+      {/* ========================================================================= */}
+      {/* 8. FAQ (Gray-100 bg #F3F4F6, centered H2, 5 Q&A items, max-width ~670px) */}
+      {/* ========================================================================= */}
+      <section className="bg-[#F3F4F6] py-10 sm:py-12 lg:py-14">
+        <div className="max-w-[670px] mx-auto px-6">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold md:text-4xl md:leading-tight text-center text-[#09090B]">
+              Frequently Asked Questions
             </h2>
-            <p className="text-white/90 text-xs sm:text-base max-w-xl mx-auto leading-relaxed">
-              Create your account in 30 seconds. Connect your resume or set your preferences to begin discovering unadvertised roles.
-            </p>
-            <div className="pt-2">
-              <Link
-                href="/signup"
-                className="inline-flex items-center justify-center gap-2 bg-white text-slate-900 font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 active:scale-[0.98] transition cursor-pointer text-sm sm:text-base"
-              >
-                <span>Get started free</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
           </div>
-        </section>
-      </main>
 
-      {/* Public Footer */}
+          <div className="bg-white rounded-2xl p-5 sm:p-7 border border-gray-200/80 shadow-sm divide-y divide-gray-100">
+            <FaqHomeItem
+              question="How is CareerMonke different from LinkedIn or Indeed?"
+              answer="Conventional job boards require employers to manually publish and pay for sponsored placements, creating massive applicant backlogs and ghost listings. CareerMonke automatically scrapes verified company career portals and ATS feeds directly every 15 minutes, uncovering open roles before they are publicized on aggregators."
+            />
+            <FaqHomeItem
+              question="Do you take a percentage of my compensation if I get hired?"
+              answer="Never. We are not a staffing agency, headhunter, or contingency recruiter. 100% of your compensation, equity offer, and signing bonus stays with you. We simply give you direct, unmediated access to open employer requisitions."
+            />
+            <FaqHomeItem
+              question="How often are the job feeds and ATS links updated?"
+              answer="Our automated ingestion pipeline continuously synchronizes directly with top ATS platforms (Greenhouse, Ashby, Lever, Workday) 24/7. When an employer creates or removes a requisition, our radar updates in real time so you never waste time applying to expired positions."
+            />
+            <FaqHomeItem
+              question="Can I filter jobs by remote status, country, and tech stack?"
+              answer="Yes! You can filter requisitions by global worldwide eligibility, timezone requirements, specific tech stacks (e.g., React, Node, Python, AI/ML), and seniority levels to find matches that fit your exact background."
+            />
+            <FaqHomeItem
+              question="Do I apply directly on the company website?"
+              answer="Yes, 100% of the time. Every job on CareerMonke links directly to the official company careers page or official ATS application form. There are no middleman forms, third-party redirects, or spam filters between you and the hiring team."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 10. CONTACT (Gray-50 bg #F9FAFB, id="contact")                            */}
+      {/* ========================================================================= */}
+      <section id="contact" className="bg-[#F9FAFB] py-10 sm:py-12 lg:py-14 border-t border-gray-200/60">
+        <div className="max-w-xl mx-auto px-6 text-center space-y-3">
+          <h2 className="text-3xl font-bold text-gray-800 sm:text-4xl tracking-tight">
+            Contact us
+          </h2>
+          <p className="text-gray-600 text-sm sm:text-base">
+            We&apos;ll try to respond the same day.
+          </p>
+          <div className="pt-2">
+            <a
+              href="mailto:contact@careermonke.io"
+              className="w-full sm:w-auto inline-flex items-center justify-center bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-medium px-8 py-3.5 min-h-[48px] rounded-lg text-sm sm:text-base transition-colors shadow-sm"
+            >
+              <span>contact@careermonke.io</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 13. FOOTER (Navy #090E34) & BackToTop Button                              */}
+      {/* ========================================================================= */}
       <Footer />
+
+      {/* Category selection modal triggered by both "View Jobs" buttons */}
+      <CategorySelectModal open={modalOpen} onOpenChange={setModalOpen} />
     </div>
   );
 }
