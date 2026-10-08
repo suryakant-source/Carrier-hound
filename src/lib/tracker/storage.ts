@@ -1,0 +1,255 @@
+import { TrackedApplication, ApplicationStage } from "./types";
+import { createClient } from "../supabase/client";
+
+const LOCAL_STORAGE_KEY = "careermonke_applications_tracker";
+
+/**
+ * Loads applications from localStorage, then fetches & syncs with Supabase if logged in.
+ */
+export async function getTrackedApplications(): Promise<TrackedApplication[]> {
+  let localApps: TrackedApplication[] = [];
+
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (stored) {
+        localApps = JSON.parse(stored);
+      }
+    } catch (e) {
+      console.warn("Failed to load local tracker applications", e);
+    }
+  }
+
+  // Try fetching from Supabase if user is authenticated
+  try {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      const { data, error } = await supabase
+        .from("applications")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("updated_at", { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        const remoteApps: TrackedApplication[] = data.map((row: any) => ({
+          id: row.id,
+          jobId: row.job_id,
+          company: row.company,
+          title: row.title,
+          location: row.location,
+          salaryText: row.salary_text,
+          applyUrl: row.apply_url,
+          stage: row.stage as ApplicationStage,
+          notes: row.notes,
+          appliedAt: row.applied_at,
+          followUpAt: row.follow_up_at,
+          createdAt: row.created_at,
+          updatedAt: row.updated_at,
+        }));
+
+        // Merge local with remote (remote takes priority)
+        const mergedMap = new Map<string, TrackedApplication>();
+        localApps.forEach((a) => mergedMap.set(a.id, a));
+        remoteApps.forEach((a) => mergedMap.set(a.id, a));
+
+        const finalApps = Array.from(mergedMap.values());
+        saveToLocalStorage(finalApps);
+        return finalApps;
+      }
+    }
+  } catch (err) {
+    // Offline or guest mode
+  }
+
+  return localApps;
+}
+
+/**
+ * Saves applications to local storage
+ */
+function saveToLocalStorage(apps: TrackedApplication[]) {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(apps));
+      window.dispatchEvent(new Event("careermonke_tracker_updated"));
+    } catch (e) {
+      console.warn("Failed to save applications locally", e);
+    }
+  }
+}
+
+/**
+ * Adds a new job to the tracker
+ */
+export async function addApplicationToTracker(
+  app: Omit<TrackedApplication, "id" | "createdAt" | "updatedAt">
+): Promise<TrackedApplication> {
+  const newApp: TrackedApplication = {
+    ...app,
+    id: `app-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  const current = await getTrackedApplications();
+  // Check if job already tracked
+  const existingIdx = current.findIndex(
+    (a) => (app.jobId && a.jobId === app.jobId) || (a.company === app.company && a.title === app.title)
+  );
+
+  let updatedList: TrackedApplication[];
+  if (existingIdx >= 0) {
+    // Update stage if already present
+    current[existingIdx] = {
+      ...current[existingIdx],
+      stage: app.stage,
+      updatedAt: new Date().toISOString(),
+    };
+    updatedList = current;
+  } else {
+    updatedList = [newApp, ...current];
+  }
+
+  saveToLocalStorage(updatedList);
+
+  // Sync to Supabase in background
+  try {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase.from("applications").upsert({
+        id: newApp.id,
+        user_id: user.id,
+        job_id: newApp.jobId || null,
+        company: newApp.company,
+        title: newApp.title,
+        location: newApp.location || null,
+        salary_text: newApp.salaryText || null,
+        apply_url: newApp.applyUrl || null,
+        stage: newApp.stage,
+        notes: newApp.notes || null,
+        applied_at: newApp.appliedAt || null,
+        follow_up_at: newApp.followUpAt || null,
+        updated_at: new Date().toISOString(),
+      });
+    }
+  } catch (e) {}
+
+  return newApp;
+}
+
+/**
+ * Updates stage for an application
+ */
+export async function updateApplicationStage(id: string, stage: ApplicationStage) {
+  const current = await getTrackedApplications();
+  const target = current.find((a) => a.id === id);
+  if (!target) return;
+
+  target.stage = stage;
+  target.updatedAt = new Date().toISOString();
+  if (stage === "applied" && !target.appliedAt) {
+    target.appliedAt = new Date().toISOString();
+  }
+
+  saveToLocalStorage(current);
+
+  // Supabase sync
+  try {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase
+        .from("applications")
+        .update({
+          stage,
+          applied_at: target.appliedAt || null,
+          updated_at: target.updatedAt,
+        })
+        .eq("id", id)
+        .eq("user_id", user.id);
+    }
+  } catch (e) {}
+}
+
+/**
+ * Updates notes for an application
+ */
+export async function updateApplicationNotes(id: string, notes: string, followUpAt?: string) {
+  const current = await getTrackedApplications();
+  const target = current.find((a) => a.id === id);
+  if (!target) return;
+
+  target.notes = notes;
+  if (followUpAt !== undefined) target.followUpAt = followUpAt;
+  target.updatedAt = new Date().toISOString();
+
+  saveToLocalStorage(current);
+
+  try {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase
+        .from("applications")
+        .update({
+          notes,
+          follow_up_at: target.followUpAt || null,
+          updated_at: target.updatedAt,
+        })
+        .eq("id", id)
+        .eq("user_id", user.id);
+    }
+  } catch (e) {}
+}
+
+/**
+ * Deletes an application from the tracker
+ */
+export async function deleteApplicationFromTracker(id: string) {
+  const current = await getTrackedApplications();
+  const filtered = current.filter((a) => a.id !== id);
+
+  saveToLocalStorage(filtered);
+
+  try {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase
+        .from("applications")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", user.id);
+    }
+  } catch (e) {}
+}
+
+/**
+ * Quick helper to track a job in 1 click
+ */
+export async function quickTrackJob(
+  job: {
+    id?: string;
+    title: string;
+    company: string;
+    location?: string;
+    salary_text?: string;
+    apply_url?: string;
+  },
+  stage: ApplicationStage = "saved"
+): Promise<TrackedApplication> {
+  return addApplicationToTracker({
+    jobId: job.id,
+    company: job.company,
+    title: job.title,
+    location: job.location,
+    salaryText: job.salary_text,
+    applyUrl: job.apply_url,
+    stage,
+    notes: "",
+    appliedAt: stage === "applied" ? new Date().toISOString() : undefined,
+  });
+}

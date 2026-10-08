@@ -1,0 +1,55 @@
+name: Daily Candidate Matching & Digest Cron
+
+on:
+  schedule:
+    # Runs daily at 03:00 AM IST (21:30 UTC)
+    - cron: '30 21 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run in dry-run mode (no writes to Supabase)'
+        required: false
+        type: boolean
+        default: false
+      min_score:
+        description: 'Minimum match percentage threshold (e.g. 60)'
+        required: false
+        type: string
+        default: '60'
+
+jobs:
+  daily-digest:
+    name: Compute Match Scores & Queue Daily Digests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Execute Daily Digest Cron
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          FAST_MODEL: ${{ secrets.FAST_MODEL }}
+          SMART_MODEL: ${{ secrets.SMART_MODEL }}
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry"
+          fi
+          if [ -n "${{ github.event.inputs.min_score }}" ]; then
+            ARGS="$ARGS --min-score=${{ github.event.inputs.min_score }}"
+          fi
+          echo "Executing: npx tsx scripts/daily-digest-cron.ts $ARGS"
+          npx tsx scripts/daily-digest-cron.ts $ARGS

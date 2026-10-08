@@ -40,6 +40,12 @@ export default function GuideHeader() {
             Resume
           </Link>
           <Link
+            href="/tracker"
+            className="text-sm font-medium text-[#4B5563] hover:text-[#09090B] transition-colors"
+          >
+            Tracker
+          </Link>
+          <Link
             href="/radar"
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 text-white hover:bg-cyan-950 hover:border-cyan-500 border border-slate-700 text-xs font-bold transition-all shadow-xs"
           >
@@ -115,7 +121,15 @@ export default function GuideHeader() {
                   className="flex items-center gap-3 p-3 min-h-[44px] rounded-lg hover:bg-gray-50 text-gray-800 font-medium"
                 >
                   <FileText className="w-4 h-4 text-blue-600" />
-                  <span>Resume</span>
+                  <span>Resume & ATS</span>
+                </Link>
+                <Link
+                  href="/tracker"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 p-3 min-h-[44px] rounded-lg hover:bg-gray-50 text-gray-800 font-medium"
+                >
+                  <Briefcase className="w-4 h-4 text-blue-600" />
+                  <span>Application Tracker</span>
                 </Link>
                 <Link
                   href="/radar"

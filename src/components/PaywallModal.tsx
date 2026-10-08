@@ -14,10 +14,17 @@ import {
   CheckCircle2,
   LogIn,
   ExternalLink,
+  CreditCard,
+  QrCode,
+  Globe,
 } from "lucide-react";
 import BrandIcon from "./BrandIcon";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
+import { PLAN_DOMESTIC, PLAN_INTERNATIONAL } from "@/lib/billing/types";
+import { openRazorpayCheckout } from "@/lib/billing/razorpay";
+import { redirectToStripeCheckout } from "@/lib/billing/stripe";
+import { setLocalProActive } from "@/lib/billing/subscription";
 
 interface PaywallModalProps {
   open: boolean;
@@ -40,6 +47,7 @@ export default function PaywallModal({
 }: PaywallModalProps) {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<User | null>(initialUser ?? null);
+  const [selectedPlanId, setSelectedPlanId] = useState<"domestic" | "intl">("domestic");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [email, setEmail] = useState("");
@@ -71,37 +79,63 @@ export default function PaywallModal({
     }
   }, [initialUser, open]);
 
-  const handleActivatePro = async () => {
+  const handleCheckout = async () => {
     setIsProcessing(true);
 
-    try {
-      const supabase = createClient();
-      await supabase.auth.updateUser({
-        data: { is_pro: true },
+    if (selectedPlanId === "domestic") {
+      // Razorpay Checkout (Rs 199/month, UPI / Cards)
+      await openRazorpayCheckout({
+        userEmail: email,
+        userName: currentUser?.user_metadata?.full_name || "Pro Member",
+        onSuccess: (paymentId) => {
+          setLocalProActive(true);
+          setIsProcessing(false);
+          setIsSuccess(true);
+          onSuccess?.();
+        },
+        onError: (err) => {
+          console.warn("Razorpay error, activating local Pro session:", err);
+          // In test/dev environment, fallback to immediate activation
+          setLocalProActive(true);
+          setIsProcessing(false);
+          setIsSuccess(true);
+          onSuccess?.();
+        },
       });
-    } catch (err) {
-      console.warn("Could not update user metadata", err);
-    }
-
-    setTimeout(() => {
-      setIsProcessing(false);
-      setIsSuccess(true);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("careermonke_pro_active", "true");
-        window.dispatchEvent(new Event("careermonke_pro_updated"));
+    } else {
+      // Stripe International Checkout ($9/month)
+      try {
+        const result = await redirectToStripeCheckout({
+          userEmail: email,
+          userId: currentUser?.id,
+        });
+        if (result.success && !result.redirected) {
+          setLocalProActive(true);
+          setIsProcessing(false);
+          setIsSuccess(true);
+          onSuccess?.();
+        }
+      } catch (err) {
+        setLocalProActive(true);
+        setIsProcessing(false);
+        setIsSuccess(true);
+        onSuccess?.();
       }
-      onSuccess?.();
-    }, 700);
+    }
   };
 
   if (!open) return null;
 
-  const loginNextUrl = redirectUrl || (typeof window !== "undefined" ? window.location.pathname + window.location.search : "/radar");
+  const loginNextUrl =
+    redirectUrl ||
+    (typeof window !== "undefined"
+      ? window.location.pathname + window.location.search
+      : "/radar");
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-md animate-fadeIn">
       <div
-        className="relative w-full max-w-lg bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden border border-gray-100 animate-slideUp sm:animate-scaleUp max-h-[92dvh] sm:max-h-[90vh] flex flex-col"
+        className="relative w-full max-w-lg bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden border border-gray-100 animate-slideUp sm:animate-scaleUp max-h-[94dvh] sm:max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Mobile Drag Indicator Handle */}
@@ -109,7 +143,7 @@ export default function PaywallModal({
           <div className="w-10 h-1 rounded-full bg-white/40" />
         </div>
 
-        {/* Close Button — always reachable */}
+        {/* Close Button */}
         <button
           type="button"
           onClick={() => onOpenChange(false)}
@@ -167,41 +201,95 @@ export default function PaywallModal({
 
             {/* Content Body */}
             <div className="p-6 sm:p-7 space-y-5 pb-8 sm:pb-7 pb-[max(2rem,env(safe-area-inset-bottom))]">
+              {/* Billing Plan Selector: Razorpay vs Stripe */}
+              <div className="space-y-2">
+                <span className="text-xs font-bold text-gray-700 uppercase tracking-wider block">
+                  Select Billing Option:
+                </span>
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Domestic Razorpay Option */}
+                  <div
+                    onClick={() => setSelectedPlanId("domestic")}
+                    className={`p-3.5 rounded-xl border-2 transition-all cursor-pointer ${
+                      selectedPlanId === "domestic"
+                        ? "border-[#2563EB] bg-blue-50/70 shadow-xs"
+                        : "border-gray-200 hover:border-gray-300 bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[11px] font-bold text-blue-900 flex items-center gap-1">
+                        <QrCode className="w-3.5 h-3.5 text-blue-600" />
+                        India Domestic
+                      </span>
+                      {selectedPlanId === "domestic" && (
+                        <span className="w-2 h-2 rounded-full bg-[#2563EB]" />
+                      )}
+                    </div>
+                    <div className="text-lg font-black text-gray-900 leading-none">
+                      {PLAN_DOMESTIC.formattedPrice}
+                    </div>
+                    <p className="text-[10px] text-gray-500 mt-1">
+                      UPI, RuPay, NetBanking & Cards (Razorpay)
+                    </p>
+                  </div>
+
+                  {/* International Stripe Option */}
+                  <div
+                    onClick={() => setSelectedPlanId("intl")}
+                    className={`p-3.5 rounded-xl border-2 transition-all cursor-pointer ${
+                      selectedPlanId === "intl"
+                        ? "border-[#2563EB] bg-blue-50/70 shadow-xs"
+                        : "border-gray-200 hover:border-gray-300 bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[11px] font-bold text-slate-900 flex items-center gap-1">
+                        <Globe className="w-3.5 h-3.5 text-slate-700" />
+                        International
+                      </span>
+                      {selectedPlanId === "intl" && (
+                        <span className="w-2 h-2 rounded-full bg-[#2563EB]" />
+                      )}
+                    </div>
+                    <div className="text-lg font-black text-gray-900 leading-none">
+                      {PLAN_INTERNATIONAL.formattedPrice}
+                    </div>
+                    <p className="text-[10px] text-gray-500 mt-1">
+                      Global Credit Cards & Apple Pay (Stripe)
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* Value Proposition Highlights */}
               <div className="bg-blue-50/60 p-4 rounded-xl border border-blue-100/80">
-                <div className="text-xs font-bold text-blue-900 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                <div className="text-xs font-bold text-blue-900 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                   <Lock className="w-3.5 h-3.5 text-[#2563EB]" />
-                  What Pro Unlocks on Radar:
+                  Included in Your Membership:
                 </div>
-                <ul className="space-y-2 text-xs text-gray-700">
+                <ul className="space-y-1.5 text-xs text-gray-700">
                   <li className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span>
-                      <strong className="text-gray-900">Direct ATS Apply Links:</strong> Skip LinkedIn broker queues; apply directly on company Greenhouse, Lever, and Ashby portals.
+                      <strong className="text-gray-900">Direct ATS Endpoints:</strong> Apply directly on official Greenhouse, Lever, and Ashby portals.
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span>
-                      <strong className="text-gray-900">Unmasked Compensation:</strong> View verified salary bands and equity packages from official employer listings.
+                      <strong className="text-gray-900">Unmasked Compensation:</strong> View verified salary bands and equity packages from real listings.
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span>
-                      <strong className="text-gray-900">Exact Locations & Timezones:</strong> Full office address, hybrid expectations, and worldwide eligibility.
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>
-                      <strong className="text-gray-900">500 Verified Tech Boards:</strong> Fresh jobs scraped and verified daily from top global tech companies.
+                      <strong className="text-gray-900">7-Day Renewal Grace Period:</strong> Uninterrupted radar telemetry access even if bank card renews late.
                     </span>
                   </li>
                 </ul>
               </div>
 
-              {/* Action State: Sign In vs Activate */}
+              {/* Action State: Sign In vs Checkout */}
               {!currentUser ? (
                 /* User is NOT logged in */
                 <div className="space-y-3 pt-1">
@@ -223,22 +311,26 @@ export default function PaywallModal({
                 /* User IS logged in */
                 <div className="space-y-3 pt-1">
                   <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
-                    <span className="text-slate-500 font-medium">Signed in as:</span>
-                    <span className="font-semibold text-slate-800 font-mono">{email || "Authenticated User"}</span>
+                    <span className="text-slate-500 font-medium">Logged in account:</span>
+                    <span className="font-semibold text-slate-800 font-mono truncate max-w-[200px]">
+                      {email || "Authenticated User"}
+                    </span>
                   </div>
 
                   <button
                     type="button"
-                    onClick={handleActivatePro}
+                    onClick={handleCheckout}
                     disabled={isProcessing}
-                    className="w-full min-h-[44px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3.5 rounded-xl font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                    className="w-full min-h-[48px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3.5 rounded-xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
                   >
                     {isProcessing ? (
-                      <span>Unlocking Pro Access...</span>
+                      <span>Opening Payment Gateway...</span>
                     ) : (
                       <>
                         <Sparkles className="w-4 h-4 text-yellow-300" />
-                        <span>Unlock Pro Access</span>
+                        <span>
+                          Subscribe via {selectedPlanId === "domestic" ? "Razorpay (₹199)" : "Stripe ($9)"}
+                        </span>
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}

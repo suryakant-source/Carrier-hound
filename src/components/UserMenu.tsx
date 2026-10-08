@@ -220,22 +220,45 @@ export default function UserMenu({
                 {user.email}
               </p>
             </div>
-            <div className="p-1.5">
+            <div className="p-1.5 space-y-0.5">
+              <Link
+                href="/tracker"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-medium"
+              >
+                <span>Application Tracker</span>
+              </Link>
+              <Link
+                href="/resume"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-medium"
+              >
+                <span>Resume & Facts (ATS)</span>
+              </Link>
               <Link
                 href="/job-search/all"
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-medium"
               >
-                Browse All Jobs
+                <span>Browse All Jobs</span>
               </Link>
+              <Link
+                href="/radar"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors font-medium"
+              >
+                <span>3D Job Radar</span>
+              </Link>
+              <div className="my-1 border-t border-gray-100" />
               <button
                 onClick={handleSignOut}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium text-left"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium text-left cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
                 Sign Out
               </button>
             </div>
+
           </div>
         </>
       )}

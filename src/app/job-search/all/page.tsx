@@ -38,7 +38,10 @@ import {
   Menu,
   AlertTriangle,
   RotateCcw,
+  BookmarkPlus,
 } from "lucide-react";
+import MatchScoreBadge from "@/components/matcher/MatchScoreBadge";
+import { quickTrackJob } from "@/lib/tracker/storage";
 
 // Category mapping for social app style category pills
 const PILL_CATEGORY_MAPPING: Record<string, string[]> = {
@@ -231,6 +234,26 @@ function JobSearchContent() {
       window.open(applyUrl, "_blank", "noopener,noreferrer");
     } else {
       toast.info("Opening employer application portal...");
+    }
+  };
+
+  // Quick Track Job Application
+  const handleTrackJob = async (job: Job) => {
+    try {
+      await quickTrackJob(
+        {
+          id: job.id,
+          title: job.title,
+          company: job.company,
+          location: job.location,
+          salary_text: job.salary,
+          apply_url: job.applyUrl,
+        },
+        "saved"
+      );
+      toast.success(`"${job.title}" added to Application Tracker!`);
+    } catch (err) {
+      toast.error("Could not add job to tracker");
     }
   };
 
@@ -517,6 +540,13 @@ function JobSearchContent() {
               <span>Resume</span>
             </button>
             <Link
+              href="/tracker"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-gray-300 text-xs sm:text-sm font-medium text-gray-700 hover:bg-slate-100 transition-colors min-h-[44px]"
+            >
+              <BookmarkPlus className="w-3.5 h-3.5 text-blue-600" />
+              <span>Tracker</span>
+            </Link>
+            <Link
               href="/radar"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-900 text-white hover:bg-cyan-950 border border-slate-700 text-xs sm:text-sm font-semibold transition-colors shadow-xs min-h-[44px]"
             >
@@ -563,6 +593,14 @@ function JobSearchContent() {
               <FileText className="w-4 h-4 text-blue-600" />
               <span>AI Resume Scanner</span>
             </button>
+            <Link
+              href="/tracker"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors min-h-[44px]"
+            >
+              <BookmarkPlus className="w-4 h-4 text-blue-600" />
+              <span>Application Tracker</span>
+            </Link>
             <Link
               href="/radar"
               onClick={() => setMobileMenuOpen(false)}
@@ -688,20 +726,29 @@ function JobSearchContent() {
             {/* Job Cards */}
             {loading ? (
               <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
+                {[1, 2, 3, 4].map((i) => (
                   <div
                     key={i}
-                    className="bg-white border border-[#E4E4E7] rounded-xl p-6 shadow-sm animate-pulse space-y-4"
+                    className="bg-white border border-[#E4E4E7] rounded-xl p-6 shadow-xs animate-pulse space-y-4"
                   >
-                    <div className="h-6 bg-gray-200 rounded w-2/3" />
-                    <div className="h-4 bg-gray-100 rounded w-1/3" />
-                    <div className="h-8 bg-gray-100 rounded w-1/2 mt-4" />
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                      <div className="space-y-2 flex-1">
+                        <div className="h-6 bg-slate-200 rounded-md w-3/4 max-w-md" />
+                        <div className="h-4 bg-slate-100 rounded-md w-1/2 max-w-xs" />
+                      </div>
+                      <div className="h-10 w-32 bg-slate-200 rounded-xl" />
+                    </div>
+                    <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-100">
+                      <div className="h-6 w-24 bg-slate-100 rounded-full" />
+                      <div className="h-6 w-28 bg-slate-100 rounded-full" />
+                      <div className="h-6 w-20 bg-slate-100 rounded-full" />
+                    </div>
                   </div>
                 ))}
               </div>
             ) : fetchError ? (
-              <div className="bg-white border border-red-200 rounded-xl p-8 sm:p-10 text-center space-y-3 shadow-sm">
-                <div className="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto">
+              <div className="bg-white border border-rose-200 rounded-xl p-8 sm:p-10 text-center space-y-3 shadow-xs">
+                <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
                   <AlertTriangle className="w-6 h-6" />
                 </div>
                 <h3 className="text-base font-bold text-gray-900">Database Connection Error</h3>
@@ -710,7 +757,7 @@ function JobSearchContent() {
                   <button
                     type="button"
                     onClick={() => setRetryCount((c) => c + 1)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-5 py-2.5 min-h-[44px] bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.98] text-white rounded-xl text-sm font-semibold transition-all duration-150 cursor-pointer shadow-xs"
                   >
                     <RotateCcw className="w-4 h-4" />
                     <span>Retry Request</span>
@@ -718,27 +765,53 @@ function JobSearchContent() {
                 </div>
               </div>
             ) : jobs.length === 0 ? (
-              <div className="bg-white border border-[#E4E4E7] rounded-xl p-12 text-center space-y-3">
-                <p className="text-gray-500 text-base">No listings match your current filter selections.</p>
-                <button
-                  onClick={handleResetAllFilters}
-                  className="text-sm font-semibold text-blue-600 hover:underline"
-                >
-                  Clear all filters
-                </button>
+              <div className="bg-white border border-[#E4E4E7] rounded-xl p-10 sm:p-12 text-center space-y-4 shadow-xs">
+                <div className="w-12 h-12 rounded-full bg-blue-50 text-[#2563EB] flex items-center justify-center mx-auto">
+                  <Briefcase className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-lg font-bold text-gray-900">No Listings Match Your Filters</h3>
+                  <p className="text-sm text-gray-500 max-w-md mx-auto">
+                    Try adjusting or resetting your category, salary, experience, or search terms to uncover more unindexed roles.
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={handleResetAllFilters}
+                    className="inline-flex items-center justify-center px-5 py-2.5 min-h-[44px] rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.98] text-white text-sm font-semibold transition-all duration-150 cursor-pointer shadow-xs"
+                  >
+                    Clear All Filters
+                  </button>
+                </div>
               </div>
             ) : (
               jobs.map((job) => (
                 <div
                   key={job.id}
-                  className="bg-white border border-[#E4E4E7] rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-150 space-y-4"
+                  className="bg-white border border-[#E4E4E7] rounded-xl p-6 shadow-xs hover:shadow-md transition-shadow duration-150 space-y-4"
                 >
+
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
                     <div className="space-y-1.5 flex-1 min-w-0">
-                      {/* Job Title: text-xl sm:text-2xl semibold with wrap (Unblurred) */}
-                      <h3 className="text-xl sm:text-2xl font-semibold text-[#09090B] tracking-tight hover:text-[#2563EB] cursor-pointer break-words">
-                        {job.title}
-                      </h3>
+                      {/* Job Title: text-xl sm:text-2xl semibold with wrap (Unblurred) + Deterministic AI Fit Badge */}
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-xl sm:text-2xl font-semibold text-[#09090B] tracking-tight hover:text-[#2563EB] cursor-pointer break-words">
+                          {job.title}
+                        </h3>
+                        <MatchScoreBadge
+                          job={{
+                            id: job.id,
+                            title: job.title,
+                            company: job.company,
+                            location: job.location,
+                            salary_text: job.salary,
+                            apply_url: job.applyUrl,
+                            description: (job as any).snippet || (job as any).description,
+                          }}
+                          size="sm"
+                        />
+                      </div>
 
                       {/* Company Name, Location, Date */}
                       <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 text-xs sm:text-sm text-[#4B5563]">
@@ -819,7 +892,7 @@ function JobSearchContent() {
                       </div>
                     </div>
 
-                    {/* Action buttons: Direct Apply Link + Outline pill More (full width on mobile under details) */}
+                    {/* Action buttons: Direct Apply Link + Track + More */}
                     <div className="flex items-center gap-2 sm:flex-col sm:items-end w-full sm:w-auto pt-2 sm:pt-0">
                       {/* Direct Apply button */}
                       <button
@@ -832,15 +905,28 @@ function JobSearchContent() {
                         <ExternalLink className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                       </button>
 
-                      {/* Outline pill More button with layers icon */}
-                      <button
-                        type="button"
-                        onClick={() => setMoreModalJob(job)}
-                        className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-xl sm:rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-medium text-xs transition-colors cursor-pointer whitespace-nowrap shrink-0"
-                      >
-                        <Layers className="w-3.5 h-3.5" />
-                        <span>More</span>
-                      </button>
+                      <div className="flex items-center gap-2">
+                        {/* Quick Track Application */}
+                        <button
+                          type="button"
+                          onClick={() => handleTrackJob(job)}
+                          className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 min-h-[44px] rounded-xl sm:rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-blue-600 font-medium text-xs transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                          title="Save this job to Application Pipeline Tracker"
+                        >
+                          <BookmarkPlus className="w-3.5 h-3.5" />
+                          <span className="hidden sm:inline">Track</span>
+                        </button>
+
+                        {/* Outline pill More button with layers icon */}
+                        <button
+                          type="button"
+                          onClick={() => setMoreModalJob(job)}
+                          className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-xl sm:rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 font-medium text-xs transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                        >
+                          <Layers className="w-3.5 h-3.5" />
+                          <span>More</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
 

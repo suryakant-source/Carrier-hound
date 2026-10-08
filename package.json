@@ -11,6 +11,8 @@
     "ingest:dry": "tsx scripts/ingest.ts --dry",
     "ingest:seed": "tsx scripts/ingest.ts --seed",
     "ingest:seed:dry": "tsx scripts/ingest.ts --seed --dry",
+    "cron:digest": "tsx scripts/daily-digest-cron.ts",
+    "cron:digest:dry": "tsx scripts/daily-digest-cron.ts --dry",
     "test:filters": "tsx scripts/test-filters.ts"
   },
   "dependencies": {
@@ -28,6 +30,7 @@
     "d3": "^7.9.0",
     "globe.gl": "^2.46.2",
     "lucide-react": "^0.453.0",
+    "mammoth": "^1.13.0",
     "mapbox-gl": "^3.31.0",
     "motion": "^13.4.4",
     "next": "^14.2.15",

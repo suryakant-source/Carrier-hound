@@ -40,7 +40,11 @@ import {
   Lock,
   GraduationCap,
   SlidersHorizontal,
+  BookmarkPlus,
 } from "lucide-react";
+import MatchScoreBadge from "@/components/matcher/MatchScoreBadge";
+import { quickTrackJob } from "@/lib/tracker/storage";
+import { toast } from "react-toastify";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
@@ -473,6 +477,26 @@ export default function JobRadarGlobe() {
       router.push(`/login?next=${encodeURIComponent(currentPath)}`);
     } else {
       setIsPaywallOpen(true);
+    }
+  };
+
+  // Quick Track Job Application
+  const handleTrackJob = async (job: RadarJobCard) => {
+    try {
+      await quickTrackJob(
+        {
+          id: job.id,
+          title: job.title,
+          company: job.company,
+          location: job.location,
+          salary_text: job.salaryText || undefined,
+          apply_url: job.applyUrl,
+        },
+        "saved"
+      );
+      toast.success(`"${job.title}" saved to Application Tracker!`);
+    } catch (err) {
+      toast.error("Could not add to tracker");
     }
   };
 
@@ -1431,10 +1455,23 @@ export default function JobRadarGlobe() {
                           {job.company.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          {/* Role Title (Visible to all) */}
-                          <h4 className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors leading-snug">
-                            {job.title}
-                          </h4>
+                          {/* Role Title (Visible to all) & Match Score Badge */}
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <h4 className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors leading-snug">
+                              {job.title}
+                            </h4>
+                            <MatchScoreBadge
+                              job={{
+                                id: job.id,
+                                title: job.title,
+                                company: job.company,
+                                location: job.location,
+                                salary_text: job.salaryText || undefined,
+                                apply_url: job.applyUrl,
+                              }}
+                              size="xs"
+                            />
+                          </div>
 
                           {/* Company Name: Pro vs Free Gated */}
                           <div className="text-xs font-medium text-slate-400 flex items-center gap-1.5 mt-0.5">
@@ -1541,44 +1578,57 @@ export default function JobRadarGlobe() {
                         </div>
                       )}
 
-                      {/* Apply Button: Pro vs Free Gated */}
-                      {isPro ? (
-                        <a
-                          href={job.applyUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() => handleApplyClick(job.id)}
-                          className={`inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[38px] rounded-lg text-xs font-bold transition-all shadow-md ${
-                            isApplied
-                              ? "bg-emerald-600 text-white"
-                              : "bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-cyan-500/30 hover:shadow-cyan-400/50"
-                          }`}
-                        >
-                          {isApplied ? (
-                            <>
-                              <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                              <span>Link Opened</span>
-                            </>
-                          ) : (
-                            <>
-                              <span>Direct Apply</span>
-                              <ExternalLink className="w-3.5 h-3.5" />
-                            </>
-                          )}
-                        </a>
-                      ) : (
+                      {/* Actions: Track Application + Apply Button */}
+                      <div className="flex items-center gap-2">
                         <button
                           type="button"
-                          onClick={handleLockedClick}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[38px] rounded-lg text-xs font-bold transition-all shadow-md bg-[#2563EB] hover:bg-[#1D4ED8] text-white shadow-blue-600/30 cursor-pointer"
+                          onClick={() => handleTrackJob(job)}
+                          className="inline-flex items-center gap-1 px-2.5 py-2 min-h-[38px] rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all border border-slate-700 cursor-pointer"
+                          title="Save to Application Pipeline Tracker"
                         >
-                          <Lock className="w-3.5 h-3.5 text-white" />
-                          <span>Direct Apply</span>
-                          <span className="px-1.5 py-0.5 rounded bg-white/20 text-[10px] font-mono uppercase tracking-wider">
-                            Pro
-                          </span>
+                          <BookmarkPlus className="w-3.5 h-3.5 text-blue-400" />
+                          <span>Track</span>
                         </button>
-                      )}
+
+                        {/* Apply Button: Pro vs Free Gated */}
+                        {isPro ? (
+                          <a
+                            href={job.applyUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => handleApplyClick(job.id)}
+                            className={`inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[38px] rounded-lg text-xs font-bold transition-all shadow-md ${
+                              isApplied
+                                ? "bg-emerald-600 text-white"
+                                : "bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-cyan-500/30 hover:shadow-cyan-400/50"
+                            }`}
+                          >
+                            {isApplied ? (
+                              <>
+                                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                                <span>Link Opened</span>
+                              </>
+                            ) : (
+                              <>
+                                <span>Direct Apply</span>
+                                <ExternalLink className="w-3.5 h-3.5" />
+                              </>
+                            )}
+                          </a>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={handleLockedClick}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[38px] rounded-lg text-xs font-bold transition-all shadow-md bg-[#2563EB] hover:bg-[#1D4ED8] text-white shadow-blue-600/30 cursor-pointer"
+                          >
+                            <Lock className="w-3.5 h-3.5 text-white" />
+                            <span>Direct Apply</span>
+                            <span className="px-1.5 py-0.5 rounded bg-white/20 text-[10px] font-mono uppercase tracking-wider">
+                              Pro
+                            </span>
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
