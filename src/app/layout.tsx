@@ -21,7 +21,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "CareerMonke — Unindexed Jobs & Remote Career Discovery",
   description: "Discover unindexed remote engineering, design, marketing, and data roles directly from verified employer career pages before they hit public aggregators.",
-  metadataBase: new URL("https://yourbrand-jobs-502.netlify.app"),
+  metadataBase: new URL("https://careermonke.io"),
   alternates: {
     canonical: "/",
   },

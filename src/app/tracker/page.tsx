@@ -38,11 +38,14 @@ import {
   Check,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { getTodayDigest, DigestMatchItem } from "@/lib/cron/digestStorage";
 import { toast } from "react-toastify";
 import MatchScoreBadge from "@/components/matcher/MatchScoreBadge";
+import { getAuthUser } from "@/lib/auth/session";
 
 export default function TrackerPage() {
+  const router = useRouter();
   const [applications, setApplications] = useState<TrackedApplication[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -89,6 +92,12 @@ export default function TrackerPage() {
   };
 
   useEffect(() => {
+    getAuthUser().then((u) => {
+      if (!u) {
+        router.replace("/login?next=/tracker");
+        return;
+      }
+    });
     loadData();
     getTodayDigest().then((d) => setDigest(d));
 

@@ -3,8 +3,8 @@ import Link from "next/link";
 import BrandIcon from "@/components/BrandIcon";
 
 export const metadata = {
-  title: "Privacy Policy | YourBrand",
-  description: "Privacy policy and data protection terms for YourBrand job discovery service.",
+  title: "Privacy Policy | CareerMonke",
+  description: "Privacy policy and data protection terms for CareerMonke job discovery service.",
 };
 
 export default function PrivacyPolicyPage() {
@@ -16,7 +16,7 @@ export default function PrivacyPolicyPage() {
           <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center">
             <BrandIcon className="w-4 h-4 text-white" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-blue-600">YourBrand</span>
+          <span className="text-xl font-bold tracking-tight text-blue-600">CareerMonke</span>
         </Link>
       </div>
 
@@ -28,7 +28,7 @@ export default function PrivacyPolicyPage() {
         <p className="text-xs text-gray-400 font-mono">Last Updated: September 24, 2026</p>
 
         <p className="mb-2">
-          1. Information We Collect. YourBrand collects information you provide directly to us when creating an account, subscribing to job alert notifications, or contacting customer support. This may include your email address, career preferences, target job titles, and communication logs.
+          1. Information We Collect. CareerMonke collects information you provide directly to us when creating an account, subscribing to job alert notifications, or contacting customer support. This may include your email address, career preferences, target job titles, and communication logs.
         </p>
         <p className="mb-2">
           - We automatically collect diagnostic telemetry such as browser version, operating system, IP address, and anonymized referral links to protect service integrity and prevent scraping abuse.
@@ -51,7 +51,7 @@ export default function PrivacyPolicyPage() {
         </p>
 
         <p className="mb-2">
-          3. Third-Party Integrations. When you click an &ldquo;Apply&rdquo; or destination link, you are directed to third-party employer applicant tracking systems (such as Greenhouse, Lever, Ashby, or Workday). YourBrand does not share your private resume data with these employers unless you explicitly submit through their native web forms.
+          3. Third-Party Integrations. When you click an &ldquo;Apply&rdquo; or destination link, you are directed to third-party employer applicant tracking systems (such as Greenhouse, Lever, Ashby, or Workday). CareerMonke does not share your private resume data with these employers unless you explicitly submit through their native web forms.
         </p>
 
         <p className="mb-2">
@@ -59,7 +59,7 @@ export default function PrivacyPolicyPage() {
         </p>
 
         <p className="mb-2">
-          5. Data Retention and Erasure. You retain the right to request full deletion of your user profile and registered email alerts. Requests may be transmitted to privacy@yourbrand.example.com and will be executed within 30 business days.
+          5. Data Retention and Erasure. You retain the right to request full deletion of your user profile and registered email alerts. Requests may be transmitted to privacy@careermonke.io and will be executed within 30 business days.
         </p>
 
         <p className="mb-2">

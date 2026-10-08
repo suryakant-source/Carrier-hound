@@ -97,7 +97,7 @@ export const GUIDE_ARTICLES: Record<string, GuideArticle> = {
     ],
     comparisonTable: {
       title: "Comparative Architectural Breakdown",
-      headers: ["Metric / Feature", "YourBrand Direct Feed", "Legacy Paid Board", "Standard Job Board"],
+      headers: ["Metric / Feature", "CareerMonke Direct Feed", "Legacy Paid Board", "Standard Job Board"],
       rows: [
         {
           feature: "Ingestion Latency",
@@ -139,14 +139,14 @@ export const GUIDE_ARTICLES: Record<string, GuideArticle> = {
         id: "how-direct-tracking-works",
         h2: "Architectural Shift: From Gatekeepers to Automated Radar",
         paragraphs: [
-          "YourBrand operates as an automated discovery radar. Rather than asking employers to manually submit listings or wait for staffing agencies, our crawlers query verified career endpoints continuously across 12,000+ top software and product companies.",
+          "CareerMonke operates as an automated discovery radar. Rather than asking employers to manually submit listings or wait for staffing agencies, our crawlers query verified career endpoints continuously across 12,000+ top software and product companies.",
           "When an opening is removed or marked filled on the employer's internal board, it immediately drops from our active search index. This eliminates the widespread frustration of spending hours tailoring cover letters for defunct positions.",
         ],
       },
     ],
     faqs: [
       {
-        question: "How does YourBrand discover positions that aren't on public portals?",
+        question: "How does CareerMonke discover positions that aren't on public portals?",
         answer: "We monitor employer career pages directly through their applicant tracking systems (Greenhouse, Lever, Ashby, Workday, BambooHR). Most companies open these links internally days before paying for syndication on LinkedIn or Indeed.",
       },
       {
@@ -174,7 +174,7 @@ export const GUIDE_ARTICLES: Record<string, GuideArticle> = {
         items: [
           "Monitor venture portfolio career subdomains directly",
           "Track key engineering managers on GitHub and technical forums",
-          "Subscribe to sub-hourly company ATS changelogs via YourBrand",
+          "Subscribe to sub-hourly company ATS changelogs via CareerMonke",
         ],
       },
       addWhen: {
@@ -330,7 +330,7 @@ export const GUIDE_ARTICLES: Record<string, GuideArticle> = {
     ],
     faqs: [
       {
-        question: "How does YourBrand purge ghost jobs?",
+        question: "How does CareerMonke purge ghost jobs?",
         answer: "We perform automated health checks on every job listing multiple times daily. If an ATS returns a 404, redirects to a generic splash page, or remains open without activity past our threshold, it is automatically archived.",
       },
     ],

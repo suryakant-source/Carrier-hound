@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import BrandIcon from "@/components/BrandIcon";
 import { createClient } from "@/lib/supabase/client";
 import { getValidReturnUrl, getAuthUser } from "@/lib/auth/session";
-import { ArrowLeft, Mail, Loader2, CheckCircle2, AlertCircle, RefreshCw } from "lucide-react";
+import { ArrowLeft, Loader2, CheckCircle2, AlertCircle, RefreshCw, ShieldCheck } from "lucide-react";
 
 function GoogleIcon() {
   return (
@@ -31,30 +31,28 @@ function GoogleIcon() {
   );
 }
 
-function LoginPageInner() {
+function SignupPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const rawNext = searchParams.get("next");
-  const next = getValidReturnUrl(rawNext, "/dashboard");
-  const queryError = searchParams.get("error");
+  const next = getValidReturnUrl(rawNext, "/onboarding");
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [error, setError] = useState(queryError || "");
+  const [error, setError] = useState("");
   const [emailSent, setEmailSent] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
 
-  // Auto-redirect if already logged in
+  // If already authenticated, redirect to dashboard or next directly
   useEffect(() => {
     getAuthUser().then((user) => {
       if (user) {
-        router.replace(next);
+        router.replace(next.includes("onboarding") ? "/dashboard" : next);
       }
     });
   }, [next, router]);
 
-  // Resend cooldown timer
   useEffect(() => {
     if (resendTimer > 0) {
       const interval = setInterval(() => setResendTimer((t) => t - 1), 1000);
@@ -62,8 +60,7 @@ function LoginPageInner() {
     }
   }, [resendTimer]);
 
-  // Real Supabase Email Login (Magic Link / OTP)
-  const handleEmailSubmit = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanEmail = email.trim();
     if (!cleanEmail || !cleanEmail.includes("@")) {
@@ -77,23 +74,23 @@ function LoginPageInner() {
     try {
       const supabase = createClient();
       const redirectUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
-      const { error: signInError } = await supabase.auth.signInWithOtp({
+      const { error: signUpError } = await supabase.auth.signInWithOtp({
         email: cleanEmail,
         options: {
           emailRedirectTo: redirectUrl,
         },
       });
 
-      if (signInError) {
-        // Fallback for dev / local testing
-        if (signInError.message.includes("fetch") || signInError.message.includes("network")) {
+      if (signUpError) {
+        // Fallback for dev / offline testing
+        if (signUpError.message.includes("fetch") || signUpError.message.includes("network")) {
           localStorage.setItem("careermonke_user_email", cleanEmail);
           document.cookie = `careermonke_user_email=${encodeURIComponent(cleanEmail)}; path=/; max-age=2592000`;
           window.dispatchEvent(new Event("careermonke_auth_updated"));
           window.location.href = next;
           return;
         }
-        setError(signInError.message);
+        setError(signUpError.message);
         setLoading(false);
         return;
       }
@@ -101,13 +98,12 @@ function LoginPageInner() {
       setEmailSent(true);
       setResendTimer(30);
     } catch (err: any) {
-      setError(err?.message || "Failed to send magic link. Please try again.");
+      setError(err?.message || "Failed to initialize signup. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Real Supabase Google OAuth
   const handleGoogle = async () => {
     setGoogleLoading(true);
     setError("");
@@ -127,14 +123,13 @@ function LoginPageInner() {
         setGoogleLoading(false);
       }
     } catch (err: any) {
-      setError(err?.message || "Could not initialize Google Sign In.");
+      setError(err?.message || "Could not initialize Google Sign Up.");
       setGoogleLoading(false);
     }
   };
 
   return (
     <div className="min-h-[100dvh] bg-[#F3F4F6] flex flex-col items-center justify-center p-4 sm:p-6 text-[#09090B] py-6 sm:py-12">
-      {/* Back button */}
       <div className="w-full max-w-[520px] mb-4 sm:mb-6">
         <Link
           href="/"
@@ -145,25 +140,23 @@ function LoginPageInner() {
         </Link>
       </div>
 
-      {/* CareerMonke Brand Logo */}
       <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white shadow-md border border-gray-100 flex items-center justify-center p-2 mb-4 sm:mb-6">
         <BrandIcon className="w-12 h-12 sm:w-16 sm:h-16" />
       </div>
 
-      {/* Main Auth Card */}
       <div className="w-full max-w-[520px] bg-white border border-[#E4E4E7] rounded-2xl shadow-sm overflow-hidden">
-        {/* Top announcement bar */}
         <div className="bg-[#F8FAFF] border-b border-gray-100 py-3 px-6 text-center">
-          <p className="text-xs sm:text-sm font-medium text-gray-700">
-            Sign in to access verified direct company openings & your tracker.
+          <p className="text-xs sm:text-sm font-medium text-gray-700 flex items-center justify-center gap-1.5">
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <span>Create your account to discover unadvertised career page jobs.</span>
           </p>
         </div>
 
         <div className="p-6 sm:p-10 space-y-6">
           <div className="text-center space-y-1.5">
-            <h1 className="text-2xl font-bold text-[#09090B] tracking-tight">Sign In to CareerMonke</h1>
+            <h1 className="text-2xl font-bold text-[#09090B] tracking-tight">Get Started with CareerMonke</h1>
             <p className="text-sm text-[#4B5563]">
-              Welcome back! Access your tailored applications & live feeds.
+              30-second setup. No credit card required.
             </p>
           </div>
 
@@ -180,9 +173,9 @@ function LoginPageInner() {
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <h3 className="font-bold text-base text-slate-900">Check your inbox</h3>
+                <h3 className="font-bold text-base text-slate-900">Check your email</h3>
                 <p className="text-xs text-slate-600 max-w-sm mx-auto">
-                  We sent a verified magic sign-in link to <strong className="text-slate-900">{email}</strong>. Click the link to complete sign in.
+                  We sent an account activation link to <strong className="text-slate-900">{email}</strong>. Click it to begin your 3-step setup.
                 </p>
               </div>
 
@@ -190,12 +183,12 @@ function LoginPageInner() {
                 <button
                   type="button"
                   disabled={resendTimer > 0 || loading}
-                  onClick={handleEmailSubmit}
+                  onClick={handleSignup}
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800 disabled:opacity-50 cursor-pointer"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>
-                    {resendTimer > 0 ? `Resend link in ${resendTimer}s` : "Resend magic link"}
+                    {resendTimer > 0 ? `Resend link in ${resendTimer}s` : "Resend confirmation email"}
                   </span>
                 </button>
                 <button
@@ -203,13 +196,12 @@ function LoginPageInner() {
                   onClick={() => setEmailSent(false)}
                   className="text-xs text-slate-400 hover:text-slate-600"
                 >
-                  Use a different email
+                  Change email address
                 </button>
               </div>
             </div>
           ) : (
             <div className="space-y-4">
-              {/* Google OAuth Button */}
               <button
                 type="button"
                 onClick={handleGoogle}
@@ -217,30 +209,28 @@ function LoginPageInner() {
                 className="w-full h-12 flex items-center justify-center gap-3 border border-[#E4E4E7] rounded-xl text-sm font-semibold text-[#09090B] hover:bg-gray-50 active:scale-[0.99] transition shadow-2xs disabled:opacity-60 cursor-pointer"
               >
                 {googleLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GoogleIcon />}
-                <span>Continue with Google</span>
+                <span>Sign up with Google</span>
               </button>
 
-              {/* Or separator */}
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-xs text-gray-400 font-medium">or continue with email</span>
+                <span className="text-xs text-gray-400 font-medium">or with email</span>
                 <div className="flex-1 h-px bg-gray-200" />
               </div>
 
-              {/* Email Form */}
-              <form onSubmit={handleEmailSubmit} className="space-y-4">
+              <form onSubmit={handleSignup} className="space-y-4">
                 <div>
-                  <label htmlFor="email" className="block text-xs font-bold text-[#09090B] uppercase tracking-wider mb-1.5">
-                    Email address
+                  <label htmlFor="signup-email" className="block text-xs font-bold text-[#09090B] uppercase tracking-wider mb-1.5">
+                    Your Email Address
                   </label>
                   <input
-                    id="email"
+                    id="signup-email"
                     type="email"
                     required
                     autoFocus
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@company.com"
+                    placeholder="you@domain.com"
                     className="w-full h-11 px-3.5 bg-white border border-[#E4E4E7] rounded-xl text-sm text-[#09090B] focus:outline-blue-600 shadow-2xs"
                   />
                 </div>
@@ -253,29 +243,28 @@ function LoginPageInner() {
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Sending verification link…</span>
+                      <span>Creating your account…</span>
                     </>
                   ) : (
-                    <span>Sign In with Magic Link →</span>
+                    <span>Create Free Account →</span>
                   )}
                 </button>
               </form>
             </div>
           )}
 
-          {/* Switch to Signup */}
           <div className="pt-4 border-t border-gray-100 text-center text-xs text-slate-600">
-            <span>Don&apos;t have an account yet? </span>
+            <span>Already have an account? </span>
             <Link
-              href={`/signup?next=${encodeURIComponent(next)}`}
+              href={`/login?next=${encodeURIComponent(next)}`}
               className="font-bold text-blue-600 hover:text-blue-800 hover:underline"
             >
-              Create Account
+              Sign In
             </Link>
           </div>
 
           <div className="text-center text-[11px] text-gray-400">
-            By signing in, you agree to our{" "}
+            By signing up, you agree to CareerMonke&apos;s{" "}
             <Link href="/terms-and-conditions" className="hover:underline text-gray-600">
               Terms
             </Link>{" "}
@@ -291,10 +280,10 @@ function LoginPageInner() {
   );
 }
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
     <Suspense>
-      <LoginPageInner />
+      <SignupPageInner />
     </Suspense>
   );
 }

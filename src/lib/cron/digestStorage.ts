@@ -16,14 +16,16 @@ export interface DigestMatchItem {
   missingSkills: string[];
 }
 
-/**
- * Loads today's daily digest for the authenticated user, or computes top matches locally.
- */
-export async function getTodayDigest(): Promise<{
+export interface DailyDigestQueue {
   digestDate: string;
   matches: DigestMatchItem[];
   isQueuedByCron: boolean;
-}> {
+}
+
+/**
+ * Loads today's daily digest for the authenticated user, or computes top matches locally.
+ */
+export async function getTodayDigest(): Promise<DailyDigestQueue> {
   const todayStr = new Date().toISOString().split("T")[0];
 
   try {

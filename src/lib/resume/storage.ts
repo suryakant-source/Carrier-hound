@@ -148,3 +148,27 @@ export async function saveConfirmedCandidateProfile(profile: CandidateProfile): 
 }
 
 export const saveCandidateProfileToSupabase = saveConfirmedCandidateProfile;
+
+/**
+ * Deletes candidate profile from local storage and Supabase
+ */
+export async function deleteCandidateProfile(): Promise<void> {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.removeItem(PROFILE_STORAGE_KEY);
+      window.dispatchEvent(new Event("careermonke_profile_updated"));
+    } catch (e) {
+      console.warn("Could not remove local candidate profile", e);
+    }
+  }
+
+  try {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase.from("candidate_profiles").delete().eq("user_id", user.id);
+    }
+  } catch (err) {
+    console.warn("Could not delete candidate profile from Supabase", err);
+  }
+}

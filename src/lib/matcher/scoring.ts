@@ -90,6 +90,7 @@ export function computeFitDiagnostics(
     remote_scope?: string;
     category?: string;
     skills?: string[];
+    salary_text?: string;
   }
 ): FitDiagnosticsResult {
   const candidateSkills = (candidate.skills || []).map((s) => s.toLowerCase());

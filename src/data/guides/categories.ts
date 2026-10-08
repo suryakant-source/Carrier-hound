@@ -169,7 +169,7 @@ export const CATEGORY_LANDINGS: Record<string, CategoryLandingData> = {
     faqs: [
       {
         question: "Are these marketing roles performance/commission-only or salaried?",
-        answer: "We strictly filter out commission-only and multi-level marketing roles. 100% of listings on YourBrand are legitimate W2/EOR salaried or fixed-rate contract positions.",
+        answer: "We strictly filter out commission-only and multi-level marketing roles. 100% of listings on CareerMonke are legitimate W2/EOR salaried or fixed-rate contract positions.",
       },
     ],
     relatedGuides: [

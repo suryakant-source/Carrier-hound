@@ -35,18 +35,21 @@ export const MORE_CATEGORIES: CategoryPillItem[] = [
 ];
 
 interface CategoryPillBarProps {
-  activeCategory: string | null;
+  activeCategory?: string | null;
+  selectedCategory?: string | null;
   onSelectCategory: (id: string | null) => void;
   onOpenFilters?: () => void;
   hasActiveFilters?: boolean;
 }
 
 export default function CategoryPillBar({
-  activeCategory,
+  activeCategory: propActiveCategory,
+  selectedCategory,
   onSelectCategory,
   onOpenFilters,
   hasActiveFilters = false,
 }: CategoryPillBarProps) {
+  const activeCategory = propActiveCategory ?? selectedCategory ?? null;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 

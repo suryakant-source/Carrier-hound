@@ -97,3 +97,112 @@ export function setLocalProActive(active: boolean = true) {
     } catch {}
   }
 }
+
+/**
+ * Retrieves the full user subscription object if one exists
+ */
+export async function getUserSubscription(): Promise<UserSubscription | null> {
+  try {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      const { data: sub, error } = await supabase
+        .from("subscriptions")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (!error && sub) {
+        return {
+          id: sub.id,
+          userId: sub.user_id,
+          provider: sub.provider || "razorpay",
+          planId: sub.plan_id || PLAN_DOMESTIC.id,
+          currency: sub.currency || "INR",
+          amount: sub.amount || 199,
+          status: sub.status || "active",
+          currentPeriodStart: sub.current_period_start || new Date().toISOString(),
+          currentPeriodEnd: sub.current_period_end || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          gracePeriodEnd: sub.grace_period_end,
+          cancelAtPeriodEnd: sub.cancel_at_period_end ?? false,
+          metadata: sub.metadata,
+        };
+      }
+    }
+  } catch (e) {
+    console.warn("Could not fetch user subscription", e);
+  }
+
+  // Fallback to local cache if pro was activated locally
+  if (typeof window !== "undefined") {
+    try {
+      const isPro = localStorage.getItem(LOCAL_PRO_KEY) === "true";
+      if (isPro) {
+        return {
+          id: "sub_local_pro",
+          userId: "local_user",
+          provider: "razorpay",
+          planId: PLAN_DOMESTIC.id,
+          currency: "INR",
+          amount: 199,
+          status: "active",
+          currentPeriodStart: new Date().toISOString(),
+          currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          cancelAtPeriodEnd: false,
+        };
+      }
+    } catch {}
+  }
+
+  return null;
+}
+
+/**
+ * Marks the subscription to cancel at the end of the current period
+ */
+export async function cancelSubscription(): Promise<UserSubscription | null> {
+  try {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      const { data: sub } = await supabase
+        .from("subscriptions")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (sub) {
+        await supabase
+          .from("subscriptions")
+          .update({ cancel_at_period_end: true })
+          .eq("id", sub.id);
+
+        return {
+          id: sub.id,
+          userId: sub.user_id,
+          provider: sub.provider || "razorpay",
+          planId: sub.plan_id || PLAN_DOMESTIC.id,
+          currency: sub.currency || "INR",
+          amount: sub.amount || 199,
+          status: sub.status || "active",
+          currentPeriodStart: sub.current_period_start || new Date().toISOString(),
+          currentPeriodEnd: sub.current_period_end || new Date().toISOString(),
+          gracePeriodEnd: sub.grace_period_end,
+          cancelAtPeriodEnd: true,
+          metadata: sub.metadata,
+        };
+      }
+    }
+  } catch (e) {
+    console.warn("Could not cancel subscription remotely", e);
+  }
+
+  // Local fallback
+  return null;
+}

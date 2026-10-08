@@ -41,7 +41,13 @@ import {
 import { extractResumeFactsWithGroq, getGroqApiKey } from "@/lib/ai/groq";
 import Link from "next/link";
 
-export default function ResumeUploadAndConfirm() {
+export interface ResumeUploadAndConfirmProps {
+  onProfileConfirmed?: (profile: CandidateProfile) => void;
+}
+
+export default function ResumeUploadAndConfirm({
+  onProfileConfirmed,
+}: ResumeUploadAndConfirmProps = {}) {
   const [profile, setProfile] = useState<CandidateProfile | null>(null);
   const [isParsing, setIsParsing] = useState(false);
   const [parseError, setParseError] = useState<string | null>(null);
@@ -238,6 +244,9 @@ export default function ResumeUploadAndConfirm() {
       saveCandidateProfileLocally(confirmedProfile);
       await saveCandidateProfileToSupabase(confirmedProfile);
       setProfile(confirmedProfile);
+      if (onProfileConfirmed) {
+        onProfileConfirmed(confirmedProfile);
+      }
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 4000);
     } catch (err) {

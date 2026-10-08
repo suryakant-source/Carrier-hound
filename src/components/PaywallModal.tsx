@@ -31,6 +31,7 @@ interface PaywallModalProps {
   onOpenChange: (open: boolean) => void;
   title?: string;
   subtitle?: string;
+  featureTitle?: string;
   user?: User | null;
   onSuccess?: () => void;
   redirectUrl?: string;
@@ -41,6 +42,7 @@ export default function PaywallModal({
   onOpenChange,
   title = "Unlock CareerMonke Pro Access",
   subtitle = "Direct access to unlisted company career endpoints, verified compensation bands, and ATS links.",
+  featureTitle,
   user: initialUser,
   onSuccess,
   redirectUrl,

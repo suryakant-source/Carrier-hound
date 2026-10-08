@@ -3,8 +3,8 @@ import Link from "next/link";
 import BrandIcon from "@/components/BrandIcon";
 
 export const metadata = {
-  title: "Terms and Conditions | YourBrand",
-  description: "Terms and conditions of service for YourBrand job discovery platform.",
+  title: "Terms and Conditions | CareerMonke",
+  description: "Terms and conditions of service for CareerMonke job discovery platform.",
 };
 
 export default function TermsPage() {
@@ -16,7 +16,7 @@ export default function TermsPage() {
           <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center">
             <BrandIcon className="w-4 h-4 text-white" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-blue-600">YourBrand</span>
+          <span className="text-xl font-bold tracking-tight text-blue-600">CareerMonke</span>
         </Link>
       </div>
 
@@ -28,14 +28,14 @@ export default function TermsPage() {
         <p className="text-xs text-gray-400 font-mono">Last Updated: September 24, 2026</p>
 
         <p className="mb-2">
-          1. Acceptance of Terms. By accessing or using the YourBrand application, website, or data feeds, you agree to be legally bound by these Terms and Conditions. If you do not consent to all provisions, you must discontinue platform usage immediately.
+          1. Acceptance of Terms. By accessing or using the CareerMonke application, website, or data feeds, you agree to be legally bound by these Terms and Conditions. If you do not consent to all provisions, you must discontinue platform usage immediately.
         </p>
 
         <p className="mb-2">
-          2. Nature of Service. YourBrand operates as an informational search engine and direct discovery tool designed to catalog unindexed and publicly published employment opportunities.
+          2. Nature of Service. CareerMonke operates as an informational search engine and direct discovery tool designed to catalog unindexed and publicly published employment opportunities.
         </p>
         <p className="mb-2">
-          - YourBrand is not an employment agency, headhunter, staffing firm, or employer.
+          - CareerMonke is not an employment agency, headhunter, staffing firm, or employer.
         </p>
         <p className="mb-2">
           - We make no warranty regarding employment outcomes, interview guarantees, or third-party hiring decisions.
@@ -56,7 +56,7 @@ export default function TermsPage() {
         </p>
 
         <p className="mb-2">
-          5. Limitation of Liability. To the fullest extent permitted by applicable law, YourBrand shall not be held liable for any indirect, incidental, or consequential damages resulting from platform interactions or employment disputes.
+          5. Limitation of Liability. To the fullest extent permitted by applicable law, CareerMonke shall not be held liable for any indirect, incidental, or consequential damages resulting from platform interactions or employment disputes.
         </p>
 
         <p className="mb-2">

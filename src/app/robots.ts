@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/onboarding"],
     },
-    sitemap: "https://yourbrand-jobs.example.com/sitemap.xml",
+    sitemap: "https://careermonke.io/sitemap.xml",
   };
 }

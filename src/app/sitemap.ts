@@ -4,7 +4,7 @@ import { ROLE_GUIDES } from "@/data/guides/roles";
 import { CATEGORY_LANDINGS } from "@/data/guides/categories";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://yourbrand-jobs.example.com";
+  const baseUrl = "https://careermonke.io";
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
@@ -14,10 +14,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/job-search/all`,
+      url: `${baseUrl}/jobs`,
       lastModified: new Date(),
       changeFrequency: "hourly",
-      priority: 0.9,
+      priority: 1.0,
     },
     {
       url: `${baseUrl}/worldwide`,
