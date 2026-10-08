@@ -11,6 +11,10 @@ A modern, high-speed job discovery platform designed to surface **verified, dire
 - **100% Transparency**: Unblurred employer names, verified salary disclosures, and direct-to-ATS application links (`Apply Direct`).
 - **Filter by Role & Mode**: Search across Software Engineering, Cloud/DevOps, AI/ML, Design, and 100% Remote vs. Hybrid/On-site opportunities.
 
+## Documentation & Roadmap
+
+- 📖 **[Product, Tech, Business & Jobright Roadmap Blueprint](docs/PRODUCT_BLUEPRINT_AND_ROADMAP.md)**: Full breakdown of product scope, costs, architecture, monetization, and upcoming Jobright.ai feature parity (resume parsing, AI match scoring, ATS resume builder).
+
 ## Tech Stack
 
 - **Framework**: [Next.js 14](https://nextjs.org/) (App Router, Static Generation)

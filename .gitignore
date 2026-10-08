@@ -40,3 +40,12 @@ graphify-out/
 /login_reverted.png
 /svg_test.png
 
+# Backups & doc conversions
+.system_backup/
+*.docx
+*.txt
+!robots.txt
+deno.lock
+scripts/read_docs.mjs
+scripts/extract_docx.py
+
