@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import BrandIcon from "@/components/BrandIcon";
 import DotPattern from "@/components/DotPattern";
@@ -16,10 +17,21 @@ import GlobeLiveStats from "@/components/GlobeLiveStats";
 import { Testimonials } from "@/components/testimonials";
 import { TestimonialMarqueeDemo } from "@/components/ui/marquee-01";
 import UserMenu from "@/components/UserMenu";
+import { getAuthUser } from "@/lib/auth/session";
 import { X, Check, ArrowRight } from "lucide-react";
 
 export default function HomePage() {
+  const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
+
+  // Returning signed-in user visiting / goes to /dashboard
+  useEffect(() => {
+    getAuthUser().then((user) => {
+      if (user) {
+        router.replace("/dashboard");
+      }
+    });
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-white text-[#09090B] flex flex-col selection:bg-blue-100 selection:text-blue-900">

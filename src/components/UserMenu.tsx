@@ -32,29 +32,8 @@ export default function UserMenu({
     const supabase = createClient();
 
     const checkUser = () => {
-      // 1. Check local email first (instant auth)
-      const localEmail =
-        typeof window !== "undefined"
-          ? localStorage.getItem("careermonke_user_email")
-          : null;
-
-      if (localEmail) {
-        setUser({
-          id: "local-user",
-          email: localEmail,
-          user_metadata: {
-            is_pro:
-              typeof window !== "undefined" &&
-              localStorage.getItem("careermonke_pro_active") === "true",
-          },
-        } as any);
-        setLoading(false);
-        return;
-      }
-
-      // 2. Check Supabase session
-      supabase.auth.getUser().then(({ data }) => {
-        if (data.user) {
+      supabase.auth.getUser().then(({ data, error }) => {
+        if (data?.user && !error) {
           setUser(data.user);
         } else {
           setUser(null);
@@ -116,7 +95,7 @@ export default function UserMenu({
     } catch {}
     setUser(null);
     setOpen(false);
-    router.refresh();
+    router.replace("/");
   };
 
   if (loading) {

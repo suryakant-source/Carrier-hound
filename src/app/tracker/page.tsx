@@ -97,9 +97,9 @@ export default function TrackerPage() {
         router.replace("/login?next=/tracker");
         return;
       }
+      loadData();
+      getTodayDigest().then((d) => setDigest(d));
     });
-    loadData();
-    getTodayDigest().then((d) => setDigest(d));
 
     const handleUpdate = () => {
       loadData();
@@ -109,7 +109,7 @@ export default function TrackerPage() {
     return () => {
       window.removeEventListener("careermonke_tracker_updated", handleUpdate);
     };
-  }, []);
+  }, [router]);
 
   const handleAddDigestToPipeline = async (item: DigestMatchItem) => {
     await addApplicationToTracker({

@@ -38,21 +38,9 @@ export async function getAuthUser(): Promise<User | null> {
     console.warn("Supabase auth check failed:", err);
   }
 
-  // Fallback check from local cache if offline or dev
+  // Clear stale local storage if Supabase says no authenticated session
   if (typeof window !== "undefined") {
-    const email = localStorage.getItem(USER_EMAIL_KEY);
-    if (email) {
-      return {
-        id: "local-user-" + email.replace(/[^a-zA-Z0-9]/g, ""),
-        email,
-        app_metadata: {},
-        user_metadata: {
-          is_pro: localStorage.getItem(USER_PRO_KEY) === "true",
-        },
-        aud: "authenticated",
-        created_at: new Date().toISOString(),
-      } as unknown as User;
-    }
+    localStorage.removeItem(USER_EMAIL_KEY);
   }
 
   return null;

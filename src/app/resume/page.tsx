@@ -42,9 +42,8 @@ export default function ResumePage() {
         router.replace("/login?next=/resume");
         return;
       }
+      loadProfile();
     });
-
-    loadProfile();
 
     const handleUpdate = () => loadProfile();
     window.addEventListener("careermonke_profile_updated", handleUpdate);

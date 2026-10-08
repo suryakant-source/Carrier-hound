@@ -68,20 +68,23 @@ function OnboardingPageInner() {
 
   useEffect(() => {
     getAuthUser().then((user) => {
-      if (user) {
-        setUserId(user.id);
-        getUserPreferences(user.id).then((p) => {
-          if (p.roles && p.roles.length > 0) setRoles(p.roles);
-          if (p.experienceLevel) setExperienceLevel(p.experienceLevel);
-          if (p.employmentTypes) setEmploymentTypes(p.employmentTypes);
-          if (p.remotePreference) setRemotePreference(p.remotePreference);
-          if (p.locations) setLocations(p.locations);
-          if (p.workAuth) setWorkAuth(p.workAuth);
-          if (p.minSalary !== undefined) setMinSalary(p.minSalary);
-          if (p.salaryCurrency) setSalaryCurrency(p.salaryCurrency);
-          setDailyDigestOptIn(p.dailyDigestOptIn);
-        });
+      if (!user) {
+        const returnUrl = rawNext ? `/onboarding?next=${encodeURIComponent(rawNext)}` : "/onboarding";
+        router.replace(`/login?next=${encodeURIComponent(returnUrl)}`);
+        return;
       }
+      setUserId(user.id);
+      getUserPreferences(user.id).then((p) => {
+        if (p.roles && p.roles.length > 0) setRoles(p.roles);
+        if (p.experienceLevel) setExperienceLevel(p.experienceLevel);
+        if (p.employmentTypes) setEmploymentTypes(p.employmentTypes);
+        if (p.remotePreference) setRemotePreference(p.remotePreference);
+        if (p.locations) setLocations(p.locations);
+        if (p.workAuth) setWorkAuth(p.workAuth);
+        if (p.minSalary !== undefined) setMinSalary(p.minSalary);
+        if (p.salaryCurrency) setSalaryCurrency(p.salaryCurrency);
+        setDailyDigestOptIn(p.dailyDigestOptIn);
+      });
     });
 
     getCandidateProfile().then((p) => {
