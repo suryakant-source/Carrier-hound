@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import GuideHeader from "@/components/GuideHeader";
 import Footer from "@/components/Footer";
 import { DUMMY_JOBS, Job } from "@/data/jobs";
@@ -37,10 +37,10 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 
-export default function JobDetailPage() {
-  const params = useParams();
+function JobDetailInner() {
   const router = useRouter();
-  const jobId = typeof params?.id === "string" ? params.id : Array.isArray(params?.id) ? params.id[0] : "";
+  const searchParams = useSearchParams();
+  const jobId = searchParams.get("id") || "";
 
   const [user, setUser] = useState<User | null>(null);
   const [candidate, setCandidate] = useState<CandidateProfile | null>(null);
@@ -501,5 +501,22 @@ export default function JobDetailPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function JobDetailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-50 flex flex-col">
+          <GuideHeader />
+          <div className="flex-1 flex items-center justify-center">
+            <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          </div>
+        </div>
+      }
+    >
+      <JobDetailInner />
+    </Suspense>
   );
 }

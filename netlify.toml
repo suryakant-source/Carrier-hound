@@ -15,6 +15,12 @@
   force = true
 
 [[redirects]]
+  from = "/jobs/:id"
+  to = "/jobs/detail?id=:id"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

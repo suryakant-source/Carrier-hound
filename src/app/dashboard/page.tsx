@@ -508,7 +508,7 @@ export default function DashboardPage() {
                   </button>
 
                   <Link
-                    href={`/jobs/${job.jobId}`}
+                    href={`/jobs/detail?id=${encodeURIComponent(job.jobId)}`}
                     className="text-xs font-semibold text-slate-500 hover:text-slate-800 flex items-center gap-0.5"
                   >
                     <span>Inspect</span>
