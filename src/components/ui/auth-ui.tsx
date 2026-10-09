@@ -218,8 +218,6 @@ function SignInForm({ onSubmit, loading = false }: SignInFormProps) {
     event.preventDefault();
     if (onSubmit) {
       onSubmit(event);
-    } else {
-      console.log("UI: Sign In form submitted");
     }
   };
   return (
@@ -272,8 +270,6 @@ function SignUpForm({ onSubmit, loading = false }: SignUpFormProps) {
     event.preventDefault();
     if (onSubmit) {
       onSubmit(event);
-    } else {
-      console.log("UI: Sign Up form submitted");
     }
   };
   return (
@@ -389,10 +385,7 @@ function AuthFormContainer({
         variant="outline"
         type="button"
         disabled={loading}
-        onClick={
-          onGoogleClick ||
-          (() => console.log("UI: Google button clicked"))
-        }
+        onClick={onGoogleClick}
         className="w-full"
       >
         <img

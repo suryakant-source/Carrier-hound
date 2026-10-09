@@ -228,6 +228,29 @@ export async function deleteApplicationFromTracker(id: string) {
 }
 
 /**
+ * Removes an application from the tracker by jobId or id
+ */
+export async function removeApplicationFromTracker(jobIdOrId: string) {
+  const current = await getTrackedApplications();
+  const target = current.find((a) => a.jobId === jobIdOrId || a.id === jobIdOrId);
+  const filtered = current.filter((a) => a.jobId !== jobIdOrId && a.id !== jobIdOrId);
+
+  saveToLocalStorage(filtered);
+
+  try {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user && target) {
+      await supabase
+        .from("applications")
+        .delete()
+        .eq("id", target.id)
+        .eq("user_id", user.id);
+    }
+  } catch (e) {}
+}
+
+/**
  * Quick helper to track a job in 1 click
  */
 export async function quickTrackJob(

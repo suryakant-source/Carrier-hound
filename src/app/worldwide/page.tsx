@@ -28,7 +28,7 @@ export default function WorldwidePage() {
 
           <div className="pt-2">
             <Link
-              href="/job-search/all"
+              href="/jobs"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-black hover:bg-neutral-800 text-white font-semibold px-7 py-3.5 min-h-[48px] rounded-lg text-sm sm:text-base transition-colors shadow-sm"
             >
               <span>View Jobs on CareerMonke</span>
@@ -50,7 +50,7 @@ export default function WorldwidePage() {
                 className="py-3 sm:py-3.5 min-h-[48px] flex items-center justify-between hover:bg-slate-50/80 px-2 transition-colors group"
               >
                 <Link
-                  href={`/job-search/all?search=${encodeURIComponent(company.name)}`}
+                  href={`/jobs?search=${encodeURIComponent(company.name)}`}
                   className="text-base sm:text-lg font-medium text-[#09090B] group-hover:text-blue-600 transition-colors flex-1 py-1"
                 >
                   {company.name}

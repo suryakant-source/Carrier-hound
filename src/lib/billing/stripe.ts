@@ -1,5 +1,4 @@
 import { PLAN_INTERNATIONAL } from "./types";
-import { setLocalProActive } from "./subscription";
 
 /**
  * Initiates Stripe International Checkout ($9/month)
@@ -16,10 +15,9 @@ export async function redirectToStripeCheckout(options: {
       options.userEmail || ""
     )}`;
 
-  // For testing or instant client mock if key is placeholder
+  // If live link is not configured yet
   if (paymentLink.includes("placeholder")) {
-    setLocalProActive(true);
-    return { success: true, redirected: false };
+    return { success: false, redirected: false };
   }
 
   if (typeof window !== "undefined") {

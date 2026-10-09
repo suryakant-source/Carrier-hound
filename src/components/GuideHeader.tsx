@@ -247,15 +247,6 @@ export default function GuideHeader() {
           /* DESKTOP NAV: PUBLIC GUEST                                            */
           /* =================================================================== */
           <nav className="hidden md:flex items-center gap-6">
-            <a href="/#how-it-works" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition">
-              How it works
-            </a>
-            <a href="/#preview" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition">
-              Jobs preview
-            </a>
-            <a href="/#pricing" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition">
-              Pricing
-            </a>
             <Link href="/remote" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition">
               Resources
             </Link>
@@ -392,27 +383,6 @@ export default function GuideHeader() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <a
-                    href="/#how-it-works"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                  >
-                    How it works
-                  </a>
-                  <a
-                    href="/#preview"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                  >
-                    Jobs preview
-                  </a>
-                  <a
-                    href="/#pricing"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                  >
-                    Pricing
-                  </a>
                   <Link
                     href="/remote"
                     onClick={() => setMobileMenuOpen(false)}

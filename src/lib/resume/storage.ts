@@ -45,16 +45,20 @@ export const DEFAULT_CANDIDATE_PROFILE: CandidateProfile = {
 };
 
 /**
- * Gets the confirmed candidate profile from local storage and Supabase
+ * Gets the confirmed candidate profile from local storage and Supabase.
+ * Returns null if the user has not uploaded and confirmed a resume.
  */
-export async function getCandidateProfile(): Promise<CandidateProfile> {
-  let profile = DEFAULT_CANDIDATE_PROFILE;
+export async function getCandidateProfile(): Promise<CandidateProfile | null> {
+  let profile: CandidateProfile | null = null;
 
   if (typeof window !== "undefined") {
     try {
       const stored = localStorage.getItem(PROFILE_STORAGE_KEY);
       if (stored) {
-        profile = JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.confirmedAt) {
+          profile = parsed;
+        }
       }
     } catch (e) {
       console.warn("Could not read local candidate profile", e);
@@ -72,18 +76,18 @@ export async function getCandidateProfile(): Promise<CandidateProfile> {
         .eq("user_id", user.id)
         .single();
 
-      if (!error && data) {
+      if (!error && data && data.confirmed_at) {
         const remoteProfile: CandidateProfile = {
-          name: data.name || profile.name,
-          email: data.email || user.email || profile.email,
-          phone: data.phone || profile.phone,
-          headline: data.headline || profile.headline,
-          summary: data.summary || profile.summary,
-          skills: data.skills || profile.skills,
-          experience: data.experience_json || profile.experience,
-          education: data.education_json || profile.education,
-          certifications: data.certifications || profile.certifications,
-          rawText: data.raw_resume_text || profile.rawText,
+          name: data.name || profile?.name || "",
+          email: data.email || user.email || profile?.email || "",
+          phone: data.phone || profile?.phone || "",
+          headline: data.headline || profile?.headline || "",
+          summary: data.summary || profile?.summary || "",
+          skills: data.skills || profile?.skills || [],
+          experience: data.experience_json || profile?.experience || [],
+          education: data.education_json || profile?.education || [],
+          certifications: data.certifications || profile?.certifications || [],
+          rawText: data.raw_resume_text || profile?.rawText || "",
           confirmedAt: data.confirmed_at,
           updatedAt: data.updated_at,
         };

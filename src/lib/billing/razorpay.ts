@@ -1,5 +1,4 @@
 import { PLAN_DOMESTIC } from "./types";
-import { setLocalProActive } from "./subscription";
 
 /**
  * Loads Razorpay Standard Checkout SDK dynamically
@@ -43,8 +42,12 @@ export async function openRazorpayCheckout(options: RazorpayCheckoutOptions) {
 
   const keyId =
     process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ||
-    process.env.RAZORPAY_KEY_ID ||
-    "rzp_test_placeholder";
+    process.env.RAZORPAY_KEY_ID;
+
+  if (!keyId) {
+    options.onError(new Error("Razorpay billing is not configured yet."));
+    return;
+  }
 
   const razorpayOptions = {
     key: keyId,
@@ -62,7 +65,6 @@ export async function openRazorpayCheckout(options: RazorpayCheckoutOptions) {
       color: "#2563EB",
     },
     handler: function (response: any) {
-      setLocalProActive(true);
       options.onSuccess(response.razorpay_payment_id || "pay_success");
     },
     modal: {

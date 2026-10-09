@@ -21,6 +21,16 @@ export function getValidReturnUrl(targetUrl: string | null | undefined, fallback
   return fallback;
 }
 
+export function getAuditEmail(): string | null {
+  return process.env.NEXT_PUBLIC_AUDIT_EMAIL?.trim() || null;
+}
+
+export function isAuditUser(email?: string | null): boolean {
+  const auditEmail = getAuditEmail();
+  if (!auditEmail || !email) return false;
+  return email.trim().toLowerCase() === auditEmail.toLowerCase();
+}
+
 /**
  * Retrieves the current authenticated user session.
  */
@@ -36,6 +46,22 @@ export async function getAuthUser(): Promise<User | null> {
     }
   } catch (err) {
     console.warn("Supabase auth check failed:", err);
+  }
+
+  // 1. Audit Mode bypass: env-gated only (NEXT_PUBLIC_AUDIT_EMAIL)
+  const auditEmail = getAuditEmail();
+  if (auditEmail && typeof window !== "undefined") {
+    const localEmail = localStorage.getItem(USER_EMAIL_KEY);
+    if (localEmail && localEmail.trim().toLowerCase() === auditEmail.toLowerCase()) {
+      return {
+        id: "audit-mode-tester",
+        email: auditEmail,
+        app_metadata: { provider: "audit" },
+        user_metadata: { full_name: "Audit Mode Tester", email: auditEmail },
+        aud: "authenticated",
+        created_at: new Date().toISOString(),
+      } as unknown as User;
+    }
   }
 
   // Clear stale local storage if Supabase says no authenticated session

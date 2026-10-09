@@ -24,6 +24,7 @@ import type { User } from "@supabase/supabase-js";
 import { PLAN_DOMESTIC, PLAN_INTERNATIONAL } from "@/lib/billing/types";
 import { openRazorpayCheckout } from "@/lib/billing/razorpay";
 import { redirectToStripeCheckout } from "@/lib/billing/stripe";
+import { toast } from "react-toastify";
 import { setLocalProActive } from "@/lib/billing/subscription";
 
 interface PaywallModalProps {
@@ -89,19 +90,15 @@ export default function PaywallModal({
       await openRazorpayCheckout({
         userEmail: email,
         userName: currentUser?.user_metadata?.full_name || "Pro Member",
-        onSuccess: (paymentId) => {
-          setLocalProActive(true);
+        onSuccess: (_paymentId) => {
           setIsProcessing(false);
           setIsSuccess(true);
           onSuccess?.();
         },
         onError: (err) => {
-          console.warn("Razorpay error, activating local Pro session:", err);
-          // In test/dev environment, fallback to immediate activation
-          setLocalProActive(true);
+          console.warn("Razorpay checkout error / cancelled:", err);
           setIsProcessing(false);
-          setIsSuccess(true);
-          onSuccess?.();
+          toast.error("Payment was not completed. Pro access was not granted.");
         },
       });
     } else {
@@ -112,16 +109,17 @@ export default function PaywallModal({
           userId: currentUser?.id,
         });
         if (result.success && !result.redirected) {
-          setLocalProActive(true);
           setIsProcessing(false);
           setIsSuccess(true);
           onSuccess?.();
+        } else if (!result.success) {
+          setIsProcessing(false);
+          toast.error("Checkout was not initialized.");
         }
       } catch (err) {
-        setLocalProActive(true);
+        console.warn("Stripe checkout error:", err);
         setIsProcessing(false);
-        setIsSuccess(true);
-        onSuccess?.();
+        toast.error("Payment was not completed. Pro access was not granted.");
       }
     }
   };

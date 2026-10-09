@@ -57,9 +57,7 @@ export default function UserMenu({
             id: "local-user",
             email: localEmail,
             user_metadata: {
-              is_pro:
-                typeof window !== "undefined" &&
-                localStorage.getItem("careermonke_pro_active") === "true",
+              is_pro: false,
             },
           } as any);
         } else {
@@ -135,10 +133,7 @@ export default function UserMenu({
   }
 
   // ── Signed IN ─────────────────────────────────────────────────────────────
-  const isPro =
-    user.user_metadata?.is_pro === true ||
-    (typeof window !== "undefined" &&
-      localStorage.getItem("careermonke_pro_active") === "true");
+  const isPro = user.user_metadata?.is_pro === true;
 
   const initial = (user.email?.[0] ?? "U").toUpperCase();
   const shortEmail = user.email

@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { Sparkles, Target, Zap } from "lucide-react";
 import { computeFitDiagnostics, FitDiagnosticsResult } from "@/lib/matcher/scoring";
 import { CandidateProfile } from "@/lib/resume/types";
-import { getCandidateProfile, DEFAULT_CANDIDATE_PROFILE } from "@/lib/resume/storage";
+import { getCandidateProfile } from "@/lib/resume/storage";
 import FitDiagnosticsModal from "./FitDiagnosticsModal";
 import CoverLetterModal from "../resume/CoverLetterModal";
 
@@ -31,35 +32,52 @@ export default function MatchScoreBadge({
   size = "sm",
   showLabel = true,
 }: MatchScoreBadgeProps) {
-  const [candidate, setCandidate] = useState<CandidateProfile>(
-    candidateProfile || DEFAULT_CANDIDATE_PROFILE
-  );
-  const [diagnostics, setDiagnostics] = useState<FitDiagnosticsResult>(() =>
-    computeFitDiagnostics(candidateProfile || DEFAULT_CANDIDATE_PROFILE, job)
-  );
+  const [candidate, setCandidate] = useState<CandidateProfile | null>(() => {
+    if (candidateProfile && candidateProfile.confirmedAt) {
+      return candidateProfile;
+    }
+    return null;
+  });
+  const [diagnostics, setDiagnostics] = useState<FitDiagnosticsResult | null>(() => {
+    if (candidateProfile && candidateProfile.confirmedAt) {
+      return computeFitDiagnostics(candidateProfile, job);
+    }
+    return null;
+  });
   const [isDiagnosticsOpen, setIsDiagnosticsOpen] = useState(false);
   const [isCoverLetterOpen, setIsCoverLetterOpen] = useState(false);
 
   useEffect(() => {
-    if (candidateProfile) {
-      setCandidate(candidateProfile);
-      setDiagnostics(computeFitDiagnostics(candidateProfile, job));
+    if (candidateProfile !== undefined) {
+      if (candidateProfile && candidateProfile.confirmedAt) {
+        setCandidate(candidateProfile);
+        setDiagnostics(computeFitDiagnostics(candidateProfile, job));
+      } else {
+        setCandidate(null);
+        setDiagnostics(null);
+      }
       return;
     }
 
     // Load from storage (e.g. user's confirmed resume)
     getCandidateProfile().then((p) => {
-      if (p) {
+      if (p && p.confirmedAt) {
         setCandidate(p);
         setDiagnostics(computeFitDiagnostics(p, job));
+      } else {
+        setCandidate(null);
+        setDiagnostics(null);
       }
     });
 
     const handleProfileUpdate = () => {
       getCandidateProfile().then((p) => {
-        if (p) {
+        if (p && p.confirmedAt) {
           setCandidate(p);
           setDiagnostics(computeFitDiagnostics(p, job));
+        } else {
+          setCandidate(null);
+          setDiagnostics(null);
         }
       });
     };
@@ -70,8 +88,18 @@ export default function MatchScoreBadge({
     };
   }, [candidateProfile, job]);
 
-  if (!diagnostics || !candidate) {
-    return null;
+  if (!candidate || !candidate.confirmedAt || !diagnostics) {
+    return (
+      <Link
+        href="/resume"
+        onClick={(e) => e.stopPropagation()}
+        className="inline-flex items-center gap-1 font-semibold rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition text-[10px] px-2 py-0.5 shadow-2xs"
+        title="Add and confirm your resume facts to see your personalized match score"
+      >
+        <Sparkles className="w-3 h-3 text-slate-400" />
+        <span>Add resume to see match</span>
+      </Link>
+    );
   }
 
   const { score, scoreGrade } = diagnostics;

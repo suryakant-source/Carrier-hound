@@ -68,8 +68,15 @@ function SignupPageInner() {
       return;
     }
 
-    setError("");
-    setLoading(true);
+    // 1. Audit Mode bypass (env-gated only via NEXT_PUBLIC_AUDIT_EMAIL)
+    const auditEmail = process.env.NEXT_PUBLIC_AUDIT_EMAIL?.trim();
+    if (auditEmail && cleanEmail.toLowerCase() === auditEmail.toLowerCase()) {
+      localStorage.setItem("careermonke_user_email", auditEmail);
+      document.cookie = `careermonke_user_email=${encodeURIComponent(auditEmail)}; path=/; max-age=2592000; SameSite=Lax`;
+      window.dispatchEvent(new Event("careermonke_auth_updated"));
+      window.location.href = next;
+      return;
+    }
 
     try {
       const supabase = createClient();
@@ -82,15 +89,7 @@ function SignupPageInner() {
       });
 
       if (signUpError) {
-        // Fallback for dev / offline testing
-        if (signUpError.message.includes("fetch") || signUpError.message.includes("network")) {
-          localStorage.setItem("careermonke_user_email", cleanEmail);
-          document.cookie = `careermonke_user_email=${encodeURIComponent(cleanEmail)}; path=/; max-age=2592000`;
-          window.dispatchEvent(new Event("careermonke_auth_updated"));
-          window.location.href = next;
-          return;
-        }
-        setError(signUpError.message);
+        setError(signUpError.message || "Failed to initialize signup. Please try again.");
         setLoading(false);
         return;
       }

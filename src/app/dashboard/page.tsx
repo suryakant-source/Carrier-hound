@@ -12,9 +12,9 @@ import { getCandidateProfile } from "@/lib/resume/storage";
 import { CandidateProfile } from "@/lib/resume/types";
 import { getTrackedApplications, addApplicationToTracker } from "@/lib/tracker/storage";
 import { TrackedApplication } from "@/lib/tracker/types";
-import { getTodayDigest, DailyDigestQueue, DigestMatchItem } from "@/lib/cron/digestStorage";
 import MatchScoreBadge from "@/components/matcher/MatchScoreBadge";
-import { DUMMY_JOBS } from "@/data/jobs";
+import { getLiveJobs, LiveJob } from "@/lib/jobs/service";
+import { getTodayDigest, DailyDigestQueue, DigestMatchItem } from "@/lib/cron/digestStorage";
 import type { User } from "@supabase/supabase-js";
 import {
   Sparkles,
@@ -50,6 +50,7 @@ export default function DashboardPage() {
   const [digest, setDigest] = useState<DailyDigestQueue | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [showWalkthrough, setShowWalkthrough] = useState(false);
+  const [fallbackLiveJobs, setFallbackLiveJobs] = useState<LiveJob[]>([]);
 
   // Check auth and load user data
   useEffect(() => {
@@ -59,6 +60,12 @@ export default function DashboardPage() {
         return;
       }
       setUser(authUser);
+      const isPro = authUser?.user_metadata?.is_pro === true;
+
+      // Load live jobs for dashboard
+      getLiveJobs({ page: 1, pageSize: 6, isPro }).then((res) => {
+        setFallbackLiveJobs(res.jobs);
+      });
 
       // Load preferences
       getUserPreferences(authUser.id).then((p) => {
@@ -156,18 +163,27 @@ export default function DashboardPage() {
     (a) => a.stage === "interview" || a.followUpAt
   );
 
-  // Relevant listings: from digest or curated top roles
+  // Relevant listings: from digest or live top verified roles
   const relevantListings = digest?.matches && digest.matches.length > 0
-    ? digest.matches.slice(0, 6)
-    : DUMMY_JOBS.slice(0, 6).map((j) => ({
+    ? digest.matches.slice(0, 6).map((m: DigestMatchItem) => ({
+        jobId: m.jobId,
+        title: m.title,
+        company: isPro ? m.company : "Confidential Employer",
+        location: m.location,
+        score: hasConfirmedResume ? m.score : 0,
+        matchedSkills: m.matchedSkills,
+        missingSkills: m.missingSkills,
+        applyUrl: isPro ? m.applyUrl : "",
+      }))
+    : fallbackLiveJobs.map((j) => ({
         jobId: j.id,
         title: j.title,
         company: j.company,
         location: j.location,
-        score: 85,
-        matchedSkills: ["TypeScript", "React", "Node.js"],
-        missingSkills: ["AWS"],
-        applyUrl: j.applyUrl,
+        score: 0,
+        matchedSkills: [],
+        missingSkills: [],
+        applyUrl: isPro ? j.applyUrl : "",
       }));
 
   if (loading) {
@@ -438,7 +454,7 @@ export default function DashboardPage() {
 
           {/* Job Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {relevantListings.map((job) => (
+            {relevantListings.map((job: any) => (
               <div
                 key={job.jobId}
                 className="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs hover:shadow-md transition space-y-3 flex flex-col justify-between group"
@@ -488,7 +504,7 @@ export default function DashboardPage() {
 
                   {job.matchedSkills && job.matchedSkills.length > 0 && (
                     <div className="flex flex-wrap gap-1 pt-1">
-                      {job.matchedSkills.slice(0, 3).map((skill) => (
+                      {job.matchedSkills.slice(0, 3).map((skill: string) => (
                         <span key={skill} className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
                           {skill}
                         </span>

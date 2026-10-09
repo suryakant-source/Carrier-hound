@@ -1,3 +1,6 @@
 /job-search /job-search/all 301!
 /paywall /job-search/all 301!
+/jobs/detail /jobs/detail.html 200
+/jobs/:id /jobs/detail.html 200
+/jobs/* /jobs/detail.html 200
 /* /index.html 200

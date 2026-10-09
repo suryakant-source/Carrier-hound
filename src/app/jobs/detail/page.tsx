@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import GuideHeader from "@/components/GuideHeader";
 import Footer from "@/components/Footer";
-import { DUMMY_JOBS, Job } from "@/data/jobs";
+import { getLiveJobById, LiveJob } from "@/lib/jobs/service";
 import { getAuthUser } from "@/lib/auth/session";
 import { getCandidateProfile } from "@/lib/resume/storage";
 import { CandidateProfile } from "@/lib/resume/types";
 import { computeFitDiagnostics, FitDiagnosticsResult } from "@/lib/matcher/scoring";
-import { addApplicationToTracker, getTrackedApplications } from "@/lib/tracker/storage";
+import { addApplicationToTracker, getTrackedApplications, removeApplicationFromTracker } from "@/lib/tracker/storage";
 import PaywallModal from "@/components/PaywallModal";
 import CoverLetterModal from "@/components/resume/CoverLetterModal";
 import FitDiagnosticsModal from "@/components/matcher/FitDiagnosticsModal";
@@ -37,14 +37,32 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 
+function getResolvedJobId(searchParams: URLSearchParams | null): string {
+  const queryId = searchParams?.get("id");
+  if (queryId && queryId.trim()) return queryId.trim();
+
+  if (typeof window !== "undefined") {
+    const urlParams = new URLSearchParams(window.location.search);
+    const winId = urlParams.get("id");
+    if (winId && winId.trim()) return winId.trim();
+
+    const pathname = window.location.pathname;
+    const match = pathname.match(/^\/jobs\/([^/?#]+)/);
+    if (match && match[1] && match[1] !== "detail") {
+      return decodeURIComponent(match[1]).trim();
+    }
+  }
+
+  return "";
+}
+
 function JobDetailInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const jobId = searchParams.get("id") || "";
 
   const [user, setUser] = useState<User | null>(null);
   const [candidate, setCandidate] = useState<CandidateProfile | null>(null);
-  const [job, setJob] = useState<Job | null>(null);
+  const [job, setJob] = useState<LiveJob | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Modals & States
@@ -55,32 +73,40 @@ function JobDetailInner() {
   const [isSavedInTracker, setIsSavedInTracker] = useState(false);
 
   useEffect(() => {
+    const resolvedId = getResolvedJobId(searchParams);
+
     // 1. Load user & profile
     getAuthUser().then((u) => {
       setUser(u);
+      const isPro = u?.user_metadata?.is_pro === true;
+
+      // 2. Fetch live job from Supabase with payload-level Pro gating
+      if (resolvedId) {
+        getLiveJobById(resolvedId, isPro).then((foundJob) => {
+          setJob(foundJob);
+          setLoading(false);
+        });
+      } else {
+        setLoading(false);
+      }
     });
 
     getCandidateProfile().then((cp) => {
       if (cp && cp.confirmedAt) {
         setCandidate(cp);
+      } else {
+        setCandidate(null);
       }
     });
 
-    // 2. Find job by ID
-    const found = DUMMY_JOBS.find((j) => j.id === jobId);
-    if (found) {
-      setJob(found);
-    }
-    setLoading(false);
-
     // 3. Check if already tracked
-    if (jobId) {
+    if (resolvedId) {
       getTrackedApplications().then((apps) => {
-        const tracked = apps.some((a) => a.jobId === jobId);
+        const tracked = apps.some((a) => a.jobId === resolvedId);
         setIsSavedInTracker(tracked);
       });
     }
-  }, [jobId]);
+  }, [searchParams]);
 
   if (loading) {
     return (
@@ -171,6 +197,24 @@ function JobDetailInner() {
   };
 
   const handleSaveOnly = async () => {
+    if (!user) {
+      toast.info("Please sign up or sign in to save jobs to your tracker.");
+      const currentUrl = typeof window !== "undefined" ? window.location.pathname + window.location.search : `/jobs/detail?id=${job.id}`;
+      router.push(`/signup?next=${encodeURIComponent(currentUrl)}`);
+      return;
+    }
+
+    if (isSavedInTracker) {
+      try {
+        await removeApplicationFromTracker(job.id);
+        setIsSavedInTracker(false);
+        toast.info(`Removed "${job.title}" from Applications.`);
+      } catch (e) {
+        toast.error("Could not remove from tracker.");
+      }
+      return;
+    }
+
     try {
       await addApplicationToTracker({
         jobId: job.id,
@@ -303,15 +347,14 @@ function JobDetailInner() {
               <button
                 type="button"
                 onClick={handleSaveOnly}
-                disabled={isSavedInTracker}
                 className={`inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-xs sm:text-sm font-bold border transition cursor-pointer ${
                   isSavedInTracker
-                    ? "bg-slate-100 text-slate-400 border-slate-200 cursor-default"
+                    ? "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200"
                     : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                 }`}
               >
                 <BookmarkPlus className="w-4 h-4" />
-                <span>{isSavedInTracker ? "Saved to Applications" : "Save Job"}</span>
+                <span>{isSavedInTracker ? "Remove from Saved" : "Save Job"}</span>
               </button>
             </div>
 
@@ -428,7 +471,7 @@ function JobDetailInner() {
               <p>• Category: {job.category || "General Tech"}</p>
               <p>• Location Eligibility: {job.location || "Remote Worldwide"}</p>
               <p>• Employment Type: {job.type || "Full-Time Direct Hire"}</p>
-              <p>• Reported Compensation: {job.salary || "Competitive based on experience"}</p>
+              <p>• Reported Compensation: {isPro && job.salary ? job.salary : "Locked (Pro Membership)"}</p>
             </div>
             <p>
               Candidates are encouraged to tailor their application to address the core responsibilities outlined above and apply directly through the company&apos;s ATS link.

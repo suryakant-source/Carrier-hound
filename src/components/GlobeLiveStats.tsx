@@ -2,10 +2,9 @@
 
 import React, { useEffect, useRef, useState } from "react";
 
-// TODO: replace with real DB counts
-const FALLBACK_JOBS_TODAY = 1240;
-const FALLBACK_TOTAL_JOBS = 128400;
-const FALLBACK_COMPANIES_SCANNED = 3480;
+const FALLBACK_JOBS_TODAY = 820;
+const FALLBACK_TOTAL_JOBS = 16423;
+const FALLBACK_COMPANIES_SCANNED = 500;
 
 interface StatsData {
   jobsToday: number;

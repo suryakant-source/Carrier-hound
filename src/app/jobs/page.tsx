@@ -8,12 +8,13 @@ import Footer from "@/components/Footer";
 import CategoryPillBar from "@/components/CategoryPillBar";
 import PaywallModal from "@/components/PaywallModal";
 import MatchScoreBadge from "@/components/matcher/MatchScoreBadge";
-import { DUMMY_JOBS, Job } from "@/data/jobs";
+import { getLiveJobs, LiveJob } from "@/lib/jobs/service";
 import { getAuthUser, getUserPreferences } from "@/lib/auth/session";
 import { getCandidateProfile } from "@/lib/resume/storage";
 import { CandidateProfile } from "@/lib/resume/types";
 import { UserPreferences } from "@/lib/auth/types";
-import { addApplicationToTracker, getTrackedApplications } from "@/lib/tracker/storage";
+import { addApplicationToTracker, getTrackedApplications, removeApplicationFromTracker } from "@/lib/tracker/storage";
+import { computeFitDiagnostics } from "@/lib/matcher/scoring";
 import type { User } from "@supabase/supabase-js";
 import {
   Search,
@@ -60,6 +61,11 @@ function JobsPageInner() {
   const [page, setPage] = useState(1);
   const JOBS_PER_PAGE = 25;
 
+  // Live Supabase Jobs Data
+  const [liveJobs, setLiveJobs] = useState<LiveJob[]>([]);
+  const [totalCount, setTotalCount] = useState<number>(16423);
+  const [loadingJobs, setLoadingJobs] = useState<boolean>(true);
+
   useEffect(() => {
     getAuthUser().then((u) => {
       setUser(u);
@@ -77,6 +83,9 @@ function JobsPageInner() {
       if (cp && cp.confirmedAt) {
         setCandidate(cp);
         setSortBy("match");
+      } else {
+        setCandidate(null);
+        setSortBy("newest");
       }
     });
 
@@ -88,49 +97,73 @@ function JobsPageInner() {
   const isPro = user?.user_metadata?.is_pro === true;
   const hasConfirmedResume = Boolean(candidate && candidate.confirmedAt);
 
-  // Filtered Jobs
-  const filteredJobs = useMemo(() => {
-    return DUMMY_JOBS.filter((job) => {
-      // 1. Tab filtering
-      if (activeTab === "saved") {
-        return savedJobIds.includes(job.id);
-      }
+  // Fetch live verified jobs from Supabase whenever search/category/filters or Pro status updates
+  useEffect(() => {
+    let cancelled = false;
+    setLoadingJobs(true);
 
-      if (activeTab === "foryou") {
-        if (preferences?.roles?.length) {
-          const titleMatches = preferences.roles.some((r) =>
+    getLiveJobs({
+      page: 1,
+      pageSize: 50,
+      category: selectedCategory,
+      search,
+      remoteOnly,
+      isPro,
+    }).then((res) => {
+      if (!cancelled) {
+        setLiveJobs(res.jobs);
+        setTotalCount(res.totalCount);
+        setLoadingJobs(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedCategory, search, remoteOnly, isPro]);
+
+  // Filtered & Sorted Jobs
+  const filteredJobs = useMemo(() => {
+    let result = liveJobs.slice();
+
+    if (activeTab === "saved") {
+      result = result.filter((job) => savedJobIds.includes(job.id));
+    } else if (activeTab === "foryou") {
+      if (!user) {
+        result = [];
+      } else if (preferences?.roles?.length || preferences?.categories?.length) {
+        result = result.filter((job) => {
+          const titleMatches = preferences.roles?.some((r) =>
             job.title.toLowerCase().includes(r.toLowerCase())
           );
-          if (!titleMatches && !preferences.categories.includes(job.category?.toLowerCase() || "")) {
-            return false;
-          }
-        }
+          const categoryMatches = preferences.categories?.some((c) =>
+            job.category?.toLowerCase().includes(c.toLowerCase())
+          );
+          return Boolean(titleMatches || categoryMatches);
+        });
       }
+    }
 
-      // 2. Search query filter
-      if (search.trim()) {
-        const q = search.toLowerCase();
-        const matchesTitle = job.title.toLowerCase().includes(q);
-        const matchesCompany = job.company.toLowerCase().includes(q);
-        const matchesLocation = job.location.toLowerCase().includes(q);
-        if (!matchesTitle && !matchesCompany && !matchesLocation) return false;
-      }
+    if (sortBy === "match" && hasConfirmedResume && candidate) {
+      result.sort((a, b) => {
+        const scoreA = computeFitDiagnostics(candidate, {
+          id: a.id,
+          title: a.title,
+          company: a.company,
+          location: a.location,
+        }).score;
+        const scoreB = computeFitDiagnostics(candidate, {
+          id: b.id,
+          title: b.title,
+          company: b.company,
+          location: b.location,
+        }).score;
+        return scoreB - scoreA;
+      });
+    }
 
-      // 3. Category filter
-      if (selectedCategory && selectedCategory !== "all") {
-        if (job.category?.toLowerCase() !== selectedCategory.toLowerCase()) {
-          return false;
-        }
-      }
-
-      // 4. Remote only filter
-      if (remoteOnly && !job.remote) {
-        return false;
-      }
-
-      return true;
-    });
-  }, [activeTab, search, selectedCategory, remoteOnly, savedJobIds, preferences]);
+    return result;
+  }, [liveJobs, activeTab, savedJobIds, preferences, sortBy, hasConfirmedResume, candidate, user]);
 
   const displayedJobs = useMemo(() => {
     return filteredJobs.slice(0, page * JOBS_PER_PAGE);
@@ -144,7 +177,24 @@ function JobsPageInner() {
     setPage(1);
   };
 
-  const handleSaveJob = async (job: Job) => {
+  const handleSaveJob = async (job: LiveJob) => {
+    if (!user) {
+      toast.info("Please create a free account or sign in to save jobs to your tracker.");
+      router.push(`/signup?next=${encodeURIComponent("/jobs")}`);
+      return;
+    }
+
+    if (savedJobIds.includes(job.id)) {
+      try {
+        await removeApplicationFromTracker(job.id);
+        setSavedJobIds((prev) => prev.filter((id) => id !== job.id));
+        toast.info(`Removed "${job.title}" from your Applications Tracker.`);
+      } catch (e) {
+        toast.error("Could not remove application.");
+      }
+      return;
+    }
+
     try {
       await addApplicationToTracker({
         jobId: job.id,
@@ -184,6 +234,11 @@ function JobsPageInner() {
               <button
                 type="button"
                 onClick={() => {
+                  if (!user) {
+                    toast.info("Please sign in or create an account to view your tailored 'For you' jobs.");
+                    router.push(`/login?next=${encodeURIComponent("/jobs")}`);
+                    return;
+                  }
                   setActiveTab("foryou");
                   setPage(1);
                 }}
@@ -293,7 +348,7 @@ function JobsPageInner() {
         {/* Results Count Banner */}
         <div className="flex items-center justify-between text-xs text-slate-500 pb-1 border-b border-slate-200">
           <span>
-            Showing <strong className="text-slate-900">{displayedJobs.length}</strong> of {filteredJobs.length} verified jobs
+            Showing <strong className="text-slate-900">{displayedJobs.length}</strong> of {totalCount.toLocaleString()} verified jobs
           </span>
 
           {!hasConfirmedResume && (
@@ -312,19 +367,35 @@ function JobsPageInner() {
               <Search className="w-6 h-6" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-base font-bold text-slate-900">No jobs match your active filters</h3>
+              <h3 className="text-base font-bold text-slate-900">
+                {activeTab === "foryou" && !user
+                  ? "Sign in to view your tailored 'For you' jobs"
+                  : "No jobs match your active filters"}
+              </h3>
               <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                Try clearing your search terms or expanding your category preferences to see more openings.
+                {activeTab === "foryou" && !user
+                  ? "Sign in with your account to get recommendations tailored to your profile and preferences."
+                  : "Try clearing your search terms or expanding your category preferences to see more openings."}
               </p>
             </div>
-            <button
-              type="button"
-              onClick={handleResetFilters}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-xs cursor-pointer"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset All Filters</span>
-            </button>
+            {activeTab === "foryou" && !user ? (
+              <Link
+                href="/login?next=/jobs"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-xs"
+              >
+                <span>Sign In to View Matches</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={handleResetFilters}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-xs cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Reset All Filters</span>
+              </button>
+            )}
           </div>
         ) : (
           <div className="space-y-3">
@@ -402,13 +473,12 @@ function JobsPageInner() {
                     <button
                       type="button"
                       onClick={() => handleSaveJob(job)}
-                      disabled={isSaved}
                       className={`p-2 rounded-xl border text-xs font-bold transition cursor-pointer ${
                         isSaved
-                          ? "bg-slate-100 text-slate-400 border-slate-200"
+                          ? "bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100"
                           : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                       }`}
-                      title={isSaved ? "Saved to Applications" : "Save to Tracker"}
+                      title={isSaved ? "Saved - click to remove from Tracker" : "Save to Tracker"}
                     >
                       <BookmarkPlus className="w-4 h-4" />
                     </button>

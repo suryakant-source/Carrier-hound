@@ -57,7 +57,7 @@ export default function Footer({ isGuide = false }: FooterProps) {
             <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-200">Links</h4>
             <ul className="space-y-1 text-sm text-slate-400">
               <li>
-                <a href="/#contact" className="inline-flex items-center py-2 sm:py-1 min-h-[44px] sm:min-h-0 hover:text-white transition-colors">
+                <a href="mailto:support@careermonke.com" className="inline-flex items-center py-2 sm:py-1 min-h-[44px] sm:min-h-0 hover:text-white transition-colors">
                   Support
                 </a>
               </li>
@@ -73,33 +73,33 @@ export default function Footer({ isGuide = false }: FooterProps) {
               </li>
               <li className="pt-2 flex flex-wrap items-center gap-2 text-slate-400 text-xs sm:text-sm">
                 <a
-                  href="https://twitter.com"
+                  href="https://x.com/careermonke"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Twitter / X"
                   className="inline-flex items-center px-2 py-2 sm:py-1 min-h-[44px] sm:min-h-0 hover:text-white transition-colors"
                 >
-                  Twitter
+                  X (Twitter)
                 </a>
                 <span>•</span>
                 <a
-                  href="https://facebook.com"
+                  href="https://linkedin.com/company/careermonke"
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="Facebook"
+                  aria-label="LinkedIn"
                   className="inline-flex items-center px-2 py-2 sm:py-1 min-h-[44px] sm:min-h-0 hover:text-white transition-colors"
                 >
-                  Facebook
+                  LinkedIn
                 </a>
                 <span>•</span>
                 <a
-                  href="https://tiktok.com"
+                  href="https://github.com"
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="TikTok"
+                  aria-label="GitHub"
                   className="inline-flex items-center px-2 py-2 sm:py-1 min-h-[44px] sm:min-h-0 hover:text-white transition-colors"
                 >
-                  TikTok
+                  GitHub
                 </a>
               </li>
             </ul>

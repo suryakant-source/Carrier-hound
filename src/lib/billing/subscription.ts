@@ -6,24 +6,15 @@ import {
   PLAN_INTERNATIONAL,
 } from "./types";
 
-const LOCAL_PRO_KEY = "careermonke_pro_active";
 const LOCAL_SUB_KEY = "careermonke_subscription_cache";
 
 /**
- * Checks the user's active Pro access status, taking into account:
- * 1. Active paid subscriptions (Razorpay / Stripe)
- * 2. 7-Day Grace Period on failed renewal (maintains access with dunning warning)
- * 3. Local demo or promo overrides
+ * Checks the user's active Pro access status, strictly server-verified.
+ * 1. Active paid subscriptions in Supabase (Razorpay / Stripe)
+ * 2. 7-Day Grace Period on failed renewal
+ * Until billing is live and verified on the server, everyone is Free.
  */
 export async function getProAccessStatus(): Promise<ProAccessStatus> {
-  // Check if locally marked as pro (offline fallback / guest upgrade)
-  let isLocallyActive = false;
-  if (typeof window !== "undefined") {
-    try {
-      isLocallyActive = localStorage.getItem(LOCAL_PRO_KEY) === "true";
-    } catch {}
-  }
-
   try {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -75,25 +66,22 @@ export async function getProAccessStatus(): Promise<ProAccessStatus> {
     console.warn("Could not check remote subscription status", e);
   }
 
+  // Strictly server-verified: default to Free plan
   return {
-    isPro: isLocallyActive,
-    status: isLocallyActive ? "active" : "canceled",
+    isPro: false,
+    status: "canceled",
     inGracePeriod: false,
   };
 }
 
 /**
- * Activates Pro status locally and broadcasts update event
+ * Legacy hook deprecated: Pro proof is strictly server-verified in Supabase.
  */
-export function setLocalProActive(active: boolean = true) {
+export function setLocalProActive(_active: boolean = true) {
+  // Purge any stale fake pro key from previous sessions
   if (typeof window !== "undefined") {
     try {
-      if (active) {
-        localStorage.setItem(LOCAL_PRO_KEY, "true");
-      } else {
-        localStorage.removeItem(LOCAL_PRO_KEY);
-      }
-      window.dispatchEvent(new Event("careermonke_pro_updated"));
+      localStorage.removeItem("careermonke_pro_active");
     } catch {}
   }
 }
@@ -134,27 +122,6 @@ export async function getUserSubscription(): Promise<UserSubscription | null> {
     }
   } catch (e) {
     console.warn("Could not fetch user subscription", e);
-  }
-
-  // Fallback to local cache if pro was activated locally
-  if (typeof window !== "undefined") {
-    try {
-      const isPro = localStorage.getItem(LOCAL_PRO_KEY) === "true";
-      if (isPro) {
-        return {
-          id: "sub_local_pro",
-          userId: "local_user",
-          provider: "razorpay",
-          planId: PLAN_DOMESTIC.id,
-          currency: "INR",
-          amount: 199,
-          status: "active",
-          currentPeriodStart: new Date().toISOString(),
-          currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          cancelAtPeriodEnd: false,
-        };
-      }
-    } catch {}
   }
 
   return null;

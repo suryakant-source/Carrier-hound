@@ -51,9 +51,17 @@ export async function getTodayDigest(): Promise<DailyDigestQueue> {
     }
   } catch (e) {}
 
-  // Fallback: Compute top matches against candidate profile
+  // Fallback: Compute top matches against candidate profile only if confirmed
   try {
     const profile = await getCandidateProfile();
+    if (!profile || !profile.confirmedAt) {
+      return {
+        digestDate: new Date().toISOString().split("T")[0],
+        matches: [],
+        isQueuedByCron: false,
+      };
+    }
+
     const matches: DigestMatchItem[] = [];
 
     for (const job of DUMMY_JOBS.slice(0, 40)) {

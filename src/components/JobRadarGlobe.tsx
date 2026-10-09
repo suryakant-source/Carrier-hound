@@ -226,22 +226,11 @@ export default function JobRadarGlobe() {
             : null;
         if (localEmail) {
           setCurrentUser({ email: localEmail, id: "local-user" });
-          setIsPro(
-            typeof window !== "undefined" &&
-              localStorage.getItem("careermonke_pro_active") === "true"
-          );
+          setIsPro(false);
         }
       }
     });
 
-    const handleProUpdated = () => {
-      setIsPro(
-        typeof window !== "undefined" &&
-          localStorage.getItem("careermonke_pro_active") === "true"
-      );
-    };
-    window.addEventListener("careermonke_pro_updated", handleProUpdated);
-    return () => window.removeEventListener("careermonke_pro_updated", handleProUpdated);
   }, []);
 
   // 2. Fetch live telemetry from /api/radar on mount
