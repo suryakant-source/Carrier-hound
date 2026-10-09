@@ -56,7 +56,7 @@ export default function TrackerPage() {
     matches: DigestMatchItem[];
     isQueuedByCron: boolean;
   } | null>(null);
-  const [showDigest, setShowDigest] = useState(true);
+  const [showDigest, setShowDigest] = useState(false);
   const [isScanningDigest, setIsScanningDigest] = useState(false);
   const [draggedAppId, setDraggedAppId] = useState<string | null>(null);
   const [dropTargetStage, setDropTargetStage] = useState<ApplicationStage | null>(null);

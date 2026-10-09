@@ -5,14 +5,16 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import GuideHeader from "@/components/GuideHeader";
 import Footer from "@/components/Footer";
-import { getLiveJobById, LiveJob } from "@/lib/jobs/service";
+import { getLiveJobById, LiveJob, getJobRemoteEligibility } from "@/lib/jobs/service";
 import { getAuthUser } from "@/lib/auth/session";
 import { getCandidateProfile } from "@/lib/resume/storage";
 import { CandidateProfile } from "@/lib/resume/types";
 import { computeFitDiagnostics, FitDiagnosticsResult } from "@/lib/matcher/scoring";
 import { addApplicationToTracker, getTrackedApplications, removeApplicationFromTracker } from "@/lib/tracker/storage";
+import { getProAccessStatus } from "@/lib/billing/subscription";
 import PaywallModal from "@/components/PaywallModal";
 import CoverLetterModal from "@/components/resume/CoverLetterModal";
+import TailorResumeModal from "@/components/resume/TailorResumeModal";
 import FitDiagnosticsModal from "@/components/matcher/FitDiagnosticsModal";
 import type { User } from "@supabase/supabase-js";
 import {
@@ -33,7 +35,9 @@ import {
   AlertCircle,
   Clock,
   HelpCircle,
-  Share2
+  Share2,
+  ChevronRight,
+  ArrowRight
 } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -61,6 +65,7 @@ function JobDetailInner() {
   const searchParams = useSearchParams();
 
   const [user, setUser] = useState<User | null>(null);
+  const [isPro, setIsPro] = useState(false);
   const [candidate, setCandidate] = useState<CandidateProfile | null>(null);
   const [job, setJob] = useState<LiveJob | null>(null);
   const [loading, setLoading] = useState(true);
@@ -68,6 +73,7 @@ function JobDetailInner() {
   // Modals & States
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [isCoverLetterOpen, setIsCoverLetterOpen] = useState(false);
+  const [isTailorResumeOpen, setIsTailorResumeOpen] = useState(false);
   const [isDiagnosticsOpen, setIsDiagnosticsOpen] = useState(false);
   const [showApplyConfirmModal, setShowApplyConfirmModal] = useState(false);
   const [isSavedInTracker, setIsSavedInTracker] = useState(false);
@@ -75,20 +81,22 @@ function JobDetailInner() {
   useEffect(() => {
     const resolvedId = getResolvedJobId(searchParams);
 
-    // 1. Load user & profile
-    getAuthUser().then((u) => {
-      setUser(u);
-      const isPro = u?.user_metadata?.is_pro === true || (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true");
+    // 1. Load server-verified Pro status and user
+    getProAccessStatus().then((subRes) => {
+      const activePro = subRes.isPro;
+      setIsPro(activePro);
 
-      // 2. Fetch live job from Supabase with payload-level Pro gating
-      if (resolvedId) {
-        getLiveJobById(resolvedId, isPro).then((foundJob) => {
-          setJob(foundJob);
+      getAuthUser().then((u) => {
+        setUser(u);
+        if (resolvedId) {
+          getLiveJobById(resolvedId, activePro).then((foundJob) => {
+            setJob(foundJob);
+            setLoading(false);
+          });
+        } else {
           setLoading(false);
-        });
-      } else {
-        setLoading(false);
-      }
+        }
+      });
     });
 
     getCandidateProfile().then((cp) => {
@@ -147,13 +155,16 @@ function JobDetailInner() {
     );
   }
 
-  const isPro = user?.user_metadata?.is_pro === true || (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true");
+
   const diagnostics: FitDiagnosticsResult | null = candidate
     ? computeFitDiagnostics(candidate, {
         id: job.id,
         title: job.title,
         company: job.company,
         location: job.location,
+        remote_scope: job.remoteScope || (job.remote ? "worldwide" : undefined),
+        category: job.category,
+        skills: job.skills,
         salary_text: job.salary,
       })
     : null;
@@ -265,11 +276,31 @@ function JobDetailInner() {
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
                   {job.type || "Full-time"}
                 </span>
-                {job.remote && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    Worldwide Remote Eligible
-                  </span>
-                )}
+                {(() => {
+                  const elig = getJobRemoteEligibility(job);
+                  if (elig === "worldwide") {
+                    return (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        Worldwide Remote Eligible
+                      </span>
+                    );
+                  }
+                  if (elig === "country_restricted") {
+                    return (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
+                        Remote ({job.location || "Geographically Restricted"})
+                      </span>
+                    );
+                  }
+                  if (job.remote) {
+                    return (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                        Remote (Eligibility Unknown)
+                      </span>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
 
               <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">
@@ -332,6 +363,78 @@ function JobDetailInner() {
             </div>
           </div>
 
+          {/* Prominent Match Score Header Banner */}
+          {candidate && diagnostics ? (
+            <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div
+                  className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex flex-col items-center justify-center border font-black text-xl sm:text-2xl shadow-xs shrink-0 ${
+                    diagnostics.score >= 80
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      : diagnostics.score >= 65
+                      ? "bg-blue-50 text-blue-700 border-blue-200"
+                      : diagnostics.score >= 45
+                      ? "bg-amber-50 text-amber-800 border-amber-200"
+                      : "bg-rose-50 text-rose-700 border-rose-200"
+                  }`}
+                >
+                  <span>{diagnostics.score}%</span>
+                  <span className="text-[9px] uppercase font-bold tracking-wider -mt-1">Match</span>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-blue-600" />
+                    <span>
+                      {diagnostics.score >= 80
+                        ? "High Deterministic Match"
+                        : diagnostics.score >= 65
+                        ? "Strong Role Alignment"
+                        : diagnostics.score >= 45
+                        ? "Moderate Fit — Review Skills"
+                        : "Low Alignment"}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    {diagnostics.matchedSkills.length} matched skills • {diagnostics.missingSkills.length} missing • ~{diagnostics.breakdown.yearsOfExperience}y experience alignment
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsDiagnosticsOpen(true)}
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-xs font-bold text-slate-800 shadow-2xs transition cursor-pointer shrink-0 min-h-[44px]"
+              >
+                <span>Inspect Fit Diagnostics</span>
+                <ChevronRight className="w-4 h-4 text-blue-600" />
+              </button>
+            </div>
+          ) : (
+            <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xs sm:text-sm font-bold text-blue-950">
+                    See Your AI Job Fit Score & Skill Diagnostics
+                  </h3>
+                  <p className="text-xs text-blue-700 mt-0.5">
+                    Upload your ATS resume facts to see matched skills, missing requirements, and experience fit for this role.
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href="/resume"
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition shrink-0 min-h-[44px]"
+              >
+                <span>Upload Resume</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          )}
+
           {/* Action Ribbon */}
           <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
@@ -358,8 +461,24 @@ function JobDetailInner() {
               </button>
             </div>
 
-            {/* AI Tailoring Secondary Actions */}
-            <div className="flex items-center gap-2">
+            {/* AI Tailoring Actions */}
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  if (!candidate) {
+                    toast.info("Please upload your resume first to tailor it for this job.");
+                    router.push("/resume");
+                    return;
+                  }
+                  setIsTailorResumeOpen(true);
+                }}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-xl border border-emerald-300 bg-emerald-50 hover:bg-emerald-100/80 text-emerald-900 text-xs font-bold transition cursor-pointer shadow-2xs"
+              >
+                <Sparkles className="w-4 h-4 text-emerald-600" />
+                <span>Tailor Resume</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => {
@@ -370,9 +489,9 @@ function JobDetailInner() {
                   }
                   setIsCoverLetterOpen(true);
                 }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-blue-200 bg-blue-50/70 hover:bg-blue-100 text-blue-700 text-xs font-bold transition cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-xl border border-blue-200 bg-blue-50/70 hover:bg-blue-100 text-blue-700 text-xs font-bold transition cursor-pointer"
               >
-                <FileText className="w-3.5 h-3.5" />
+                <FileText className="w-4 h-4" />
                 <span>Prepare Cover Letter</span>
               </button>
             </div>
@@ -399,47 +518,70 @@ function JobDetailInner() {
           </div>
 
           {candidate ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-100 space-y-2 text-xs">
-                <span className="font-bold text-emerald-900 block text-xs">
-                  ✓ Why You Fit (Matched Skills)
-                </span>
-                <p className="text-emerald-800 text-[11px]">
-                  Skills from your confirmed resume found in this requisition:
-                </p>
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {diagnostics?.matchedSkills.length ? (
-                    diagnostics.matchedSkills.map((s) => (
-                      <span key={s} className="px-2 py-0.5 rounded bg-white text-emerald-800 font-semibold border border-emerald-200 text-[11px]">
-                        {s}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-slate-400 italic">No specific direct skill overlap detected</span>
-                  )}
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-100 space-y-2 text-xs">
+                  <span className="font-bold text-emerald-900 block text-xs">
+                    ✓ Why You Fit (Matched Skills)
+                  </span>
+                  <p className="text-emerald-800 text-[11px]">
+                    Skills from your confirmed resume found in this requisition:
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {diagnostics?.matchedSkills.length ? (
+                      diagnostics.matchedSkills.map((s) => (
+                        <span key={s} className="px-2 py-0.5 rounded bg-white text-emerald-800 font-semibold border border-emerald-200 text-[11px]">
+                          {s}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-slate-400 italic">No specific direct skill overlap detected</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-amber-50/60 border border-amber-100 space-y-2 text-xs">
+                  <span className="font-bold text-amber-900 block text-xs">
+                    ⚠ Missing Skills (Gaps to Address)
+                  </span>
+                  <p className="text-amber-800 text-[11px]">
+                    Target skills mentioned in the job description that were not flagged in your resume facts:
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {diagnostics?.missingSkills.length ? (
+                      diagnostics.missingSkills.map((s) => (
+                        <span key={s} className="px-2 py-0.5 rounded bg-white text-amber-800 font-semibold border border-amber-200 text-[11px]">
+                          {s}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-emerald-700 font-semibold">Zero critical skill gaps detected!</span>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-amber-50/60 border border-amber-100 space-y-2 text-xs">
-                <span className="font-bold text-amber-900 block text-xs">
-                  ⚠ Missing Skills (Gaps to Address)
-                </span>
-                <p className="text-amber-800 text-[11px]">
-                  Target skills mentioned in the job description that were not flagged in your resume facts:
-                </p>
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {diagnostics?.missingSkills.length ? (
-                    diagnostics.missingSkills.map((s) => (
-                      <span key={s} className="px-2 py-0.5 rounded bg-white text-amber-800 font-semibold border border-amber-200 text-[11px]">
-                        {s}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-emerald-700 font-semibold">Zero critical skill gaps detected!</span>
-                  )}
+              {diagnostics && (
+                <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsDiagnosticsOpen(true)}
+                    className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>View Full Scoring Heuristics Breakdown →</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsTailorResumeOpen(true)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition cursor-pointer"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Tailor ATS Resume for this Role →</span>
+                  </button>
                 </div>
-              </div>
-            </div>
+              )}
+            </>
           ) : (
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center space-y-2">
               <p className="text-xs text-slate-600">
@@ -469,7 +611,7 @@ function JobDetailInner() {
             </p>
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2 font-mono text-xs text-slate-800">
               <p>• Category: {job.category || "General Tech"}</p>
-              <p>• Location Eligibility: {job.location || "Remote Worldwide"}</p>
+              <p>• Location Eligibility: {job.location || "Unknown"}</p>
               <p>• Employment Type: {job.type || "Full-Time Direct Hire"}</p>
               <p>• Reported Compensation: {isPro && job.salary ? job.salary : "Locked (Pro Membership)"}</p>
             </div>
@@ -539,6 +681,45 @@ function JobDetailInner() {
             company: job.company,
             description: `${job.title} at ${job.company} (${job.location}, ${job.category}).`,
           }}
+        />
+      )}
+
+      {/* Tailor Resume Modal */}
+      {isTailorResumeOpen && candidate && (
+        <TailorResumeModal
+          open={isTailorResumeOpen}
+          onOpenChange={setIsTailorResumeOpen}
+          candidate={candidate}
+          job={{
+            id: job.id,
+            title: job.title,
+            company: job.company,
+            location: job.location,
+            category: job.category,
+            skills: job.skills,
+            description: `${job.title} at ${job.company} (${job.location}, ${job.category}).`,
+          }}
+          onOpenCoverLetter={() => setIsCoverLetterOpen(true)}
+        />
+      )}
+
+      {/* Fit Diagnostics Breakdown Modal */}
+      {isDiagnosticsOpen && candidate && diagnostics && (
+        <FitDiagnosticsModal
+          open={isDiagnosticsOpen}
+          onOpenChange={setIsDiagnosticsOpen}
+          diagnostics={diagnostics}
+          candidate={candidate}
+          job={{
+            id: job.id,
+            title: job.title,
+            company: job.company,
+            location: job.location,
+            salary_text: job.salary,
+            apply_url: job.applyUrl,
+          }}
+          onOpenCoverLetter={() => setIsCoverLetterOpen(true)}
+          onExportResume={() => setIsTailorResumeOpen(true)}
         />
       )}
 

@@ -14,6 +14,7 @@ import { getCandidateProfile } from "@/lib/resume/storage";
 import { CandidateProfile } from "@/lib/resume/types";
 import { UserPreferences } from "@/lib/auth/types";
 import { addApplicationToTracker, getTrackedApplications, removeApplicationFromTracker } from "@/lib/tracker/storage";
+import { getProAccessStatus } from "@/lib/billing/subscription";
 import { computeFitDiagnostics } from "@/lib/matcher/scoring";
 import type { User } from "@supabase/supabase-js";
 import {
@@ -54,6 +55,7 @@ function JobsPageInner() {
 
   // User state
   const [user, setUser] = useState<User | null>(null);
+  const [isPro, setIsPro] = useState(false);
   const [candidate, setCandidate] = useState<CandidateProfile | null>(null);
   const [preferences, setPreferences] = useState<UserPreferences | null>(null);
   const [savedJobIds, setSavedJobIds] = useState<string[]>([]);
@@ -79,6 +81,10 @@ function JobsPageInner() {
       }
     });
 
+    getProAccessStatus().then((res) => {
+      setIsPro(res.isPro);
+    });
+
     getCandidateProfile().then((cp) => {
       if (cp && cp.confirmedAt) {
         setCandidate(cp);
@@ -92,15 +98,27 @@ function JobsPageInner() {
     getTrackedApplications().then((apps) => {
       setSavedJobIds(apps.map((a) => a.jobId || ""));
     });
+
+    const handleSubUpdate = () => {
+      getProAccessStatus().then((res) => setIsPro(res.isPro));
+    };
+    window.addEventListener("careermonke_pro_updated", handleSubUpdate);
+    window.addEventListener("careermonke_auth_updated", handleSubUpdate);
+    return () => {
+      window.removeEventListener("careermonke_pro_updated", handleSubUpdate);
+      window.removeEventListener("careermonke_auth_updated", handleSubUpdate);
+    };
   }, []);
 
-  const isPro = user?.user_metadata?.is_pro === true || (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true");
   const hasConfirmedResume = Boolean(candidate && candidate.confirmedAt);
+
+  const [loadingMore, setLoadingMore] = useState(false);
 
   // Fetch live verified jobs from Supabase whenever search/category/filters or Pro status updates
   useEffect(() => {
     let cancelled = false;
     setLoadingJobs(true);
+    setPage(1);
 
     getLiveJobs({
       page: 1,
@@ -121,6 +139,28 @@ function JobsPageInner() {
       cancelled = true;
     };
   }, [selectedCategory, search, remoteOnly, isPro]);
+
+  const handleLoadMore = async () => {
+    const nextPage = page + 1;
+    setLoadingMore(true);
+    try {
+      const res = await getLiveJobs({
+        page: nextPage,
+        pageSize: 50,
+        category: selectedCategory,
+        search,
+        remoteOnly,
+        isPro,
+      });
+      setLiveJobs((prev) => [...prev, ...res.jobs]);
+      setPage(nextPage);
+      if (res.totalCount) setTotalCount(res.totalCount);
+    } catch (e) {
+      console.warn("Failed to load more jobs", e);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   // Filtered & Sorted Jobs
   const filteredJobs = useMemo(() => {
@@ -151,12 +191,20 @@ function JobsPageInner() {
           title: a.title,
           company: a.company,
           location: a.location,
+          remote_scope: a.remoteScope || (a.remote ? "worldwide" : undefined),
+          category: a.category,
+          skills: a.skills,
+          salary_text: a.salary,
         }).score;
         const scoreB = computeFitDiagnostics(candidate, {
           id: b.id,
           title: b.title,
           company: b.company,
           location: b.location,
+          remote_scope: b.remoteScope || (b.remote ? "worldwide" : undefined),
+          category: b.category,
+          skills: b.skills,
+          salary_text: b.salary,
         }).score;
         return scoreB - scoreA;
       });
@@ -165,9 +213,7 @@ function JobsPageInner() {
     return result;
   }, [liveJobs, activeTab, savedJobIds, preferences, sortBy, hasConfirmedResume, candidate, user]);
 
-  const displayedJobs = useMemo(() => {
-    return filteredJobs.slice(0, page * JOBS_PER_PAGE);
-  }, [filteredJobs, page]);
+  const displayedJobs = filteredJobs;
 
   const handleResetFilters = () => {
     setSearch("");
@@ -409,7 +455,7 @@ function JobsPageInner() {
                   <div className="space-y-1.5 flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <Link
-                        href={`/jobs/${job.id}`}
+                        href={`/jobs/detail?id=${encodeURIComponent(job.id)}`}
                         className="text-base sm:text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors break-words"
                       >
                         {job.title}
@@ -421,6 +467,8 @@ function JobsPageInner() {
                           title: job.title,
                           company: job.company,
                           location: job.location,
+                          remote_scope: job.remoteScope || (job.remote ? "worldwide" : undefined),
+                          category: job.category,
                           salary_text: job.salary,
                           apply_url: job.applyUrl,
                         }}
@@ -453,7 +501,7 @@ function JobsPageInner() {
 
                       <div className="flex items-center gap-1">
                         <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span>{job.location || "Remote Worldwide"}</span>
+                        <span>{job.location || (job.remote ? "Remote" : "Unknown")}</span>
                       </div>
 
                       {job.salary && (
@@ -496,14 +544,17 @@ function JobsPageInner() {
             })}
 
             {/* Load More Pagination */}
-            {displayedJobs.length < filteredJobs.length && (
+            {liveJobs.length < totalCount && (
               <div className="pt-4 text-center">
                 <button
                   type="button"
-                  onClick={() => setPage((p) => p + 1)}
-                  className="px-6 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold transition shadow-2xs cursor-pointer"
+                  onClick={handleLoadMore}
+                  disabled={loadingMore}
+                  className="px-6 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold transition shadow-2xs cursor-pointer disabled:opacity-60"
                 >
-                  Load More Verified Positions ({filteredJobs.length - displayedJobs.length} remaining)
+                  {loadingMore
+                    ? "Loading Positions..."
+                    : `Load More Verified Positions (${Math.max(0, totalCount - liveJobs.length).toLocaleString()} remaining)`}
                 </button>
               </div>
             )}

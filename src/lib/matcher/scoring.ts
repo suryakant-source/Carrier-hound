@@ -1,4 +1,4 @@
-import { CandidateProfile } from "../resume/types";
+import { CandidateProfile, WorkExperienceItem } from "../resume/types";
 import { SKILLS_TAXONOMY } from "../resume/parser";
 
 export interface FitDiagnosticsResult {
@@ -6,6 +6,7 @@ export interface FitDiagnosticsResult {
   scoreGrade: "high" | "good" | "moderate" | "low";
   matchedSkills: string[];
   missingSkills: string[];
+  inferredSignals: string[];
   whyYouFit: string[];
   gaps: string[];
   jobRequiredSkills: string[];
@@ -14,11 +15,142 @@ export interface FitDiagnosticsResult {
     titleScore: number;
     experienceScore: number;
     remoteScore: number;
+    yearsOfExperience: number;
   };
 }
 
 /**
- * Extracts key technical skills mentioned in a job listing
+ * Standard tech skill alias mapping for bidirectional normalization
+ */
+const SKILL_ALIASES: Record<string, string[]> = {
+  sql: ["sql", "mysql", "postgresql", "postgres", "sqlite", "pl/sql", "tsql", "t-sql", "mariadb"],
+  javascript: ["javascript", "js", "es6", "es6+", "ecmascript"],
+  typescript: ["typescript", "ts"],
+  react: ["react", "react.js", "reactjs", "react-native", "react native"],
+  "node.js": ["node.js", "nodejs", "node"],
+  vue: ["vue", "vue.js", "vuejs"],
+  python: ["python", "python3", "py"],
+  golang: ["golang", "go"],
+  kubernetes: ["kubernetes", "k8s"],
+  aws: ["aws", "amazon web services"],
+  gcp: ["gcp", "google cloud", "google cloud platform"],
+  azure: ["azure", "microsoft azure"],
+  "c#": ["c#", "csharp", ".net", "dotnet", "asp.net"],
+  "c++": ["c++", "cpp"],
+  docker: ["docker", "containerization", "containers"],
+  "ci/cd": ["ci/cd", "ci", "cd", "continuous integration", "continuous delivery", "github actions", "gitlab ci"],
+  graphql: ["graphql", "gql"],
+  "rest api": ["rest api", "rest", "restful", "restful api", "restful apis"],
+  mongodb: ["mongodb", "mongo"],
+  redis: ["redis"],
+  html: ["html", "html5"],
+  css: ["css", "css3", "tailwind", "tailwind css", "sass", "scss"],
+};
+
+/**
+ * Normalizes a skill string into its canonical alias tokens and sub-tokens.
+ * E.g. 'SQL (PostgreSQL, MySQL)' -> tokens ['sql', 'postgresql', 'mysql', 'postgres', ...]
+ */
+export function normalizeSkillToTokens(skill: string): { original: string; tokens: Set<string> } {
+  const tokens = new Set<string>();
+  const clean = skill.trim().toLowerCase();
+  if (!clean) return { original: skill, tokens };
+
+  tokens.add(clean);
+
+  // Split on parentheses, slashes, commas, semicolons, plus signs
+  const parts = clean
+    .split(/[\(\),\/;+]|\s+and\s+/i)
+    .map((p) => p.trim())
+    .filter((p) => p.length > 0);
+
+  for (const part of parts) {
+    tokens.add(part);
+    const alphanumeric = part.replace(/[\s\-_.]/g, "");
+    if (alphanumeric) tokens.add(alphanumeric);
+
+    // Check alias maps
+    for (const [key, aliases] of Object.entries(SKILL_ALIASES)) {
+      if (aliases.includes(part) || aliases.includes(alphanumeric) || key === part) {
+        tokens.add(key);
+        aliases.forEach((a) => tokens.add(a));
+      }
+    }
+  }
+
+  // Word-boundary scan for aliases
+  for (const [key, aliases] of Object.entries(SKILL_ALIASES)) {
+    for (const alias of aliases) {
+      const regex = new RegExp(`\\b${alias.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+      if (regex.test(clean)) {
+        tokens.add(key);
+        tokens.add(alias);
+      }
+    }
+  }
+
+  return { original: skill, tokens };
+}
+
+/**
+ * Computes whether a candidate skill matches a job required skill using canonical tokens.
+ */
+export function doesSkillMatch(
+  jobReqSkill: string,
+  candidateSkills: Array<{ original: string; tokens: Set<string> }>
+): { matched: boolean; candidateEvidence?: string } {
+  const reqNormalized = normalizeSkillToTokens(jobReqSkill);
+
+  for (const cand of candidateSkills) {
+    // Check if any canonical token overlaps
+    for (const reqToken of Array.from(reqNormalized.tokens)) {
+      if (cand.tokens.has(reqToken)) {
+        return { matched: true, candidateEvidence: cand.original };
+      }
+    }
+
+    // Direct substring/word boundary check
+    const reqClean = jobReqSkill.toLowerCase();
+    const candClean = cand.original.toLowerCase();
+    if (candClean.includes(reqClean) || reqClean.includes(candClean)) {
+      return { matched: true, candidateEvidence: cand.original };
+    }
+  }
+
+  return { matched: false };
+}
+
+/**
+ * Calculates genuine total years of experience from work history.
+ */
+export function calculateYearsOfExperience(experience?: WorkExperienceItem[]): number {
+  if (!experience || experience.length === 0) return 0;
+  const currentYear = new Date().getFullYear();
+  let totalYears = 0;
+
+  for (const exp of experience) {
+    if (!exp.startDate) continue;
+    const startYearMatch = exp.startDate.match(/\b(19\d\d|20\d\d)\b/);
+    if (!startYearMatch) continue;
+    const startYear = parseInt(startYearMatch[1], 10);
+
+    let endYear = currentYear;
+    if (exp.endDate && !/\b(present|now|current)\b/i.test(exp.endDate)) {
+      const endYearMatch = exp.endDate.match(/\b(19\d\d|20\d\d)\b/);
+      if (endYearMatch) {
+        endYear = parseInt(endYearMatch[1], 10);
+      }
+    }
+    const duration = Math.max(0.5, endYear - startYear);
+    totalYears += duration;
+  }
+
+  return Math.round(totalYears * 10) / 10;
+}
+
+/**
+ * Extracts ONLY skills actually evidenced in the job description or explicit requirements.
+ * Never invents skills or pushes title-inferred assumptions as requirements.
  */
 export function extractSkillsFromJob(job: {
   title?: string;
@@ -26,58 +158,71 @@ export function extractSkillsFromJob(job: {
   category?: string;
   skills?: string[];
 }): string[] {
-  const detected = new Set<string>();
+  const evidenced = new Set<string>();
 
-  // If the job already has explicit skills array in Supabase
+  // If the job already has explicit skills array in database
   if (Array.isArray(job.skills) && job.skills.length > 0) {
-    job.skills.forEach((s) => detected.add(s));
+    job.skills.forEach((s) => {
+      if (s && s.trim()) evidenced.add(s.trim());
+    });
   }
 
-  const combinedText = ` ${job.title || ""} ${job.category || ""} ${job.description || ""} `.toLowerCase();
+  const descText = (job.description || "").toLowerCase();
+  const titleText = (job.title || "").toLowerCase();
 
+  // Search description for evidenced skills
+  if (descText.length > 0) {
+    for (const skill of SKILLS_TAXONOMY) {
+      const lowerSkill = skill.toLowerCase();
+      const escaped = lowerSkill.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const regex = new RegExp(`(?:^|[\\s,;/|])${escaped}(?:$|[\\s,;/|])`, "i");
+      if (regex.test(descText)) {
+        evidenced.add(skill);
+      }
+    }
+  }
+
+  // Also check if title explicitly names a specific technology (e.g. "React Developer", "Python Engineer")
   for (const skill of SKILLS_TAXONOMY) {
     const lowerSkill = skill.toLowerCase();
     const escaped = lowerSkill.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(`(?:^|[\\s,;/|])${escaped}(?:$|[\\s,;/|])`, "i");
-    if (regex.test(combinedText)) {
-      detected.add(skill);
+    const regex = new RegExp(`\\b${escaped}\\b`, "i");
+    if (regex.test(titleText)) {
+      evidenced.add(skill);
     }
   }
 
-  // Fallback if very few skills detected in short teaser
-  if (detected.size === 0) {
-    const titleLower = (job.title || "").toLowerCase();
-    if (titleLower.includes("frontend") || titleLower.includes("react")) {
-      detected.add("React");
-      detected.add("JavaScript");
-      detected.add("TypeScript");
-    } else if (titleLower.includes("backend") || titleLower.includes("node")) {
-      detected.add("Node.js");
-      detected.add("SQL");
-      detected.add("REST API");
-    } else if (titleLower.includes("full") || titleLower.includes("stack")) {
-      detected.add("JavaScript");
-      detected.add("TypeScript");
-      detected.add("React");
-      detected.add("Node.js");
-    } else if (titleLower.includes("devops") || titleLower.includes("cloud")) {
-      detected.add("Docker");
-      detected.add("Kubernetes");
-      detected.add("AWS");
-    } else if (titleLower.includes("data") || titleLower.includes("python")) {
-      detected.add("Python");
-      detected.add("SQL");
-    } else {
-      detected.add("Software Engineering");
-    }
-  }
-
-  return Array.from(detected);
+  return Array.from(evidenced);
 }
 
 /**
- * Computes a 100% deterministic fit score (0-100) and diagnostics breakdown.
- * Same resume + same job ALWAYS produces the exact same score.
+ * Extracts domain-level signals inferred from title/category (kept separate from actual requirements).
+ */
+export function extractInferredDomainSignals(job: {
+  title?: string;
+  category?: string;
+}): string[] {
+  const signals: string[] = [];
+  const t = (job.title || "").toLowerCase();
+  const c = (job.category || "").toLowerCase();
+
+  if (t.includes("frontend") || t.includes("front-end")) signals.push("Frontend Architecture");
+  if (t.includes("backend") || t.includes("back-end")) signals.push("Backend & API Systems");
+  if (t.includes("full") && t.includes("stack")) signals.push("Full-Stack Systems");
+  if (t.includes("devops") || t.includes("cloud") || t.includes("sre")) signals.push("Cloud & Infrastructure");
+  if (t.includes("data") || t.includes("ml") || t.includes("ai")) signals.push("Data & ML Pipelines");
+  if (c && c !== "other" && !signals.includes(c)) signals.push(c.toUpperCase());
+
+  return signals;
+}
+
+/**
+ * Computes a transparent, reproducible fit score (0-100) and diagnostics breakdown.
+ * Formula:
+ * - Technical Skill Evidence (50%)
+ * - Title & Role Alignment (25%)
+ * - Experience & Seniority (15% based on actual years of experience)
+ * - Location Compatibility (10% - 0 if geography restricted and not matching)
  */
 export function computeFitDiagnostics(
   candidate: CandidateProfile,
@@ -93,37 +238,44 @@ export function computeFitDiagnostics(
     salary_text?: string;
   }
 ): FitDiagnosticsResult {
-  const candidateSkills = (candidate.skills || []).map((s) => s.toLowerCase());
-  const jobSkills = extractSkillsFromJob(job);
+  const candidateSkillTokens = (candidate.skills || []).map(normalizeSkillToTokens);
+  const jobEvidencedSkills = extractSkillsFromJob(job);
+  const inferredSignals = extractInferredDomainSignals(job);
 
   // 1. Skill Match Component (Weight: 50%)
   const matchedSkills: string[] = [];
   const missingSkills: string[] = [];
+  const matchEvidenceMap: Record<string, string> = {};
 
-  for (const skill of jobSkills) {
-    if (candidateSkills.includes(skill.toLowerCase())) {
+  for (const skill of jobEvidencedSkills) {
+    const matchRes = doesSkillMatch(skill, candidateSkillTokens);
+    if (matchRes.matched) {
       matchedSkills.push(skill);
+      if (matchRes.candidateEvidence) {
+        matchEvidenceMap[skill] = matchRes.candidateEvidence;
+      }
     } else {
       missingSkills.push(skill);
     }
   }
 
-  const skillRatio = jobSkills.length > 0 ? matchedSkills.length / jobSkills.length : 0.8;
+  // If no explicit skills in listing description, neutral skill baseline of 35/50
+  const skillRatio = jobEvidencedSkills.length > 0
+    ? matchedSkills.length / jobEvidencedSkills.length
+    : 0.7;
   const skillScore = Math.round(skillRatio * 50);
 
   // 2. Title & Role Alignment (Weight: 25%)
-  let titleScore = 12; // Baseline neutral
+  let titleScore = 12;
   const jobTitleLower = job.title.toLowerCase();
   const headlineLower = (candidate.headline || "").toLowerCase();
 
-  // Check matching tokens
   const jobTokens = jobTitleLower.split(/[\s\-_,]+/).filter((t) => t.length > 2);
   let titleMatches = 0;
   for (const token of jobTokens) {
     if (headlineLower.includes(token)) {
       titleMatches++;
     }
-    // Also check past experience roles
     for (const exp of candidate.experience || []) {
       if ((exp.role || "").toLowerCase().includes(token)) {
         titleMatches += 0.5;
@@ -136,33 +288,57 @@ export function computeFitDiagnostics(
   else if (titleMatches === 1) titleScore = 20;
   else titleScore = 14;
 
-  // 3. Experience & Seniority Alignment (Weight: 15%)
+  // 3. Experience & Seniority Alignment (Weight: 15% - based on actual years, not position count)
+  const yearsOfExperience = calculateYearsOfExperience(candidate.experience);
   let experienceScore = 12;
-  const totalPositions = (candidate.experience || []).length;
-  if (totalPositions >= 3) experienceScore = 15;
-  else if (totalPositions >= 1) experienceScore = 12;
-  else experienceScore = 8;
 
-  // Check seniority keyword match
-  if (jobTitleLower.includes("senior") || jobTitleLower.includes("lead") || jobTitleLower.includes("staff")) {
-    if (totalPositions < 2) {
-      experienceScore = 8;
-    }
+  if (yearsOfExperience >= 5) experienceScore = 15;
+  else if (yearsOfExperience >= 2) experienceScore = 12;
+  else if (yearsOfExperience >= 0.5) experienceScore = 9;
+  else experienceScore = 6;
+
+  const isSeniorJob =
+    jobTitleLower.includes("senior") ||
+    jobTitleLower.includes("lead") ||
+    jobTitleLower.includes("staff") ||
+    jobTitleLower.includes("principal");
+
+  if (isSeniorJob && yearsOfExperience < 4) {
+    experienceScore = Math.min(experienceScore, 8);
   }
 
   // 4. Remote & Location Compatibility (Weight: 10%)
-  let remoteScore = 8;
+  // STRICT: Do not award default points when geography restrictions exist
+  let remoteScore = 0;
   const jobRemote = (job.remote_scope || "").toLowerCase();
-  if (jobRemote === "worldwide" || jobRemote === "remote") {
+  const jobLoc = (job.location || "").toLowerCase();
+  const candLoc = (candidate.location || "").toLowerCase();
+
+  const isWorldwide =
+    jobRemote === "worldwide" ||
+    (/\b(worldwide|anywhere|global|work from anywhere)\b/i.test(jobLoc) &&
+      !/\b(us only|u\.s\. only|united states only|uk only|eu only|india only)\b/i.test(jobLoc));
+
+  const isGeographicallyRestricted =
+    jobRemote === "country_restricted" ||
+    /\b(united states|u\.s\.|usa|remote - us|remote \(us\)|uk|canada|india|germany|europe|emea|apac)\b/i.test(jobLoc) ||
+    (!isWorldwide && job.location && !jobLoc.includes("remote"));
+
+  if (isWorldwide) {
     remoteScore = 10;
-  } else if (candidate.location && (job.location || "").toLowerCase().includes(candidate.location.toLowerCase())) {
+  } else if (candLoc && jobLoc && (jobLoc.includes(candLoc) || candLoc.includes(jobLoc))) {
     remoteScore = 10;
+  } else if (isGeographicallyRestricted) {
+    remoteScore = 0; // Restricted to another region
+  } else if (jobRemote === "remote" || jobLoc.includes("remote")) {
+    remoteScore = 6; // General remote with unspecified eligibility
+  } else {
+    remoteScore = 3;
   }
 
   // Sum components
   const finalScore = Math.min(100, Math.max(10, skillScore + titleScore + experienceScore + remoteScore));
 
-  // Determine grade
   let scoreGrade: "high" | "good" | "moderate" | "low" = "moderate";
   if (finalScore >= 80) scoreGrade = "high";
   else if (finalScore >= 65) scoreGrade = "good";
@@ -172,38 +348,49 @@ export function computeFitDiagnostics(
   // Construct factual "Why You Fit" reasons
   const whyYouFit: string[] = [];
   if (matchedSkills.length > 0) {
+    const evidenceSnippets = matchedSkills.slice(0, 3).map((s) => {
+      const orig = matchEvidenceMap[s];
+      return orig && orig.toLowerCase() !== s.toLowerCase() ? `${s} (via "${orig}")` : s;
+    });
     whyYouFit.push(
-      `Matches ${matchedSkills.length} of ${jobSkills.length} core technical requirements (${matchedSkills.slice(0, 4).join(", ")}${matchedSkills.length > 4 ? ` +${matchedSkills.length - 4} more` : ""}).`
+      `Evidenced ${matchedSkills.length} of ${jobEvidencedSkills.length} listed requirements: ${evidenceSnippets.join(", ")}${matchedSkills.length > 3 ? ` +${matchedSkills.length - 3} more` : ""}.`
     );
   }
+
   if (titleMatches >= 1) {
     whyYouFit.push(
-      `Your background as "${candidate.headline || candidate.experience?.[0]?.role || "Software Developer"}" strongly aligns with the "${job.title}" title.`
+      `Background as "${candidate.headline || candidate.experience?.[0]?.role || "Engineer"}" aligns with "${job.title}".`
     );
   }
-  if (candidate.experience && candidate.experience.length > 0) {
-    const latestCompany = candidate.experience[0]?.company;
-    if (latestCompany && !latestCompany.includes("Needs Confirmation")) {
-      whyYouFit.push(`Verified industry experience at ${latestCompany} supports role readiness.`);
-    }
+
+  if (yearsOfExperience > 0) {
+    whyYouFit.push(`~${yearsOfExperience} years of work history provides relevant seniority for this opening.`);
   }
-  if (jobRemote === "worldwide" || jobRemote === "remote") {
-    whyYouFit.push("100% remote-eligible role with flexible location compatibility.");
+
+  if (isWorldwide) {
+    whyYouFit.push("Worldwide remote role with flexible location compatibility.");
+  } else if (remoteScore === 10) {
+    whyYouFit.push("Location aligns with role's geographic eligibility.");
   }
 
   if (whyYouFit.length === 0) {
-    whyYouFit.push("Core engineering background provides a foundation for this position.");
+    whyYouFit.push("Core background provides a foundation for this position.");
   }
 
   // Construct "Gaps" reasons
   const gaps: string[] = [];
   if (missingSkills.length > 0) {
     gaps.push(
-      `Missing explicit evidence for ${missingSkills.length} skills: ${missingSkills.slice(0, 5).join(", ")}${missingSkills.length > 5 ? "..." : ""}.`
+      `Skills mentioned in listing without explicit resume evidence (${missingSkills.length}): ${missingSkills.slice(0, 5).join(", ")}${missingSkills.length > 5 ? "..." : ""}.`
     );
   }
-  if (jobTitleLower.includes("senior") && totalPositions < 2) {
-    gaps.push("Role requires senior-level scope; resume shows early/mid-career timeline.");
+
+  if (isSeniorJob && yearsOfExperience < 4) {
+    gaps.push(`Senior role scope typically requires 5+ years; resume shows ~${yearsOfExperience} years.`);
+  }
+
+  if (isGeographicallyRestricted && remoteScore === 0) {
+    gaps.push(`Listing has geographic restrictions (${job.location || "specific region"}) that may not match your profile location.`);
   }
 
   return {
@@ -211,14 +398,16 @@ export function computeFitDiagnostics(
     scoreGrade,
     matchedSkills,
     missingSkills,
+    inferredSignals,
     whyYouFit,
     gaps,
-    jobRequiredSkills: jobSkills,
+    jobRequiredSkills: jobEvidencedSkills,
     breakdown: {
       skillScore,
       titleScore,
       experienceScore,
       remoteScore,
+      yearsOfExperience,
     },
   };
 }

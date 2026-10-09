@@ -55,18 +55,28 @@ export default function ResumeUploadAndConfirm({
   const [isSaving, setIsSaving] = useState(false);
   const [newSkillInput, setNewSkillInput] = useState("");
   const [newCertInput, setNewCertInput] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
+  const [showPasteBox, setShowPasteBox] = useState(false);
+  const [pastedText, setPastedText] = useState("");
+  const [initialProfileStr, setInitialProfileStr] = useState<string>("");
+  const [showReplaceUpload, setShowReplaceUpload] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load existing profile on mount
   useEffect(() => {
     getCandidateProfile().then((p) => {
       setProfile(p);
+      if (p) {
+        setInitialProfileStr(JSON.stringify(p));
+      }
     });
   }, []);
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const processFile = async (file: File) => {
+    if (file.size > 10 * 1024 * 1024) {
+      setParseError("File size exceeds 10MB limit. Please upload a smaller document.");
+      return;
+    }
 
     setIsParsing(true);
     setParseError(null);
@@ -94,6 +104,60 @@ export default function ResumeUploadAndConfirm({
     } finally {
       setIsParsing(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await processFile(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      await processFile(file);
+    }
+  };
+
+  const handleParsePastedText = async () => {
+    if (!pastedText.trim() || pastedText.trim().length < 40) {
+      setParseError("Please paste at least 40 characters of resume text to extract facts.");
+      return;
+    }
+
+    setIsParsing(true);
+    setParseError(null);
+    setIsSaved(false);
+
+    try {
+      const parsed: ParsedResumeResult = parseResumeText(pastedText);
+      let profileResult = parsed.profile;
+      if (getGroqApiKey()) {
+        profileResult = await extractResumeFactsWithGroq(pastedText, parsed.profile);
+      }
+      setProfile(profileResult);
+      setShowPasteBox(false);
+    } catch (err: any) {
+      console.error("Resume parsing error:", err);
+      setParseError(err?.message || "Failed to parse pasted text.");
+    } finally {
+      setIsParsing(false);
     }
   };
 
@@ -244,6 +308,7 @@ export default function ResumeUploadAndConfirm({
       saveCandidateProfileLocally(confirmedProfile);
       await saveCandidateProfileToSupabase(confirmedProfile);
       setProfile(confirmedProfile);
+      setInitialProfileStr(JSON.stringify(confirmedProfile));
       if (onProfileConfirmed) {
         onProfileConfirmed(confirmedProfile);
       }
@@ -264,153 +329,234 @@ export default function ResumeUploadAndConfirm({
   };
 
   const needsReviewTotal = countNeedsReview();
+  const isDirty = Boolean(
+    profile &&
+    initialProfileStr &&
+    JSON.stringify(profile) !== initialProfileStr
+  );
+  const hasConfirmedFacts = Boolean(profile && profile.confirmedAt);
 
-  return (
-    <div className="space-y-8">
-      {/* Upload & Dropzone Card */}
-      <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
-        <div className="max-w-2xl mx-auto text-center space-y-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">
-            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-            <span>Zero-Hallucination Fact Extraction</span>
-          </div>
+  const renderDropzoneContent = () => (
+    <div className="max-w-2xl mx-auto text-center space-y-4">
+      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">
+        <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+        <span>Zero-Hallucination Fact Extraction</span>
+      </div>
 
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Upload Your Resume for AI Fit & ATS Export
-          </h2>
+      <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+        {hasConfirmedFacts ? "Replace or Re-upload Resume File" : "Upload Your Resume for AI Fit & ATS Export"}
+      </h2>
 
-          <p className="text-sm text-slate-600 leading-relaxed max-w-xl mx-auto">
-            Upload your existing resume in <strong>PDF</strong> or <strong>DOCX</strong> format. We extract verified skills, job timelines, and education. We never invent facts—any unclear lines are flagged for your confirmation.
-          </p>
+      <p className="text-sm text-slate-600 leading-relaxed max-w-xl mx-auto">
+        Upload your existing resume in <strong>PDF</strong> or <strong>DOCX</strong> format. We extract verified skills, job timelines, and education. We never invent facts—any unclear lines are flagged for your confirmation.
+      </p>
 
-          {/* Hidden File Input */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".pdf,.docx,.txt"
-            onChange={handleFileUpload}
-            className="hidden"
-            id="resume-file-input"
-          />
+      {/* Hidden File Input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".pdf,.docx,.txt"
+        onChange={handleFileUpload}
+        className="hidden"
+        id="resume-file-input"
+      />
 
-          {/* Dropzone Container */}
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            className="mt-6 border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/40 hover:bg-blue-50/70 rounded-2xl p-8 sm:p-10 cursor-pointer transition-all flex flex-col items-center justify-center gap-3 text-center group"
-          >
-            <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-              {isParsing ? (
-                <RefreshCw className="w-6 h-6 animate-spin" />
-              ) : (
-                <UploadCloud className="w-7 h-7" />
-              )}
-            </div>
-
-            <div className="space-y-1">
-              <span className="text-sm sm:text-base font-bold text-slate-800">
-                {isParsing ? "Parsing Document Facts..." : "Click or drag resume here to upload"}
-              </span>
-              <p className="text-xs text-slate-500">
-                Supports PDF (.pdf), Microsoft Word (.docx), or Text (.txt) up to 10MB
-              </p>
-            </div>
-          </div>
-
-          {parseError && (
-            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600" />
-                <span>{parseError}</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setParseError(null);
-                  fileInputRef.current?.click();
-                }}
-                className="px-3 py-1.5 min-h-[36px] bg-amber-200 hover:bg-amber-300 active:scale-[0.98] rounded-lg font-bold text-amber-900 transition cursor-pointer self-start sm:self-auto shrink-0"
-              >
-                Retry Upload
-              </button>
-            </div>
+      {/* Dropzone Container */}
+      <div
+        onClick={() => fileInputRef.current?.click()}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        className={`mt-6 border-2 border-dashed ${
+          isDragging ? "border-blue-500 bg-blue-100/50" : "border-blue-200 hover:border-blue-400 bg-blue-50/40 hover:bg-blue-50/70"
+        } rounded-2xl p-8 sm:p-10 cursor-pointer transition-all flex flex-col items-center justify-center gap-3 text-center group`}
+      >
+        <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+          {isParsing ? (
+            <RefreshCw className="w-6 h-6 animate-spin" />
+          ) : (
+            <UploadCloud className="w-7 h-7" />
           )}
+        </div>
 
-          <div className="pt-2 flex items-center justify-center gap-3">
-            <span className="text-xs text-slate-400">or</span>
-            <button
-              type="button"
-              onClick={handleLoadSample}
-              className="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 cursor-pointer min-h-[44px] py-2 px-1"
-            >
-              <FileCheck className="w-3.5 h-3.5" />
-              Load Sample Software Engineer Resume
-            </button>
-          </div>
-
+        <div className="space-y-1">
+          <span className="text-sm sm:text-base font-bold text-slate-800">
+            {isParsing ? "Parsing Document Facts..." : isDragging ? "Drop resume file here" : "Click or drag resume here to upload"}
+          </span>
+          <p className="text-xs text-slate-500">
+            Supports PDF (.pdf), Microsoft Word (.docx), or Text (.txt) up to 10MB
+          </p>
         </div>
       </div>
 
-      {/* Fact Review & Confirmation Section */}
-      {profile && (
-        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-8 animate-fadeInUp">
-          {/* Header & Verification Banner */}
-          <div className="border-b border-slate-200 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
-                  Extracted Facts Review
-                </h3>
-                {profile.confirmedAt ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                    <Check className="w-3 h-3 text-emerald-600" />
-                    Confirmed
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
-                    Review Before Saving
-                  </span>
-                )}
-              </div>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                Verify your extracted profile details below. Changes are saved directly to your account.
-              </p>
-            </div>
+      {parseError && (
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600" />
+            <span>{parseError}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setParseError(null);
+              fileInputRef.current?.click();
+            }}
+            className="px-3 py-1.5 min-h-[36px] bg-amber-200 hover:bg-amber-300 active:scale-[0.98] rounded-lg font-bold text-amber-900 transition cursor-pointer self-start sm:self-auto shrink-0"
+          >
+            Retry Upload
+          </button>
+        </div>
+      )}
 
-            {/* ATS Download Quick Actions */}
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={() => downloadAtsResumeDocx(profile)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
-                title="Download ATS-Optimized Word Doc"
-              >
-                <Download className="w-3.5 h-3.5 text-blue-600" />
-                <span>Export ATS Word (.doc)</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => downloadAtsResumeText(profile)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
-                title="Download ATS Plain Text"
-              >
-                <FileText className="w-3.5 h-3.5 text-slate-600" />
-                <span>Export Plain Text</span>
-              </button>
+      <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+        <button
+          type="button"
+          onClick={() => setShowPasteBox(!showPasteBox)}
+          className="text-xs font-semibold text-slate-600 hover:text-slate-800 hover:underline inline-flex items-center gap-1 cursor-pointer min-h-[44px] py-2 px-1"
+        >
+          <FileText className="w-3.5 h-3.5" />
+          {showPasteBox ? "Hide Paste Box" : "Paste plain text instead"}
+        </button>
+        <span className="text-xs text-slate-400">or</span>
+        <button
+          type="button"
+          onClick={handleLoadSample}
+          className="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 cursor-pointer min-h-[44px] py-2 px-1"
+        >
+          <FileCheck className="w-3.5 h-3.5" />
+          Load Sample Software Engineer Resume
+        </button>
+      </div>
+
+      {showPasteBox && (
+        <div className="mt-4 p-4 rounded-xl bg-slate-50 border border-slate-200 text-left space-y-3">
+          <label className="block text-xs font-bold text-slate-700">
+            Paste Resume Text
+          </label>
+          <textarea
+            rows={6}
+            value={pastedText}
+            onChange={(e) => setPastedText(e.target.value)}
+            placeholder="Paste your resume contents here (experience, skills, education)..."
+            className="w-full text-xs font-mono p-3 rounded-lg border border-slate-300 focus:outline-blue-500 bg-white"
+          />
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setShowPasteBox(false)}
+              className="px-3 py-1.5 text-xs text-slate-600 hover:text-slate-800 rounded-lg cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleParsePastedText}
+              disabled={isParsing || !pastedText.trim()}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition cursor-pointer"
+            >
+              {isParsing ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+              Parse Pasted Text
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderFactReview = () => {
+    if (!profile) return null;
+    return (
+      <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-8 animate-fadeInUp">
+        {/* Header & Verification Banner */}
+        <div className="border-b border-slate-200 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
+                Extracted Facts Review
+              </h3>
+              {isDirty ? (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300 animate-pulse">
+                  <AlertTriangle className="w-3 h-3 text-amber-600" />
+                  Unsaved Changes
+                </span>
+              ) : profile.confirmedAt ? (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                  <Check className="w-3 h-3 text-emerald-600" />
+                  Confirmed
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                  Review Before Saving
+                </span>
+              )}
             </div>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              Verify your extracted profile details below. Changes need to be confirmed before saving. Click &apos;Confirm Facts &amp; Save Profile&apos; below to update your profile.
+            </p>
           </div>
 
-          {/* Attention Banner if items need review */}
-          {needsReviewTotal > 0 && (
-            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 shrink-0 text-amber-600 mt-0.5" />
-              <div>
-                <strong className="font-bold">
-                  {needsReviewTotal} item{needsReviewTotal > 1 ? "s" : ""} need{needsReviewTotal === 1 ? "s" : ""} review:
-                </strong>{" "}
-                Some dates or company names were ambiguous in your resume file. Please verify them below before confirming.
-              </div>
+          {/* ATS Download Quick Actions */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => downloadAtsResumeDocx(profile)}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
+              title="Download ATS-Friendly Word Document (.docx)"
+            >
+              <Download className="w-3.5 h-3.5 text-blue-600" />
+              <span>Export ATS Word (.docx)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => downloadAtsResumeText(profile)}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
+              title="Download ATS Plain Text"
+            >
+              <FileText className="w-3.5 h-3.5 text-slate-600" />
+              <span>Export Plain Text</span>
+            </button>
+            <Link
+              href="/jobs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition cursor-pointer"
+              title="Score this verified resume against 16,000+ jobs"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-blue-200" />
+              <span>Score this resume against jobs</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Unsaved Edits Attention Banner */}
+        {isDirty && (
+          <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>You have unsaved edits in your resume facts. Confirm and save below to update your deterministic match scores.</span>
             </div>
-          )}
+            <button
+              type="button"
+              onClick={handleSaveConfirmedProfile}
+              disabled={isSaving}
+              className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-xs shrink-0 cursor-pointer self-start sm:self-auto shadow-2xs"
+            >
+              {isSaving ? "Saving..." : "Save Edits Now"}
+            </button>
+          </div>
+        )}
+
+        {/* Attention Banner if items need review */}
+        {needsReviewTotal > 0 && (
+          <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 shrink-0 text-amber-600 mt-0.5" />
+            <div>
+              <strong className="font-bold">
+                {needsReviewTotal} item{needsReviewTotal > 1 ? "s" : ""} need{needsReviewTotal === 1 ? "s" : ""} review:
+              </strong>{" "}
+              Some dates or company names were ambiguous in your resume file. Please verify them below before confirming.
+            </div>
+          </div>
+        )}
 
           {/* Section 1: Personal Details */}
           <div className="space-y-4">
@@ -808,16 +954,61 @@ export default function ResumeUploadAndConfirm({
                 </button>
 
                 <Link
-                  href="/job-search/all"
-                  className="hidden md:inline-flex items-center gap-1.5 px-5 py-3.5 rounded-xl border border-slate-300 hover:bg-slate-50 font-bold text-sm text-slate-700 transition"
+                  href="/jobs"
+                  className="hidden sm:inline-flex items-center gap-1.5 px-5 py-3.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 font-bold text-sm text-blue-700 transition"
                 >
-                  <span>Browse Jobs</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4 text-blue-600" />
+                  <span>Score Against Jobs</span>
+                  <ArrowRight className="w-4 h-4 text-blue-600" />
                 </Link>
               </div>
             </div>
           </div>
         </div>
+      );
+    };
+
+  return (
+    <div className="space-y-8">
+      {/* If confirmed facts exist, render Fact Review FIRST */}
+      {hasConfirmedFacts ? (
+        <>
+          {profile && renderFactReview()}
+
+          {/* Secondary Collapsible Replace-Upload Dropzone below confirmed resume */}
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+            <button
+              type="button"
+              onClick={() => setShowReplaceUpload(!showReplaceUpload)}
+              className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-50 transition cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <UploadCloud className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900">Replace or Re-upload Resume File</h4>
+                  <p className="text-xs text-slate-500">Upload a newer PDF or DOCX file to re-extract fresh facts</p>
+                </div>
+              </div>
+              <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
+                {showReplaceUpload ? "Collapse Upload Zone" : "Upload New File"}
+              </span>
+            </button>
+            {showReplaceUpload && (
+              <div className="p-6 border-t border-slate-200 bg-slate-50/50">
+                {renderDropzoneContent()}
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+            {renderDropzoneContent()}
+          </div>
+          {profile && renderFactReview()}
+        </>
       )}
     </div>
   );

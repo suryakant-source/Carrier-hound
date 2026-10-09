@@ -15,7 +15,9 @@ import { TrackedApplication } from "@/lib/tracker/types";
 import MatchScoreBadge from "@/components/matcher/MatchScoreBadge";
 import { getLiveJobs, LiveJob } from "@/lib/jobs/service";
 import { getTodayDigest, DailyDigestQueue, DigestMatchItem } from "@/lib/cron/digestStorage";
+import { getProAccessStatus } from "@/lib/billing/subscription";
 import type { User } from "@supabase/supabase-js";
+import { downloadAtsResumeDocx } from "@/lib/resume/tailor";
 import {
   Sparkles,
   ArrowRight,
@@ -32,10 +34,12 @@ import {
   RefreshCw,
   Target,
   ChevronRight,
+  ChevronDown,
   HelpCircle,
   X,
   Lock,
-  Globe
+  Globe,
+  Download,
 } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -51,11 +55,23 @@ export default function DashboardPage() {
   const [isScanning, setIsScanning] = useState(false);
   const [showWalkthrough, setShowWalkthrough] = useState(false);
   const [fallbackLiveJobs, setFallbackLiveJobs] = useState<LiveJob[]>([]);
+  const [lastSyncTime, setLastSyncTime] = useState<Date>(() => new Date());
+
+  const formatSyncTime = (date: Date): string => {
+    const diffSecs = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (diffSecs < 60) return "Just now";
+    const diffMins = Math.floor(diffSecs / 60);
+    if (diffMins < 60) return `${diffMins}m ago`;
+    const diffHours = Math.floor(diffMins / 60);
+    return `${diffHours}h ago`;
+  };
 
   const hasConfirmedResume = Boolean(candidate && candidate.confirmedAt);
-  const isPro = user?.user_metadata?.is_pro === true || (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true");
+  const [isPro, setIsPro] = useState(false);
 
-  // Check auth and load user data
+  const [walkthroughExpanded, setWalkthroughExpanded] = useState(false);
+
+  // Check auth and load user data without false flash
   useEffect(() => {
     getAuthUser().then((authUser) => {
       if (!authUser) {
@@ -63,36 +79,36 @@ export default function DashboardPage() {
         return;
       }
       setUser(authUser);
-      const isPro = authUser?.user_metadata?.is_pro === true || (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true");
 
-      // Load live jobs for dashboard
-      getLiveJobs({ page: 1, pageSize: 6, isPro }).then((res) => {
-        setFallbackLiveJobs(res.jobs);
-      });
+      Promise.all([
+        getProAccessStatus(),
+        getUserPreferences(authUser.id),
+        getCandidateProfile(),
+        getTrackedApplications(),
+        getTodayDigest(),
+      ])
+        .then(([subRes, p, cp, apps, d]) => {
+          setIsPro(subRes.isPro);
+          setPreferences(p);
+          if (cp && cp.confirmedAt) {
+            setCandidate(cp);
+          } else {
+            setCandidate(null);
+          }
+          setApplications(apps);
+          setDigest(d);
 
-      // Load preferences
-      getUserPreferences(authUser.id).then((p) => {
-        setPreferences(p);
-      });
-
-      // Load candidate profile
-      getCandidateProfile().then((cp) => {
-        if (cp && cp.confirmedAt) {
-          setCandidate(cp);
-        } else {
-          setCandidate(null);
-        }
-      });
-
-      // Load applications
-      getTrackedApplications().then((apps) => {
-        setApplications(apps);
-      });
-
-      // Load daily digest
-      getTodayDigest().then((d) => {
-        setDigest(d);
-      });
+          if (!d?.matches || d.matches.length === 0) {
+            getLiveJobs({ page: 1, pageSize: 6, isPro: subRes.isPro }).then((res) => {
+              setFallbackLiveJobs(res.jobs);
+            });
+          }
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Dashboard data load error", err);
+          setLoading(false);
+        });
 
       // Check first-time walkthrough dismiss state
       if (typeof window !== "undefined") {
@@ -101,8 +117,6 @@ export default function DashboardPage() {
           setShowWalkthrough(true);
         }
       }
-
-      setLoading(false);
     });
   }, [router]);
 
@@ -118,6 +132,7 @@ export default function DashboardPage() {
     try {
       const d = await getTodayDigest();
       setDigest(d);
+      setLastSyncTime(new Date());
       toast.success("AI ATS scan completed! Surfaced latest matching requisitions.");
     } catch (e) {
       toast.error("Could not complete scan.");
@@ -209,115 +224,214 @@ export default function DashboardPage() {
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
         {/* ========================================================================= */}
-        {/* FIRST-TIME WALKTHROUGH BANNER (Dismissible)                                */}
+        {/* COMPACT FIRST-TIME SETUP GUIDE (Collapsible)                              */}
         {/* ========================================================================= */}
         {showWalkthrough && (
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-2xl p-5 shadow-sm relative animate-fadeIn space-y-3">
-            <button
-              type="button"
-              onClick={handleDismissWalkthrough}
-              className="absolute top-4 right-4 text-white/70 hover:text-white transition p-1"
-              title="Dismiss guide"
-            >
-              <X className="w-4 h-4" />
-            </button>
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-2xl p-4 shadow-sm relative animate-fadeIn space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="p-1.5 rounded-lg bg-white/20">
+                  <Sparkles className="w-4 h-4 text-yellow-300" />
+                </span>
+                <span className="text-xs sm:text-sm font-bold">Quick Start Guide: CareerMonke 4-Step Setup</span>
+              </div>
 
-            <div className="flex items-center gap-2">
-              <span className="p-1.5 rounded-lg bg-white/20">
-                <Sparkles className="w-4 h-4 text-yellow-300" />
-              </span>
-              <h2 className="text-sm sm:text-base font-bold">Welcome to CareerMonke! Here&apos;s your quick guide:</h2>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setWalkthroughExpanded(!walkthroughExpanded)}
+                  className="text-xs text-white/90 hover:text-white bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer"
+                >
+                  <span>{walkthroughExpanded ? "Collapse" : "Expand"}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${walkthroughExpanded ? "rotate-180" : ""}`} />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDismissWalkthrough}
+                  className="text-white/70 hover:text-white transition p-1 cursor-pointer"
+                  title="Dismiss guide"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-1 text-xs">
-              <div className="bg-white/10 rounded-xl p-3 border border-white/10">
-                <span className="font-bold block text-white mb-0.5">1. Target Preferences</span>
-                <span className="text-white/80">Filter positions by seniority, remote scope, and salary.</span>
+            {walkthroughExpanded && (
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2 text-xs border-t border-white/15 animate-fadeIn">
+                <div className="bg-white/10 rounded-xl p-3 border border-white/10">
+                  <span className="font-bold block text-white mb-0.5">1. Target Preferences</span>
+                  <span className="text-white/80">Filter positions by seniority, remote scope, and salary.</span>
+                </div>
+                <div className="bg-white/10 rounded-xl p-3 border border-white/10">
+                  <span className="font-bold block text-white mb-0.5">2. Confirmed Resume</span>
+                  <span className="text-white/80">Deterministic fact extraction without fake hallucinations.</span>
+                </div>
+                <div className="bg-white/10 rounded-xl p-3 border border-white/10">
+                  <span className="font-bold block text-white mb-0.5">3. Inspect & Tailor</span>
+                  <span className="text-white/80">View fit diagnostics & 1-click tailored ATS exports.</span>
+                </div>
+                <div className="bg-white/10 rounded-xl p-3 border border-white/10">
+                  <span className="font-bold block text-white mb-0.5">4. Track Applications</span>
+                  <span className="text-white/80">Apply directly on company portals and manage pipeline.</span>
+                </div>
               </div>
-              <div className="bg-white/10 rounded-xl p-3 border border-white/10">
-                <span className="font-bold block text-white mb-0.5">2. Confirmed Resume</span>
-                <span className="text-white/80">Deterministic fact extraction without fake hallucinations.</span>
-              </div>
-              <div className="bg-white/10 rounded-xl p-3 border border-white/10">
-                <span className="font-bold block text-white mb-0.5">3. Inspect & Tailor</span>
-                <span className="text-white/80">View fit diagnostics & 1-click tailored ATS cover letters.</span>
-              </div>
-              <div className="bg-white/10 rounded-xl p-3 border border-white/10">
-                <span className="font-bold block text-white mb-0.5">4. Track Applications</span>
-                <span className="text-white/80">Apply directly on company portals and manage pipeline.</span>
-              </div>
-            </div>
+            )}
           </div>
         )}
 
         {/* ========================================================================= */}
-        {/* ACTIONABLE NEXT-STEP BANNER                                               */}
+        {/* TWO PROMINENT HERO FEATURE CARDS: ATS RESUME & JOB FIT SCORE              */}
         {/* ========================================================================= */}
-        {!hasConfirmedResume ? (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
-            <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 mt-0.5">
-                <FileText className="w-5 h-5" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          {/* Hero Card 1: ATS Resume */}
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-2xs flex flex-col justify-between space-y-4 relative overflow-hidden group hover:border-blue-300 transition">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+                      AI ATS-Friendly Resume
+                    </h2>
+                    <p className="text-xs text-slate-500">Deterministic fact verification & clean exports</p>
+                  </div>
+                </div>
+
+                {hasConfirmedResume ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Verified & Confirmed</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 shrink-0">
+                    <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Needs Upload</span>
+                  </span>
+                )}
               </div>
-              <div>
-                <h3 className="text-sm font-bold text-amber-900">
-                  Next Step: Upload your resume for deterministic match scores
-                </h3>
-                <p className="text-xs text-amber-800 mt-0.5">
-                  We are currently showing relevant listings based on your title preferences. Upload your PDF or DOCX resume to unlock exact 0-100% skill match diagnostics & 1-click tailored cover letters.
-                </p>
-              </div>
+
+              {hasConfirmedResume && candidate ? (
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5 text-xs">
+                  <div className="flex items-center justify-between font-bold text-slate-800">
+                    <span>{candidate.name}</span>
+                    <span className="text-[11px] font-normal text-slate-500 truncate max-w-[200px]">
+                      {candidate.headline || "Software Engineer"}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[11px] text-slate-600">
+                    <span><strong>{candidate.skills?.length || 0}</strong> verified skills</span>
+                    <span>•</span>
+                    <span><strong>{candidate.experience?.length || 0}</strong> career positions</span>
+                    <span>•</span>
+                    <span>Single-column ATS format</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3.5 rounded-xl bg-amber-50/60 border border-amber-100 text-xs text-amber-900 leading-relaxed">
+                  Upload your existing PDF or DOCX resume. We extract confirmed skills and career timelines without hallucinations so every job score is 100% honest.
+                </div>
+              )}
             </div>
 
-            <Link
-              href="/resume"
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-[0.98] text-white text-xs font-bold transition shadow-xs shrink-0 self-start sm:self-auto cursor-pointer"
-            >
-              <span>Confirm Resume Facts</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            <div className="pt-2 flex flex-wrap items-center gap-2.5">
+              {hasConfirmedResume && candidate ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => downloadAtsResumeDocx(candidate)}
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-bold shadow-2xs transition cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Export ATS Word (.docx)</span>
+                  </button>
+                  <Link
+                    href="/resume"
+                    className="inline-flex items-center gap-1 px-3.5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition"
+                  >
+                    <span>Edit Facts</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
+                </>
+              ) : (
+                <Link
+                  href="/resume"
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-bold shadow-xs transition cursor-pointer"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>Upload & Confirm Facts</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              )}
+            </div>
           </div>
-        ) : !preferences?.onboardingCompleted ? (
-          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
-            <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
-                <Target className="w-5 h-5" />
+
+          {/* Hero Card 2: Job Fit Score */}
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-2xs flex flex-col justify-between space-y-4 relative overflow-hidden group hover:border-blue-300 transition">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+                    <Target className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+                      AI Job Fit Scoring
+                    </h2>
+                    <p className="text-xs text-slate-500">Real-time skill diagnostics & gap breakdown</p>
+                  </div>
+                </div>
+
+                {hasConfirmedResume ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
+                    <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Active Diagnostics</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 shrink-0">
+                    <span>Awaiting Resume</span>
+                  </span>
+                )}
               </div>
-              <div>
-                <h3 className="text-sm font-bold text-blue-900">
-                  Next Step: Complete your job target preferences
-                </h3>
-                <p className="text-xs text-blue-800 mt-0.5">
-                  Set your preferred roles, locations, and salary expectation to refine your daily scan feed.
-                </p>
-              </div>
+
+              {hasConfirmedResume ? (
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1 text-xs text-slate-700 leading-relaxed">
+                  <p>
+                    Every requisition is scored deterministically against your confirmed skills, years of experience, and location preferences—never black-box hallucinations.
+                  </p>
+                  <p className="text-[11px] text-blue-700 font-semibold pt-0.5">
+                    Pick any requisition below or in the Jobs feed to view why you fit and exact gaps to address.
+                  </p>
+                </div>
+              ) : (
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600 leading-relaxed">
+                  Match scores are locked until your confirmed facts exist. We never display fake scores against sample data.
+                </div>
+              )}
             </div>
 
-            <Link
-              href="/settings?tab=preferences"
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-xs font-bold transition shadow-xs shrink-0 self-start sm:self-auto cursor-pointer"
-            >
-              <span>Set Preferences</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        ) : (
-          <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-2xs">
-            <div className="flex items-center gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-              <span className="text-xs font-medium text-emerald-900">
-                <strong>Profile Active:</strong> Scanning 500+ direct company ATS portals against your {candidate?.skills.length} confirmed skills and preferences.
-              </span>
+            <div className="pt-2 flex flex-wrap items-center gap-2.5">
+              <Link
+                href="/jobs"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-2xs transition cursor-pointer"
+              >
+                <Target className="w-3.5 h-3.5 text-blue-300" />
+                <span>Pick a Job to Score</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+              {hasConfirmedResume && (
+                <a
+                  href="#daily-matches"
+                  className="inline-flex items-center gap-1 px-3.5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition"
+                >
+                  <span>See Today&apos;s Matches</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </a>
+              )}
             </div>
-            <Link
-              href="/jobs"
-              className="text-xs font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1 shrink-0"
-            >
-              <span>Browse All Feeds</span>
-              <ArrowRight className="w-3 h-3" />
-            </Link>
           </div>
-        )}
+        </div>
 
         {/* ========================================================================= */}
         {/* PIPELINE COUNTERS & UPCOMING INTERVIEWS ROW                               */}
@@ -421,7 +535,7 @@ export default function DashboardPage() {
                   {hasConfirmedResume ? "Today's Verified Match Feed" : "Relevant Direct Requisitions"}
                 </h3>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
-                  Last Sync: 15 mins ago
+                  Last Sync: {formatSyncTime(lastSyncTime)}
                 </span>
               </div>
               <p className="text-xs text-slate-500">
@@ -462,7 +576,7 @@ export default function DashboardPage() {
                 <div className="space-y-2">
                   <div className="flex items-start justify-between gap-2">
                     <Link
-                      href={`/jobs/${job.jobId}`}
+                      href={`/jobs/detail?id=${encodeURIComponent(job.jobId || job.id)}`}
                       className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1"
                     >
                       {job.title}

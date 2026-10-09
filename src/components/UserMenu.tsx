@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { getProAccessStatus } from "@/lib/billing/subscription";
 import type { User } from "@supabase/supabase-js";
 import { LogOut, ChevronDown, LogIn } from "lucide-react";
 
@@ -25,6 +26,7 @@ export default function UserMenu({
 }: UserMenuProps) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [isPro, setIsPro] = useState(false);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -35,8 +37,10 @@ export default function UserMenu({
       supabase.auth.getUser().then(({ data, error }) => {
         if (data?.user && !error) {
           setUser(data.user);
+          getProAccessStatus().then((res) => setIsPro(res.isPro));
         } else {
           setUser(null);
+          setIsPro(false);
         }
         setLoading(false);
       });
@@ -133,7 +137,7 @@ export default function UserMenu({
   }
 
   // ── Signed IN ─────────────────────────────────────────────────────────────
-  const isPro = user.user_metadata?.is_pro === true || (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true");
+
 
   const initial = (user.email?.[0] ?? "U").toUpperCase();
   const shortEmail = user.email

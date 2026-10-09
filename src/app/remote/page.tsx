@@ -50,7 +50,7 @@ export default function ResourcesIndexPage() {
                   <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
                     {art.label}
                   </span>
-                  <h3 className="font-bold text-base text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                  <h3 className="font-bold text-base text-slate-900 group-hover:text-blue-600 transition-colors">
                     {art.title}
                   </h3>
                   <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
@@ -62,7 +62,7 @@ export default function ResourcesIndexPage() {
                   <span className="text-[10px] text-slate-400">{art.updatedDate}</span>
                   <Link
                     href={`/remote/${art.slug}`}
-                    className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                    className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 cursor-pointer"
                   >
                     <span>Read Guide</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -85,17 +85,20 @@ export default function ResourcesIndexPage() {
               <Link
                 key={cat.slug}
                 href={`/remote/jobs/${cat.slug}`}
-                className="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs hover:border-blue-300 hover:shadow-xs transition flex items-center justify-between group"
+                className="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs hover:border-blue-300 hover:shadow-xs transition flex flex-col justify-between space-y-3 group"
               >
                 <div>
                   <h3 className="font-bold text-sm text-slate-900 group-hover:text-blue-600 transition">
                     {cat.title}
                   </h3>
-                  <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-1">
+                  <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
                     {cat.lede}
                   </p>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition shrink-0 ml-2" />
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-600 group-hover:text-blue-700">
+                  <span>Explore Roles</span>
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                </div>
               </Link>
             ))}
           </div>

@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ShieldCheck,
   Check,
+  Info,
 } from "lucide-react";
 import { FitDiagnosticsResult } from "@/lib/matcher/scoring";
 import { CandidateProfile } from "@/lib/resume/types";
@@ -160,6 +161,32 @@ export default function FitDiagnosticsModal({
             </button>
           </div>
 
+          {/* Score Calculation Basis */}
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
+            <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between">
+              <span>How This Score is Computed</span>
+              <span className="font-mono text-slate-500 font-normal">Heuristic Weights</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <div className="bg-white p-2 rounded-lg border border-slate-200">
+                <span className="text-[10px] text-slate-500 block">Skills Evidenced</span>
+                <span className="font-bold text-slate-900">{diagnostics.breakdown.skillScore} / 50</span>
+              </div>
+              <div className="bg-white p-2 rounded-lg border border-slate-200">
+                <span className="text-[10px] text-slate-500 block">Title Alignment</span>
+                <span className="font-bold text-slate-900">{diagnostics.breakdown.titleScore} / 25</span>
+              </div>
+              <div className="bg-white p-2 rounded-lg border border-slate-200">
+                <span className="text-[10px] text-slate-500 block">Experience (~{diagnostics.breakdown.yearsOfExperience}y)</span>
+                <span className="font-bold text-slate-900">{diagnostics.breakdown.experienceScore} / 15</span>
+              </div>
+              <div className="bg-white p-2 rounded-lg border border-slate-200">
+                <span className="text-[10px] text-slate-500 block">Location Fit</span>
+                <span className="font-bold text-slate-900">{diagnostics.breakdown.remoteScore} / 10</span>
+              </div>
+            </div>
+          </div>
+
           {/* Section: Why You Fit */}
           <div className="space-y-3">
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
@@ -189,16 +216,36 @@ export default function FitDiagnosticsModal({
             </div>
           </div>
 
+          {/* Section: Inferred Role Signals (Separated from explicit listing requirements) */}
+          {diagnostics.inferredSignals && diagnostics.inferredSignals.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                <Info className="w-4 h-4 text-blue-600" />
+                <span>Inferred Role Signals (From Title / Category — Not Required Skills)</span>
+              </h3>
+              <div className="flex flex-wrap gap-1.5">
+                {diagnostics.inferredSignals.map((signal, idx) => (
+                  <span
+                    key={idx}
+                    className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200"
+                  >
+                    • {signal}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Section: Missing Skills / Gaps */}
           {missingSkills.length > 0 && (
             <div className="space-y-3">
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
                 <AlertCircle className="w-4 h-4 text-amber-600" />
-                <span>Skills Mentioned in Listing But Missing on Resume ({missingSkills.length})</span>
+                <span>Skills Evidenced in Listing Description But Missing on Resume ({missingSkills.length})</span>
               </h3>
               <div className="bg-amber-50/60 border border-amber-100 rounded-xl p-4 space-y-2.5">
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Highlighting these skills in your tailored application or interview prep will boost your candidacy:
+                  Evidenced in the job description. Addressing these in your application or interview prep will strengthen your alignment:
                 </p>
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {missingSkills.map((s, idx) => (

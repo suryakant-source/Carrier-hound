@@ -169,7 +169,7 @@ export default function GlobeLiveStats() {
             {displayJobsToday.toLocaleString("en-US")}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">
-            jobs found today
+            jobs found today (est.)
           </div>
         </div>
 

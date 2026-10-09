@@ -10,6 +10,8 @@ export interface LiveJob {
   salary: string;
   category: string;
   remote: boolean;
+  remoteScope?: string;
+  remoteEligibility?: string;
   country: string;
   type: string;
   directSource: boolean;
@@ -31,6 +33,48 @@ export interface GetJobsOptions {
 export interface GetJobsResult {
   jobs: LiveJob[];
   totalCount: number;
+}
+
+/**
+ * Accurately determines remote eligibility scope without false Worldwide assumptions.
+ */
+export function getJobRemoteEligibility(job: {
+  remote?: boolean;
+  remoteScope?: string;
+  remoteEligibility?: string;
+  remote_scope?: string;
+  remote_eligibility?: string;
+  location?: string;
+}): "worldwide" | "country_restricted" | "unknown" | "onsite" {
+  const loc = (job.location || "").toLowerCase();
+  const scope = (job.remoteScope || job.remote_scope || "").toLowerCase();
+  const elig = (job.remoteEligibility || job.remote_eligibility || "").toLowerCase();
+
+  if (elig === "worldwide" || scope === "worldwide") return "worldwide";
+  if (elig === "country_restricted" || scope === "country_restricted") return "country_restricted";
+
+  if (!job.remote && !loc.includes("remote")) return "onsite";
+
+  // Check if location has explicit country/city restriction
+  if (
+    /\b(united states|u\.s\.|usa|remote - us|remote \(us\)|remote, us|uk|canada|india|germany|france|europe|emea|apac)\b/i.test(
+      loc
+    )
+  ) {
+    return "country_restricted";
+  }
+
+  // Check if location explicitly confirms global worldwide eligibility
+  if (/\b(worldwide|anywhere|global|work from anywhere|all timezones)\b/i.test(loc)) {
+    return "worldwide";
+  }
+
+  // If remote is true but no geography is specified
+  if (job.remote) {
+    return "unknown";
+  }
+
+  return "unknown";
 }
 
 function formatDate(dateStr?: string | null): string {
@@ -73,8 +117,8 @@ export async function getLiveJobs(options: GetJobsOptions = {}): Promise<GetJobs
     // STRICT PRO GATING AT QUERY LEVEL:
     // If not pro, NEVER request company, salary_text, or apply_url across the network wire
     const selectColumns = isPro
-      ? "id, title, location, category, remote, country_code, job_type, verified, posted_at, created_at, company, salary_text, apply_url"
-      : "id, title, location, category, remote, country_code, job_type, verified, posted_at, created_at";
+      ? "id, title, location, category, remote, remote_scope, remote_eligibility, country_code, job_type, verified, posted_at, created_at, company, salary_text, apply_url"
+      : "id, title, location, category, remote, remote_scope, remote_eligibility, country_code, job_type, verified, posted_at, created_at";
 
     let query = supabase
       .from("jobs")
@@ -133,11 +177,13 @@ export async function getLiveJobs(options: GetJobsOptions = {}): Promise<GetJobs
         id: row.id,
         title: row.title || "Untitled Position",
         company: isPro ? (row.company || "Verified Employer") : "Confidential Employer",
-        location: row.location || (row.remote ? "Remote Worldwide" : "Global"),
+        location: row.location || (row.remote ? "Remote (Unknown Location)" : "Unknown"),
         date: formatDate(row.posted_at || row.created_at),
         salary: isPro ? (row.salary_text || "") : "",
         category: row.category || "engineering",
         remote: Boolean(row.remote),
+        remoteScope: row.remote_scope || undefined,
+        remoteEligibility: row.remote_eligibility || undefined,
         country: row.country_code || "US",
         type: row.job_type === "internship" ? "Internship" : "Full-time",
         directSource: Boolean(row.verified),
@@ -207,8 +253,8 @@ export async function getLiveJobById(jobId: string, isPro: boolean = false): Pro
   try {
     const supabase = createClient();
     const selectColumns = isPro
-      ? "id, title, location, category, remote, country_code, job_type, verified, posted_at, created_at, description, skills, company, salary_text, apply_url"
-      : "id, title, location, category, remote, country_code, job_type, verified, posted_at, created_at, description, skills";
+      ? "id, title, location, category, remote, remote_scope, remote_eligibility, country_code, job_type, verified, posted_at, created_at, description, skills, company, salary_text, apply_url"
+      : "id, title, location, category, remote, remote_scope, remote_eligibility, country_code, job_type, verified, posted_at, created_at, description, skills";
 
     const { data, error } = await (supabase
       .from("jobs")
@@ -224,11 +270,13 @@ export async function getLiveJobById(jobId: string, isPro: boolean = false): Pro
         id: row.id,
         title: row.title || "Untitled Position",
         company: isPro ? (row.company || "Verified Employer") : "Confidential Employer",
-        location: row.location || (row.remote ? "Remote Worldwide" : "Global"),
+        location: row.location || (row.remote ? "Remote (Unknown Location)" : "Unknown"),
         date: formatDate(row.posted_at || row.created_at),
         salary: isPro ? (row.salary_text || "") : "",
         category: row.category || "engineering",
         remote: Boolean(row.remote),
+        remoteScope: row.remote_scope || undefined,
+        remoteEligibility: row.remote_eligibility || undefined,
         country: row.country_code || "US",
         type: row.job_type === "internship" ? "Internship" : "Full-time",
         directSource: Boolean(row.verified),

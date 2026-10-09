@@ -81,6 +81,7 @@ export async function getCandidateProfile(): Promise<CandidateProfile | null> {
           name: data.name || profile?.name || "",
           email: data.email || user.email || profile?.email || "",
           phone: data.phone || profile?.phone || "",
+          location: data.location || profile?.location || "",
           headline: data.headline || profile?.headline || "",
           summary: data.summary || profile?.summary || "",
           skills: data.skills || profile?.skills || [],
@@ -126,28 +127,29 @@ export async function saveConfirmedCandidateProfile(profile: CandidateProfile): 
 
   saveCandidateProfileLocally(updatedProfile);
 
-  try {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      await supabase.from("candidate_profiles").upsert({
-        user_id: user.id,
-        name: updatedProfile.name,
-        email: updatedProfile.email || user.email,
-        phone: updatedProfile.phone,
-        headline: updatedProfile.headline,
-        summary: updatedProfile.summary,
-        skills: updatedProfile.skills,
-        experience_json: updatedProfile.experience,
-        education_json: updatedProfile.education,
-        certifications: updatedProfile.certifications,
-        raw_resume_text: updatedProfile.rawText,
-        confirmed_at: updatedProfile.confirmedAt,
-        updated_at: updatedProfile.updatedAt,
-      });
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { error } = await supabase.from("candidate_profiles").upsert({
+      user_id: user.id,
+      name: updatedProfile.name,
+      email: updatedProfile.email || user.email,
+      phone: updatedProfile.phone,
+      location: updatedProfile.location || null,
+      headline: updatedProfile.headline,
+      summary: updatedProfile.summary,
+      skills: updatedProfile.skills,
+      experience_json: updatedProfile.experience,
+      education_json: updatedProfile.education,
+      certifications: updatedProfile.certifications,
+      raw_resume_text: updatedProfile.rawText,
+      confirmed_at: updatedProfile.confirmedAt,
+      updated_at: updatedProfile.updatedAt,
+    });
+    if (error) {
+      console.error("Failed to sync candidate profile to Supabase:", error);
+      throw new Error(`Failed to save candidate profile to database: ${error.message}`);
     }
-  } catch (e) {
-    console.warn("Could not sync candidate profile to Supabase", e);
   }
 }
 

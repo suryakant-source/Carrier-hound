@@ -1,68 +1,106 @@
-import React from "react";
+"use client";
+
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import GuideHeader from "@/components/GuideHeader";
 import Footer from "@/components/Footer";
 import { WORLDWIDE_COMPANIES } from "@/data/companies";
-import { ArrowRight } from "lucide-react";
-
-export const metadata = {
-  title: "Companies Hiring Worldwide | CareerMonke Directory",
-  description: "Explore 150+ companies currently hiring international and worldwide remote talent across engineering, product, and design.",
-};
+import { ArrowRight, Search, Globe2, Building } from "lucide-react";
 
 export default function WorldwidePage() {
+  const [query, setQuery] = useState("");
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return WORLDWIDE_COMPANIES;
+    return WORLDWIDE_COMPANIES.filter((c) => c.name.toLowerCase().includes(q));
+  }, [query]);
+
   return (
-    <div className="min-h-screen bg-white text-[#09090B] flex flex-col">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#09090B] flex flex-col">
       <GuideHeader />
 
-      <main className="flex-1 py-10 sm:py-20">
-        {/* Centered Header */}
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center space-y-4 sm:space-y-6 mb-10 sm:mb-16">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#09090B]">
+      <main className="flex-1 py-8 sm:py-12">
+        {/* Compact Centered Header */}
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+            <Globe2 className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Unrestricted Location Scope</span>
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
             Companies Hiring Worldwide
           </h1>
 
-          <p className="text-[#4B5563] text-sm sm:text-base md:text-xl max-w-xl mx-auto leading-relaxed">
+          <p className="text-slate-600 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
             Verified distributed organizations actively hiring across global timezones without regional tax or location restrictions.
           </p>
 
-          <div className="pt-2">
+          <div className="pt-1 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/jobs"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-black hover:bg-neutral-800 text-white font-semibold px-7 py-3.5 min-h-[48px] rounded-lg text-sm sm:text-base transition-colors shadow-sm"
+              className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 min-h-[44px] rounded-xl text-xs sm:text-sm transition-colors shadow-xs cursor-pointer"
             >
-              <span>View Jobs on CareerMonke</span>
-              <ArrowRight className="w-5 h-5" />
+              <span>View Worldwide Jobs</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
-          <p className="text-xs uppercase tracking-wider font-semibold text-gray-400 pt-4">
-            Current worldwide job listings by company:
+          {/* Client Search / Filter Input */}
+          <div className="pt-2 max-w-md mx-auto relative">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Filter companies (e.g. GitLab, Automattic, Stripe)..."
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:outline-blue-500 bg-white shadow-2xs transition"
+            />
+          </div>
+
+          <p className="text-[11px] uppercase tracking-wider font-bold text-slate-400 pt-1">
+            Showing {filtered.length} of {WORLDWIDE_COMPANIES.length} companies hiring worldwide
           </p>
         </div>
 
-        {/* List ~770px wide: rows with py-3.5 and divider lines */}
+        {/* List ~770px wide: rows with py-3 and divider lines */}
         <div className="max-w-[770px] mx-auto px-4 sm:px-6">
-          <div className="divide-y divide-[#E4E4E7] border-y border-[#E4E4E7]">
-            {WORLDWIDE_COMPANIES.map((company) => (
-              <div
-                key={company.id}
-                className="py-3 sm:py-3.5 min-h-[48px] flex items-center justify-between hover:bg-slate-50/80 px-2 transition-colors group"
-              >
-                <Link
-                  href={`/jobs?search=${encodeURIComponent(company.name)}`}
-                  className="text-base sm:text-lg font-medium text-[#09090B] group-hover:text-blue-600 transition-colors flex-1 py-1"
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs divide-y divide-slate-100 overflow-hidden">
+            {filtered.length === 0 ? (
+              <div className="py-12 text-center space-y-2">
+                <Building className="w-8 h-8 text-slate-400 mx-auto" />
+                <p className="text-xs font-semibold text-slate-700">
+                  No companies found matching &quot;{query}&quot;
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  className="text-xs text-blue-600 font-bold hover:underline cursor-pointer"
                 >
-                  {company.name}
-                </Link>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500 font-mono">
-                    {company.jobCount} jobs
-                  </span>
-                  <ArrowRight className="w-3.5 h-3.5 text-gray-300 opacity-0 group-hover:opacity-100 group-hover:text-blue-600 transition-all -translate-x-1 group-hover:translate-x-0" />
-                </div>
+                  Clear search filter
+                </button>
               </div>
-            ))}
+            ) : (
+              filtered.map((company) => (
+                <div
+                  key={company.id}
+                  className="py-3 sm:py-3.5 px-4 sm:px-5 min-h-[48px] flex items-center justify-between hover:bg-slate-50 transition-colors group"
+                >
+                  <Link
+                    href={`/jobs?search=${encodeURIComponent(company.name)}`}
+                    className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors flex-1 py-1"
+                  >
+                    {company.name}
+                  </Link>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-500 font-mono bg-slate-100 px-2 py-0.5 rounded-md">
+                      {company.jobCount} open roles
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover:opacity-100 group-hover:text-blue-600 transition-all -translate-x-1 group-hover:translate-x-0" />
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </main>

@@ -44,6 +44,7 @@ import {
 } from "lucide-react";
 import MatchScoreBadge from "@/components/matcher/MatchScoreBadge";
 import { quickTrackJob } from "@/lib/tracker/storage";
+import { getProAccessStatus } from "@/lib/billing/subscription";
 import { toast } from "react-toastify";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -216,24 +217,22 @@ export default function JobRadarGlobe() {
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
-      const isLocalPro = typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true";
       if (data.user) {
         setCurrentUser(data.user);
-        setIsPro(Boolean(data.user.user_metadata?.is_pro) || isLocalPro);
-      } else {
-        const localEmail =
-          typeof window !== "undefined"
-            ? localStorage.getItem("careermonke_user_email")
-            : null;
-        if (localEmail) {
-          setCurrentUser({ email: localEmail, id: "local-user" });
-          setIsPro(isLocalPro);
-        } else if (isLocalPro) {
-          setIsPro(true);
-        }
       }
     });
 
+    getProAccessStatus().then((res) => setIsPro(res.isPro));
+
+    const handleSubUpdate = () => {
+      getProAccessStatus().then((res) => setIsPro(res.isPro));
+    };
+    window.addEventListener("careermonke_pro_updated", handleSubUpdate);
+    window.addEventListener("careermonke_auth_updated", handleSubUpdate);
+    return () => {
+      window.removeEventListener("careermonke_pro_updated", handleSubUpdate);
+      window.removeEventListener("careermonke_auth_updated", handleSubUpdate);
+    };
   }, []);
 
   // 2. Fetch live telemetry from /api/radar on mount
@@ -703,6 +702,14 @@ export default function JobRadarGlobe() {
         const cFilter = countryFilterRef.current;
         const rFilter = regionFilterRef.current;
 
+        const visibleMarkers: {
+          city: any;
+          el: HTMLButtonElement;
+          screenX: number;
+          screenY: number;
+          isSelected: boolean;
+        }[] = [];
+
         for (let i = 0; i < data.cities.length; i++) {
           const city = data.cities[i];
           const el = markerElementsRef.current.get(city.id);
@@ -722,10 +729,51 @@ export default function JobRadarGlobe() {
               const screenY = (-screenVec.y * 0.5 + 0.5) * cHeight;
               el.style.transform = `translate3d(${screenX}px, ${screenY}px, 0) translate(-50%, -50%)`;
               el.style.display = "flex";
+              const isSelected = selectedCityRef.current?.id === city.id;
+              visibleMarkers.push({ city, el, screenX, screenY, isSelected });
               continue;
             }
           }
           el.style.display = "none";
+        }
+
+        // Prioritize selected city and higher density cities for badge display
+        visibleMarkers.sort((a, b) => {
+          if (a.isSelected) return -1;
+          if (b.isSelected) return 1;
+          return (b.city.totalCount || 0) - (a.city.totalCount || 0);
+        });
+
+        // Collision avoidance: keep diode dots visible, hide label badge if within 55px of another label
+        const placedLabelPositions: { x: number; y: number }[] = [];
+        for (const marker of visibleMarkers) {
+          const badgeEl = marker.el.querySelector(".city-tag-badge") as HTMLElement | null;
+          if (!badgeEl) continue;
+
+          if (marker.isSelected) {
+            badgeEl.style.opacity = "1";
+            badgeEl.style.pointerEvents = "auto";
+            placedLabelPositions.push({ x: marker.screenX, y: marker.screenY });
+            continue;
+          }
+
+          let collides = false;
+          for (const pos of placedLabelPositions) {
+            const dist = Math.hypot(marker.screenX - pos.x, marker.screenY - pos.y);
+            if (dist < 55) {
+              collides = true;
+              break;
+            }
+          }
+
+          if (collides) {
+            badgeEl.style.opacity = "0";
+            badgeEl.style.pointerEvents = "none";
+          } else {
+            badgeEl.style.opacity = "1";
+            badgeEl.style.pointerEvents = "auto";
+            placedLabelPositions.push({ x: marker.screenX, y: marker.screenY });
+          }
         }
       }
 
@@ -1070,7 +1118,7 @@ export default function JobRadarGlobe() {
 
                 {/* City Tag Badge */}
                 <div
-                  className={`mt-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-semibold shadow-[0_4px_14px_rgba(0,0,0,0.85)] backdrop-blur-md flex items-center gap-1.5 whitespace-nowrap transition-all ${
+                  className={`city-tag-badge mt-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-semibold shadow-[0_4px_14px_rgba(0,0,0,0.85)] backdrop-blur-md flex items-center gap-1.5 whitespace-nowrap transition-all group-hover:opacity-100! group-hover:pointer-events-auto! ${
                     isSelected
                       ? "bg-slate-950 border-white text-white ring-2 ring-white/50"
                       : "bg-slate-950/90 border-slate-700/80 text-slate-200 group-hover:border-cyan-400 group-hover:text-white"
@@ -1364,11 +1412,11 @@ export default function JobRadarGlobe() {
                   </>
                 )}
                 <span className="font-semibold text-emerald-400">
-                  {selectedCity.totalCount.toLocaleString()} Active
+                  {(jobsTotal > 0 ? jobsTotal : selectedCity.totalCount).toLocaleString()} Active
                 </span>
                 <span>•</span>
                 <span className="text-slate-400 font-medium">
-                  {selectedCity.verifiedCount.toLocaleString()} Verified
+                  {(jobsTotal > 0 ? jobsTotal : selectedCity.verifiedCount).toLocaleString()} Verified
                 </span>
               </div>
             </div>
@@ -1448,8 +1496,8 @@ export default function JobRadarGlobe() {
                         </div>
                         <div>
                           {/* Role Title (Visible to all) & Match Score Badge */}
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <h4 className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors leading-snug">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="text-sm font-extrabold text-white group-hover:text-cyan-300 transition-colors leading-snug break-words">
                               {job.title}
                             </h4>
                             <MatchScoreBadge
@@ -1461,7 +1509,7 @@ export default function JobRadarGlobe() {
                                 salary_text: job.salaryText || undefined,
                                 apply_url: job.applyUrl,
                               }}
-                              size="xs"
+                              size="sm"
                             />
                           </div>
 

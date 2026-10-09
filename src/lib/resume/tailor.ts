@@ -128,89 +128,311 @@ export function buildAtsResumePlainText(candidate: CandidateProfile): string {
   return sections.join("\n");
 }
 
-/**
- * Generates an ATS-compliant Word document (.doc) blob from confirmed facts.
- */
-export function exportAtsWordDocument(candidate: CandidateProfile): Blob {
-  const plainText = buildAtsResumePlainText(candidate);
-  
-  // Format as clean Word-compatible HTML Document (Standard single column)
-  const htmlDoc = `<!DOCTYPE html>
-<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-<head>
-<meta charset="utf-8">
-<title>${candidate.name} - Resume</title>
-<style>
-  body {
-    font-family: Calibri, Arial, sans-serif;
-    font-size: 11pt;
-    line-height: 1.35;
-    color: #111111;
-    margin: 1in;
+function makeCrcTable(): Uint32Array {
+  const table = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) {
+    let c = n;
+    for (let k = 0; k < 8; k++) {
+      c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    }
+    table[n] = c >>> 0;
   }
-  h1 { font-size: 18pt; margin-bottom: 2pt; color: #000000; text-transform: uppercase; }
-  h2 { font-size: 12pt; border-bottom: 1pt solid #333333; padding-bottom: 2pt; margin-top: 14pt; margin-bottom: 6pt; text-transform: uppercase; letter-spacing: 0.5pt; }
-  .contact { font-size: 10pt; color: #444444; margin-bottom: 12pt; }
-  .job-title { font-weight: bold; font-size: 11pt; }
-  .job-dates { font-style: italic; color: #555555; }
-  ul { margin-top: 3pt; margin-bottom: 8pt; padding-left: 18pt; }
-  li { margin-bottom: 3pt; }
-</style>
-</head>
-<body>
-  <h1>${candidate.name}</h1>
-  <div class="contact">
-    ${[candidate.email, candidate.phone, candidate.location].filter(Boolean).join(" &nbsp;|&nbsp; ")}
-  </div>
+  return table;
+}
 
-  ${candidate.summary ? `<h2>Professional Summary</h2><p>${candidate.summary}</p>` : ""}
+const crcTable = makeCrcTable();
 
-  ${candidate.skills?.length ? `<h2>Technical Skills</h2><p>${candidate.skills.join(", ")}</p>` : ""}
+function calculateCrc32(data: Uint8Array): number {
+  let crc = 0 ^ -1;
+  for (let i = 0; i < data.length; i++) {
+    crc = (crc >>> 8) ^ crcTable[(crc ^ data[i]) & 0xff];
+  }
+  return (crc ^ -1) >>> 0;
+}
 
-  ${candidate.experience?.length ? `
-  <h2>Professional Experience</h2>
-  ${candidate.experience.map(exp => `
-    <div style="margin-bottom: 8pt;">
-      <div class="job-title">${exp.role} &mdash; ${exp.company}</div>
-      <div class="job-dates">${exp.startDate} &ndash; ${exp.endDate}</div>
-      <ul>
-        ${exp.bullets.map(b => `<li>${b}</li>`).join("")}
-      </ul>
-    </div>
-  `).join("")}
-  ` : ""}
+interface ZipEntry {
+  name: string;
+  data: Uint8Array;
+}
 
-  ${candidate.education?.length ? `
-  <h2>Education</h2>
-  ${candidate.education.map(edu => `
-    <div style="margin-bottom: 6pt;">
-      <strong>${edu.degree}</strong> &mdash; ${edu.institution} (${edu.year})
-    </div>
-  `).join("")}
-  ` : ""}
+function createZipArchive(entries: ZipEntry[]): Uint8Array {
+  const localHeaders: Uint8Array[] = [];
+  const centralHeaders: Uint8Array[] = [];
+  let offset = 0;
+  const textEncoder = new TextEncoder();
 
-  ${candidate.certifications?.length ? `
-  <h2>Certifications</h2>
-  <ul>
-    ${candidate.certifications.map(c => `<li>${c}</li>`).join("")}
-  </ul>
-  ` : ""}
-</body>
-</html>`;
+  for (const entry of entries) {
+    const nameBytes = textEncoder.encode(entry.name);
+    const dataBytes = entry.data;
+    const crc = calculateCrc32(dataBytes);
+    const size = dataBytes.length;
 
-  return new Blob([htmlDoc], { type: "application/msword;charset=utf-8" });
+    const local = new Uint8Array(30 + nameBytes.length + size);
+    const lView = new DataView(local.buffer);
+
+    lView.setUint32(0, 0x04034b50, true);
+    lView.setUint16(4, 20, true);
+    lView.setUint16(6, 0, true);
+    lView.setUint16(8, 0, true);
+    lView.setUint16(10, 0, true);
+    lView.setUint16(12, 0, true);
+    lView.setUint32(14, crc, true);
+    lView.setUint32(18, size, true);
+    lView.setUint32(22, size, true);
+    lView.setUint16(26, nameBytes.length, true);
+    lView.setUint16(28, 0, true);
+
+    local.set(nameBytes, 30);
+    local.set(dataBytes, 30 + nameBytes.length);
+    localHeaders.push(local);
+
+    const central = new Uint8Array(46 + nameBytes.length);
+    const cView = new DataView(central.buffer);
+
+    cView.setUint32(0, 0x02014b50, true);
+    cView.setUint16(4, 20, true);
+    cView.setUint16(6, 20, true);
+    cView.setUint16(8, 0, true);
+    cView.setUint16(10, 0, true);
+    cView.setUint16(12, 0, true);
+    cView.setUint16(14, 0, true);
+    cView.setUint32(16, crc, true);
+    cView.setUint32(20, size, true);
+    cView.setUint32(24, size, true);
+    cView.setUint16(28, nameBytes.length, true);
+    cView.setUint16(30, 0, true);
+    cView.setUint16(32, 0, true);
+    cView.setUint16(34, 0, true);
+    cView.setUint16(36, 0, true);
+    cView.setUint32(38, 0, true);
+    cView.setUint32(42, offset, true);
+
+    central.set(nameBytes, 46);
+    centralHeaders.push(central);
+    offset += local.length;
+  }
+
+  const centralDirOffset = offset;
+  let centralDirSize = 0;
+  for (const ch of centralHeaders) {
+    centralDirSize += ch.length;
+  }
+
+  const eocd = new Uint8Array(22);
+  const eView = new DataView(eocd.buffer);
+  eView.setUint32(0, 0x06054b50, true);
+  eView.setUint16(4, 0, true);
+  eView.setUint16(6, 0, true);
+  eView.setUint16(8, entries.length, true);
+  eView.setUint16(10, entries.length, true);
+  eView.setUint32(12, centralDirSize, true);
+  eView.setUint32(16, centralDirOffset, true);
+  eView.setUint16(20, 0, true);
+
+  const totalLength = offset + centralDirSize + 22;
+  const result = new Uint8Array(totalLength);
+  let pos = 0;
+
+  for (const lh of localHeaders) {
+    result.set(lh, pos);
+    pos += lh.length;
+  }
+
+  for (const ch of centralHeaders) {
+    result.set(ch, pos);
+    pos += ch.length;
+  }
+
+  result.set(eocd, pos);
+  return result;
+}
+
+function escapeXml(str: string): string {
+  return (str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
 }
 
 /**
- * Initiates download of ATS Word doc
+ * Generates an ATS-friendly OpenXML Word document (.docx) blob from confirmed facts.
+ * Provides clean, single-column ATS-friendly formatting without tables or graphics.
+ * Note: ATS-friendly formatting optimizes parser readability, but does not guarantee job acceptance.
  */
-export function downloadAtsResumeDocx(candidate: CandidateProfile) {
+export function exportAtsWordDocument(candidate: CandidateProfile): Blob {
+  const contentTypesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>`;
+
+  const relsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+
+  const paragraphs: string[] = [];
+
+  // Candidate Name
+  paragraphs.push(`
+    <w:p>
+      <w:pPr><w:spacing w:after="60"/></w:pPr>
+      <w:r><w:rPr><w:b/><w:sz w:val="34"/></w:rPr><w:t>${escapeXml((candidate.name || "Resume").toUpperCase())}</w:t></w:r>
+    </w:p>
+  `);
+
+  // Contact line
+  const contactParts = [candidate.email, candidate.phone, candidate.location].filter(Boolean);
+  if (contactParts.length > 0) {
+    paragraphs.push(`
+      <w:p>
+        <w:pPr><w:spacing w:after="80"/></w:pPr>
+        <w:r><w:rPr><w:sz w:val="20"/><w:color w:val="555555"/></w:rPr><w:t>${escapeXml(contactParts.join(" | "))}</w:t></w:r>
+      </w:p>
+    `);
+  }
+
+  // Headline
+  if (candidate.headline) {
+    paragraphs.push(`
+      <w:p>
+        <w:pPr><w:spacing w:after="160"/></w:pPr>
+        <w:r><w:rPr><w:i/><w:sz w:val="22"/><w:color w:val="333333"/></w:rPr><w:t>${escapeXml(candidate.headline)}</w:t></w:r>
+      </w:p>
+    `);
+  }
+
+  const addSectionHeader = (title: string) => {
+    paragraphs.push(`
+      <w:p>
+        <w:pPr>
+          <w:spacing w:before="240" w:after="80"/>
+          <w:pBdr><w:bottom w:val="single" w:sz="6" w:space="1" w:color="333333"/></w:pBdr>
+        </w:pPr>
+        <w:r><w:rPr><w:b/><w:sz w:val="24"/></w:rPr><w:t>${title}</w:t></w:r>
+      </w:p>
+    `);
+  };
+
+  // Summary
+  if (candidate.summary) {
+    addSectionHeader("PROFESSIONAL SUMMARY");
+    paragraphs.push(`
+      <w:p>
+        <w:pPr><w:spacing w:after="120"/></w:pPr>
+        <w:r><w:rPr><w:sz w:val="21"/></w:rPr><w:t>${escapeXml(candidate.summary)}</w:t></w:r>
+      </w:p>
+    `);
+  }
+
+  // Skills
+  if (candidate.skills && candidate.skills.length > 0) {
+    addSectionHeader("TECHNICAL SKILLS");
+    paragraphs.push(`
+      <w:p>
+        <w:pPr><w:spacing w:after="120"/></w:pPr>
+        <w:r><w:rPr><w:sz w:val="21"/></w:rPr><w:t>${escapeXml(candidate.skills.join(" • "))}</w:t></w:r>
+      </w:p>
+    `);
+  }
+
+  // Experience
+  if (candidate.experience && candidate.experience.length > 0) {
+    addSectionHeader("PROFESSIONAL EXPERIENCE");
+    for (const exp of candidate.experience) {
+      paragraphs.push(`
+        <w:p>
+          <w:pPr><w:spacing w:before="120" w:after="40"/></w:pPr>
+          <w:r><w:rPr><w:b/><w:sz w:val="22"/></w:rPr><w:t>${escapeXml(exp.role)} — ${escapeXml(exp.company)}</w:t></w:r>
+        </w:p>
+        <w:p>
+          <w:pPr><w:spacing w:after="80"/></w:pPr>
+          <w:r><w:rPr><w:i/><w:sz w:val="20"/><w:color w:val="555555"/></w:rPr><w:t>${escapeXml(exp.startDate)} – ${escapeXml(exp.endDate)}</w:t></w:r>
+        </w:p>
+      `);
+
+      for (const bullet of exp.bullets) {
+        paragraphs.push(`
+          <w:p>
+            <w:pPr>
+              <w:ind w:left="360" w:hanging="240"/>
+              <w:spacing w:after="40"/>
+            </w:pPr>
+            <w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t>• </w:t></w:r>
+            <w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t>${escapeXml(bullet)}</w:t></w:r>
+          </w:p>
+        `);
+      }
+    }
+  }
+
+  // Education
+  if (candidate.education && candidate.education.length > 0) {
+    addSectionHeader("EDUCATION");
+    for (const edu of candidate.education) {
+      paragraphs.push(`
+        <w:p>
+          <w:pPr><w:spacing w:after="60"/></w:pPr>
+          <w:r><w:rPr><w:b/><w:sz w:val="21"/></w:rPr><w:t>${escapeXml(edu.degree)}</w:t></w:r>
+          <w:r><w:rPr><w:sz w:val="21"/></w:rPr><w:t> — ${escapeXml(edu.institution)} (${escapeXml(edu.year)})</w:t></w:r>
+        </w:p>
+      `);
+    }
+  }
+
+  // Certifications
+  if (candidate.certifications && candidate.certifications.length > 0) {
+    addSectionHeader("CERTIFICATIONS");
+    for (const cert of candidate.certifications) {
+      paragraphs.push(`
+        <w:p>
+          <w:pPr>
+            <w:ind w:left="360" w:hanging="240"/>
+            <w:spacing w:after="40"/>
+          </w:pPr>
+          <w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t>• </w:t></w:r>
+          <w:r><w:rPr><w:sz w:val="20"/></w:rPr><w:t>${escapeXml(cert)}</w:t></w:r>
+        </w:p>
+      `);
+    }
+  }
+
+  const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>
+    ${paragraphs.join("\n")}
+    <w:sectPr>
+      <w:pgSz w:w="12240" w:h="15840"/>
+      <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/>
+    </w:sectPr>
+  </w:body>
+</w:document>`;
+
+  const encoder = new TextEncoder();
+  const zipBytes = createZipArchive([
+    { name: "[Content_Types].xml", data: encoder.encode(contentTypesXml) },
+    { name: "_rels/.rels", data: encoder.encode(relsXml) },
+    { name: "word/document.xml", data: encoder.encode(documentXml) }
+  ]);
+
+  return new Blob([zipBytes.buffer as ArrayBuffer], {
+    type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  });
+}
+
+/**
+ * Initiates download of ATS Word (.docx) document
+ */
+export function downloadAtsResumeDocx(candidate: CandidateProfile, customFilename?: string) {
   if (typeof window === "undefined") return;
   const blob = exportAtsWordDocument(candidate);
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${(candidate.name || "Resume").replace(/\s+/g, "_")}_ATS.doc`;
+  a.download = customFilename || `${(candidate.name || "Resume").replace(/\s+/g, "_")}_ATS.docx`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -218,14 +440,15 @@ export function downloadAtsResumeDocx(candidate: CandidateProfile) {
 /**
  * Initiates download of ATS plain text file
  */
-export function downloadAtsResumeText(candidate: CandidateProfile) {
+export function downloadAtsResumeText(candidate: CandidateProfile, customFilename?: string) {
   if (typeof window === "undefined") return;
   const text = buildAtsResumePlainText(candidate);
   const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${(candidate.name || "Resume").replace(/\s+/g, "_")}_ATS.txt`;
+  a.download = customFilename || `${(candidate.name || "Resume").replace(/\s+/g, "_")}_ATS.txt`;
   a.click();
   URL.revokeObjectURL(url);
 }
+

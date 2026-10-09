@@ -11,6 +11,7 @@ import { UserSubscription } from "@/lib/billing/types";
 import { getCandidateProfile, deleteCandidateProfile } from "@/lib/resume/storage";
 import { getTrackedApplications } from "@/lib/tracker/storage";
 import PaywallModal from "@/components/PaywallModal";
+import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import {
   Settings,
@@ -152,8 +153,21 @@ function SettingsPageInner() {
   };
 
   const handleDeleteAccount = async () => {
-    if (!window.confirm("WARNING: This will permanently purge your account preferences, applications, and resume data. Are you sure?")) {
+    if (!window.confirm("WARNING: This will permanently wipe your saved resume facts, preferences, and application history. Are you sure?")) {
       return;
+    }
+    const supabase = createClient();
+    if (user?.id && user.id !== "local-user") {
+      try {
+        await Promise.allSettled([
+          supabase.from("candidate_profiles").delete().eq("user_id", user.id),
+          supabase.from("user_preferences").delete().eq("user_id", user.id),
+          supabase.from("applications").delete().eq("user_id", user.id),
+          supabase.from("subscriptions").delete().eq("user_id", user.id),
+        ]);
+      } catch (e) {
+        console.warn("Could not delete remote data", e);
+      }
     }
     await deleteCandidateProfile();
     if (typeof window !== "undefined") {
@@ -161,7 +175,7 @@ function SettingsPageInner() {
     }
     await signOutUser();
     router.push("/");
-    toast.info("Account data cleared. You have been signed out.");
+    toast.info("Account data purged. You have been signed out.");
   };
 
   if (loading) {
@@ -192,7 +206,7 @@ function SettingsPageInner() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center gap-2 border-b border-slate-200 overflow-x-auto pb-px">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:gap-2 border-b border-slate-200 overflow-x-auto pb-px">
           {[
             { id: "preferences", label: "Profile & Preferences", icon: Settings },
             { id: "notifications", label: "Notifications", icon: Bell },
@@ -206,7 +220,7 @@ function SettingsPageInner() {
                 key={t.id}
                 type="button"
                 onClick={() => setActiveTab(t.id as any)}
-                className={`flex items-center gap-2 px-4 py-2.5 border-b-2 text-xs sm:text-sm font-bold transition whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 border-b-2 text-xs sm:text-sm font-bold transition whitespace-nowrap cursor-pointer shrink-0 min-h-[44px] ${
                   active
                     ? "border-blue-600 text-blue-600"
                     : "border-transparent text-slate-500 hover:text-slate-800"
@@ -514,9 +528,9 @@ function SettingsPageInner() {
               {/* Delete Account */}
               <div className="p-4 rounded-xl border border-red-200 bg-red-50/40 flex items-center justify-between gap-4">
                 <div className="space-y-0.5">
-                  <span className="font-bold text-xs sm:text-sm text-red-900 block">Delete Account & Purge Data</span>
+                  <span className="font-bold text-xs sm:text-sm text-red-900 block">Purge User Data & Sign Out</span>
                   <p className="text-[11px] text-red-700">
-                    Permanently delete your user profile, subscription link, and application history.
+                    Permanently wipes your saved resume facts, target preferences, application history, and cached credentials, then signs you out.
                   </p>
                 </div>
                 <button

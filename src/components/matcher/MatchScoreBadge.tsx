@@ -142,7 +142,7 @@ export default function MatchScoreBadge({
           setIsDiagnosticsOpen(true);
         }}
         className={`inline-flex items-center font-bold rounded-lg border transition-all cursor-pointer shadow-2xs focus:outline-hidden focus:ring-2 ${colorClasses} ${ringClasses} ${sizeClasses}`}
-        title={`AI Fit Score: ${score}% match. Click to see detailed diagnostics & tailor cover letter.`}
+        title={`Fit Score: ${score}% match. Click to view honest skill & requirement breakdown.`}
       >
         <span className={`w-1.5 h-1.5 rounded-full ${dotColor} shrink-0`} />
         <span>{score}%</span>

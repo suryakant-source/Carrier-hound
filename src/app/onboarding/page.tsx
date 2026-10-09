@@ -132,10 +132,7 @@ function OnboardingPageInner() {
   };
 
   const handleSkipResume = () => {
-    setCandidateProfile(null);
     setResumeSkipped(true);
-    // Explicitly delete any fabricated candidate profile so no fake scores are computed
-    deleteCandidateProfile();
     setStep(3);
   };
 

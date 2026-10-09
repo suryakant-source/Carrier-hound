@@ -81,18 +81,35 @@ async function extractTextFromPdf(file: File): Promise<string> {
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const textContent = await page.getTextContent();
-          const pageText = textContent.items
-            .map((item: any) => item.str)
-            .join(" ");
-          fullText += pageText + "\n";
+          let lastY: number | null = null;
+          let pageText = "";
+
+          for (const item of textContent.items as any[]) {
+            const currentY = item.transform ? item.transform[5] : null;
+            if (lastY !== null && currentY !== null && Math.abs(currentY - lastY) > 4) {
+              pageText += "\n";
+            } else if (item.hasEOL) {
+              pageText += "\n";
+            } else if (pageText.length > 0 && !pageText.endsWith("\n") && !pageText.endsWith(" ")) {
+              pageText += " ";
+            }
+            pageText += item.str || "";
+            if (currentY !== null) {
+              lastY = currentY;
+            }
+          }
+          fullText += pageText.trim() + "\n\n";
         }
 
-        if (fullText.trim().length > 20) {
+        if (fullText.trim().length > 30) {
           return fullText;
         }
       }
     }
-  } catch (err) {
+  } catch (err: any) {
+    if (err?.message && !err.message.includes("PDF.js")) {
+      throw err;
+    }
     console.warn("Client PDF.js parsing failed, trying text decoder fallback", err);
   }
 
@@ -102,11 +119,12 @@ async function extractTextFromPdf(file: File): Promise<string> {
     // Basic regex extract of text objects within PDF streams (BT...ET)
     const matches = text.match(/\(([^)]+)\)\s*Tj/g);
     if (matches && matches.length > 10) {
-      return matches.map((m) => m.replace(/\(|\)\s*Tj/g, "")).join(" ");
+      const decoded = matches.map((m) => m.replace(/\(|\)\s*Tj/g, "")).join(" ");
+      if (decoded.trim().length > 40) return decoded;
     }
   } catch (_) {}
 
-  return "Unable to parse PDF text automatically. Please paste your resume text below.";
+  throw new Error("Unable to extract readable text from this PDF. Please ensure the file is not an image-only scan or password-protected, or paste your text below.");
 }
 
 /**
@@ -439,7 +457,7 @@ export function getSampleCandidateProfile(): CandidateProfile {
       "AWS Certified Solutions Architect",
       "CKA: Certified Kubernetes Administrator",
     ],
-    confirmedAt: new Date().toISOString(),
+    confirmedAt: undefined,
     updatedAt: new Date().toISOString(),
   };
 }

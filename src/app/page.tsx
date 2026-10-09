@@ -64,10 +64,10 @@ export default function HomePage() {
           </h1>
 
           <p className="mt-4 text-white/90 text-sm sm:text-base md:text-lg max-w-xl mx-auto font-normal leading-relaxed">
-            We find jobs posted on company websites.
+            We find jobs posted on company websites. Build an AI ATS-friendly resume and see your AI match score for every job.
           </p>
 
-          <div className="mt-4 flex items-center justify-center w-full max-w-xs sm:max-w-none">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3 w-full max-w-md sm:max-w-none">
             <button
               onClick={() => setModalOpen(true)}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-white text-[#09090B] font-bold text-base sm:text-lg px-8 sm:px-10 py-3.5 sm:py-4 min-h-[48px] rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer"
@@ -75,6 +75,12 @@ export default function HomePage() {
               <span>View Jobs</span>
               <ArrowRight className="w-5 h-5 ml-0.5 stroke-[2.5]" />
             </button>
+            <Link
+              href="/resume"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-blue-700/80 hover:bg-blue-800 text-white border border-white/30 font-bold text-base sm:text-lg px-7 sm:px-9 py-3.5 sm:py-4 min-h-[48px] rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition-all cursor-pointer"
+            >
+              <span>Build ATS Resume</span>
+            </Link>
           </div>
 
           <div className="mt-4">
@@ -163,6 +169,56 @@ export default function HomePage() {
             </ul>
           </div>
         </div>
+
+        {/* 4-Step How It Works Flow: Resume & Match Hero Sequence */}
+        <div className="mt-12 p-6 sm:p-8 bg-slate-50 border border-slate-200 rounded-2xl max-w-4xl mx-auto shadow-2xs">
+          <div className="text-center mb-6">
+            <span className="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
+              Deterministic Matching Workflow
+            </span>
+            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mt-2">
+              From raw resume to direct hire in 4 honest steps
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+            <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+              <div>
+                <div className="w-8 h-8 mx-auto rounded-full bg-blue-100 text-blue-700 font-extrabold text-xs flex items-center justify-center mb-2.5">
+                  1
+                </div>
+                <div className="text-sm font-bold text-slate-900">Upload Resume</div>
+                <p className="text-xs text-slate-500 mt-1">PDF or Word (.docx) document parsed without hallucinations</p>
+              </div>
+            </div>
+            <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+              <div>
+                <div className="w-8 h-8 mx-auto rounded-full bg-blue-100 text-blue-700 font-extrabold text-xs flex items-center justify-center mb-2.5">
+                  2
+                </div>
+                <div className="text-sm font-bold text-slate-900">Confirm Facts</div>
+                <p className="text-xs text-slate-500 mt-1">Review verified skills, career history, and degrees</p>
+              </div>
+            </div>
+            <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+              <div>
+                <div className="w-8 h-8 mx-auto rounded-full bg-blue-100 text-blue-700 font-extrabold text-xs flex items-center justify-center mb-2.5">
+                  3
+                </div>
+                <div className="text-sm font-bold text-slate-900">Export ATS Resume</div>
+                <p className="text-xs text-slate-500 mt-1">Download single-column ATS Word (.docx) or plain text</p>
+              </div>
+            </div>
+            <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+              <div>
+                <div className="w-8 h-8 mx-auto rounded-full bg-blue-100 text-blue-700 font-extrabold text-xs flex items-center justify-center mb-2.5">
+                  4
+                </div>
+                <div className="text-sm font-bold text-slate-900">Score Against Any Job</div>
+                <p className="text-xs text-slate-500 mt-1">0-100% deterministic AI fit diagnostics & skill gap analysis</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ========================================================================= */}
@@ -195,10 +251,17 @@ export default function HomePage() {
           <p className="text-white/90 text-base sm:text-lg max-w-xl mx-auto leading-relaxed font-normal">
             Find jobs you can&apos;t find on job sites. Start applying directly to companies. No more middle-men!
           </p>
-          <div className="pt-2">
-            <WhiteHeroButton onClick={() => setModalOpen(true)} className="px-8 min-w-[210px]">
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+            <WhiteHeroButton onClick={() => setModalOpen(true)} className="px-8 min-w-[200px]">
               View Jobs (Preview Only)
             </WhiteHeroButton>
+            <Link
+              href="/jobs"
+              className="inline-flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-800 text-white border border-white/30 font-bold text-sm sm:text-base px-6 py-3.5 min-h-[44px] rounded-xl shadow-md transition-all cursor-pointer"
+            >
+              <span>See My Job Match</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>

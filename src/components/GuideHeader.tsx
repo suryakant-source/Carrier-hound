@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import BrandIcon from "./BrandIcon";
 import { getAuthUser, signOutUser } from "@/lib/auth/session";
+import { getProAccessStatus } from "@/lib/billing/subscription";
 import type { User } from "@supabase/supabase-js";
 import {
   Menu,
@@ -22,7 +23,8 @@ import {
   CreditCard,
   HelpCircle,
   LogOut,
-  Sparkles
+  Sparkles,
+  BookOpen
 } from "lucide-react";
 
 export default function GuideHeader() {
@@ -64,6 +66,21 @@ export default function GuideHeader() {
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
+  const [isPro, setIsPro] = useState(false);
+
+  useEffect(() => {
+    getProAccessStatus().then((res) => setIsPro(res.isPro));
+    const handleSubUpdate = () => {
+      getProAccessStatus().then((res) => setIsPro(res.isPro));
+    };
+    window.addEventListener("careermonke_pro_updated", handleSubUpdate);
+    window.addEventListener("careermonke_auth_updated", handleSubUpdate);
+    return () => {
+      window.removeEventListener("careermonke_pro_updated", handleSubUpdate);
+      window.removeEventListener("careermonke_auth_updated", handleSubUpdate);
+    };
+  }, [user]);
+
   const handleSignOut = async () => {
     await signOutUser();
     setUser(null);
@@ -72,11 +89,11 @@ export default function GuideHeader() {
     router.push("/");
   };
 
-  const isPro = user?.user_metadata?.is_pro === true || (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true");
   const userInitials = (user?.email ? user.email.slice(0, 2).toUpperCase() : "CM");
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-2xs">
+    <>
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-2xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Left: Brand */}
         <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5">
@@ -114,6 +131,14 @@ export default function GuideHeader() {
             </Link>
 
             <Link
+              href="/jobs"
+              className="px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+              <span>Job Fit Score</span>
+            </Link>
+
+            <Link
               href="/resume"
               className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition ${
                 pathname === "/resume"
@@ -121,7 +146,7 @@ export default function GuideHeader() {
                   : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
-              Resume
+              ATS Resume
             </Link>
 
             <Link
@@ -133,6 +158,17 @@ export default function GuideHeader() {
               }`}
             >
               Applications
+            </Link>
+
+            <Link
+              href="/remote"
+              className={`px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition ${
+                pathname?.startsWith("/remote")
+                  ? "bg-blue-50 text-blue-600"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+              }`}
+            >
+              Resources
             </Link>
 
             {/* Explore Dropdown: Radar & Companies */}
@@ -275,157 +311,174 @@ export default function GuideHeader() {
           </button>
         </div>
       </div>
+    </header>
 
-      {/* =================================================================== */}
-      {/* MOBILE DRAWER: IDENTICAL ORDER & LABELS                             */}
-      {/* =================================================================== */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex justify-end md:hidden animate-fadeIn">
-          <div className="w-full max-w-xs bg-white h-full shadow-2xl p-6 flex flex-col justify-between overflow-y-auto">
-            <div className="space-y-6">
-              <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+    {/* =================================================================== */}
+    {/* MOBILE DRAWER: OUTSIDE HEADER TO PREVENT 64PX BACKDROP-FILTER CLIPPING */}
+    {/* =================================================================== */}
+    {mobileMenuOpen && (
+      <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex justify-end md:hidden animate-fadeIn">
+        <div className="w-full max-w-xs bg-white h-dvh min-h-screen shadow-2xl p-6 flex flex-col justify-between overflow-y-auto">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+              <Link
+                href={user ? "/dashboard" : "/"}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2"
+              >
+                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-xs p-0.5 border border-gray-100">
+                  <BrandIcon className="w-7 h-7" />
+                </div>
+                <span className="font-bold text-lg text-blue-600">CareerMonke</span>
+              </Link>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 rounded-lg text-slate-400 hover:text-slate-700 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {user ? (
+              <div className="space-y-1.5">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pb-1">
+                  Main Navigation
+                </div>
                 <Link
-                  href={user ? "/dashboard" : "/"}
+                  href="/dashboard"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-xs font-bold text-slate-800"
                 >
-                  <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-xs p-0.5 border border-gray-100">
-                    <BrandIcon className="w-7 h-7" />
-                  </div>
-                  <span className="font-bold text-lg text-blue-600">CareerMonke</span>
+                  <LayoutDashboard className="w-4 h-4 text-blue-600" />
+                  <span>Dashboard</span>
                 </Link>
-                <button
-                  type="button"
+                <Link
+                  href="/jobs"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 rounded-lg text-slate-400 hover:text-slate-700"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-xs font-bold text-slate-800"
                 >
-                  <X className="w-5 h-5" />
-                </button>
+                  <Briefcase className="w-4 h-4 text-blue-600" />
+                  <span>Jobs</span>
+                </Link>
+                <Link
+                  href="/jobs"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-xs font-bold text-slate-800"
+                >
+                  <Sparkles className="w-4 h-4 text-blue-600" />
+                  <span>Job Fit Score</span>
+                </Link>
+                <Link
+                  href="/resume"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-xs font-bold text-slate-800"
+                >
+                  <FileText className="w-4 h-4 text-blue-600" />
+                  <span>ATS Resume</span>
+                </Link>
+                <Link
+                  href="/tracker"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-xs font-bold text-slate-800"
+                >
+                  <CheckSquare className="w-4 h-4 text-blue-600" />
+                  <span>Applications</span>
+                </Link>
+                <Link
+                  href="/remote"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-xs font-bold text-slate-800"
+                >
+                  <BookOpen className="w-4 h-4 text-blue-600" />
+                  <span>Resources</span>
+                </Link>
+
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pt-3 pb-1">
+                  Explore
+                </div>
+                <Link
+                  href="/radar"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-700"
+                >
+                  <Globe className="w-4 h-4 text-cyan-600" />
+                  <span>3D Job Radar</span>
+                </Link>
+                <Link
+                  href="/worldwide"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-700"
+                >
+                  <Building className="w-4 h-4 text-slate-500" />
+                  <span>Companies Hiring</span>
+                </Link>
+
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pt-3 pb-1">
+                  Account & Settings
+                </div>
+                <Link
+                  href="/settings?tab=preferences"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-xs font-medium text-slate-700"
+                >
+                  <Settings className="w-4 h-4 text-slate-400" />
+                  <span>Preferences</span>
+                </Link>
+                <Link
+                  href="/settings?tab=billing"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-xs font-medium text-slate-700"
+                >
+                  <CreditCard className="w-4 h-4 text-slate-400" />
+                  <span>Billing</span>
+                </Link>
               </div>
-
-              {user ? (
-                <div className="space-y-1.5">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pb-1">
-                    Main Navigation
-                  </div>
-                  <Link
-                    href="/dashboard"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-xs font-bold text-slate-800"
-                  >
-                    <LayoutDashboard className="w-4 h-4 text-blue-600" />
-                    <span>Dashboard</span>
-                  </Link>
-                  <Link
-                    href="/jobs"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-xs font-bold text-slate-800"
-                  >
-                    <Briefcase className="w-4 h-4 text-blue-600" />
-                    <span>Jobs</span>
-                  </Link>
-                  <Link
-                    href="/resume"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-xs font-bold text-slate-800"
-                  >
-                    <FileText className="w-4 h-4 text-blue-600" />
-                    <span>Resume</span>
-                  </Link>
-                  <Link
-                    href="/tracker"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-xs font-bold text-slate-800"
-                  >
-                    <CheckSquare className="w-4 h-4 text-blue-600" />
-                    <span>Applications</span>
-                  </Link>
-
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pt-3 pb-1">
-                    Explore
-                  </div>
-                  <Link
-                    href="/radar"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-700"
-                  >
-                    <Globe className="w-4 h-4 text-cyan-600" />
-                    <span>3D Job Radar</span>
-                  </Link>
-                  <Link
-                    href="/worldwide"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-xs font-semibold text-slate-700"
-                  >
-                    <Building className="w-4 h-4 text-slate-500" />
-                    <span>Companies Hiring</span>
-                  </Link>
-
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pt-3 pb-1">
-                    Account & Settings
-                  </div>
-                  <Link
-                    href="/settings?tab=preferences"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-xs font-medium text-slate-700"
-                  >
-                    <Settings className="w-4 h-4 text-slate-400" />
-                    <span>Preferences</span>
-                  </Link>
-                  <Link
-                    href="/settings?tab=billing"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-xs font-medium text-slate-700"
-                  >
-                    <CreditCard className="w-4 h-4 text-slate-400" />
-                    <span>Billing</span>
-                  </Link>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Link
-                    href="/remote"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                  >
-                    Resources
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            <div className="pt-6 border-t border-gray-100">
-              {user ? (
-                <button
-                  type="button"
-                  onClick={handleSignOut}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-100 hover:bg-red-50 text-red-600 font-bold text-xs transition cursor-pointer"
+            ) : (
+              <div className="space-y-2">
+                <Link
+                  href="/remote"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50"
                 >
-                  <LogOut className="w-4 h-4" />
-                  <span>Sign Out</span>
-                </button>
-              ) : (
-                <div className="space-y-2">
-                  <Link
-                    href="/signup"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="w-full flex items-center justify-center bg-blue-600 text-white py-3 rounded-xl font-bold text-xs shadow-xs"
-                  >
-                    Get Started Free
-                  </Link>
-                  <Link
-                    href="/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="w-full flex items-center justify-center border border-slate-200 text-slate-700 py-2.5 rounded-xl font-semibold text-xs"
-                  >
-                    Sign In
-                  </Link>
-                </div>
-              )}
-            </div>
+                  Resources
+                </Link>
+              </div>
+            )}
+          </div>
+
+          <div className="pt-6 border-t border-gray-100">
+            {user ? (
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-100 hover:bg-red-50 text-red-600 font-bold text-xs transition cursor-pointer"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Sign Out</span>
+              </button>
+            ) : (
+              <div className="space-y-2">
+                <Link
+                  href="/signup"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full flex items-center justify-center bg-blue-600 text-white py-3 rounded-xl font-bold text-xs shadow-xs"
+                >
+                  Get Started Free
+                </Link>
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full flex items-center justify-center border border-slate-200 text-slate-700 py-2.5 rounded-xl font-semibold text-xs"
+                >
+                  Sign In
+                </Link>
+              </div>
+            )}
           </div>
         </div>
-      )}
-    </header>
+      </div>
+    )}
+  </>
   );
 }
