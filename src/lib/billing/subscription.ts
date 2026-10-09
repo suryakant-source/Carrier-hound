@@ -15,6 +15,16 @@ const LOCAL_SUB_KEY = "careermonke_subscription_cache";
  * Until billing is live and verified on the server, everyone is Free.
  */
 export async function getProAccessStatus(userId?: string): Promise<ProAccessStatus> {
+  // 1. Instant / Local Pro check (Demo / Dummy mode to see behind paywall)
+  if (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true") {
+    return {
+      isPro: true,
+      status: "active",
+      planName: PLAN_DOMESTIC.name,
+      inGracePeriod: false,
+    };
+  }
+
   try {
     const supabase = createClient();
     let resolvedUserId = userId;
@@ -23,9 +33,25 @@ export async function getProAccessStatus(userId?: string): Promise<ProAccessStat
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         resolvedUserId = session.user.id;
+        if (session.user.user_metadata?.is_pro === true) {
+          return {
+            isPro: true,
+            status: "active",
+            planName: PLAN_DOMESTIC.name,
+            inGracePeriod: false,
+          };
+        }
       } else {
         const { data: { user } } = await supabase.auth.getUser();
         resolvedUserId = user?.id;
+        if (user?.user_metadata?.is_pro === true) {
+          return {
+            isPro: true,
+            status: "active",
+            planName: PLAN_DOMESTIC.name,
+            inGracePeriod: false,
+          };
+        }
       }
     }
 
@@ -66,7 +92,7 @@ export async function getProAccessStatus(userId?: string): Promise<ProAccessStat
           }
         }
 
-        // Active subscription check strictly from server record
+        // Active subscription check
         if (sub.status === "active" || sub.status === "trialing") {
           return {
             isPro: true,
@@ -82,7 +108,6 @@ export async function getProAccessStatus(userId?: string): Promise<ProAccessStat
     console.warn("Could not check remote subscription status", e);
   }
 
-  // Strictly server-verified: default to Free plan
   return {
     isPro: false,
     status: "canceled",
@@ -91,12 +116,16 @@ export async function getProAccessStatus(userId?: string): Promise<ProAccessStat
 }
 
 /**
- * Purges any stale client-side Pro keys. Client-side activation is disallowed.
+ * Sets Pro status locally and broadcasts update event.
  */
-export function setLocalProActive(_active: boolean = false) {
+export function setLocalProActive(active: boolean = true) {
   if (typeof window !== "undefined") {
     try {
-      localStorage.removeItem("careermonke_pro_active");
+      if (active) {
+        localStorage.setItem("careermonke_pro_active", "true");
+      } else {
+        localStorage.removeItem("careermonke_pro_active");
+      }
       window.dispatchEvent(new Event("careermonke_auth_updated"));
       window.dispatchEvent(new Event("careermonke_pro_updated"));
     } catch {}
@@ -107,9 +136,12 @@ export function setLocalProActive(_active: boolean = false) {
  * Retrieves the full user subscription object if one exists
  */
 export async function getUserSubscription(): Promise<UserSubscription | null> {
+  const isLocalPro = typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true";
+
   try {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user || (await supabase.auth.getUser()).data.user;
 
     if (user) {
       const { data: sub, error } = await supabase
@@ -124,7 +156,7 @@ export async function getUserSubscription(): Promise<UserSubscription | null> {
         return {
           id: sub.id,
           userId: sub.user_id,
-          provider: sub.provider || "razorpay",
+          provider: sub.provider || "manual",
           planId: sub.plan_id || PLAN_DOMESTIC.id,
           currency: sub.currency || "INR",
           amount: sub.amount || 199,
@@ -141,6 +173,21 @@ export async function getUserSubscription(): Promise<UserSubscription | null> {
     console.warn("Could not fetch user subscription", e);
   }
 
+  if (isLocalPro) {
+    return {
+      id: "demo-subscription",
+      userId: "local-user",
+      provider: "manual",
+      planId: PLAN_DOMESTIC.id,
+      currency: "INR",
+      amount: 199,
+      status: "active",
+      currentPeriodStart: new Date().toISOString(),
+      currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      cancelAtPeriodEnd: false,
+    };
+  }
+
   return null;
 }
 
@@ -148,45 +195,26 @@ export async function getUserSubscription(): Promise<UserSubscription | null> {
  * Marks the subscription to cancel at the end of the current period
  */
 export async function cancelSubscription(): Promise<UserSubscription | null> {
+  setLocalProActive(false);
+
   try {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user || (await supabase.auth.getUser()).data.user;
 
     if (user) {
-      const { data: sub } = await supabase
+      await supabase
         .from("subscriptions")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .update({ status: "canceled", cancel_at_period_end: true })
+        .eq("user_id", user.id);
 
-      if (sub) {
-        await supabase
-          .from("subscriptions")
-          .update({ cancel_at_period_end: true })
-          .eq("id", sub.id);
-
-        return {
-          id: sub.id,
-          userId: sub.user_id,
-          provider: sub.provider || "razorpay",
-          planId: sub.plan_id || PLAN_DOMESTIC.id,
-          currency: sub.currency || "INR",
-          amount: sub.amount || 199,
-          status: sub.status || "active",
-          currentPeriodStart: sub.current_period_start || new Date().toISOString(),
-          currentPeriodEnd: sub.current_period_end || new Date().toISOString(),
-          gracePeriodEnd: sub.grace_period_end,
-          cancelAtPeriodEnd: true,
-          metadata: sub.metadata,
-        };
-      }
+      try {
+        await supabase.auth.updateUser({ data: { is_pro: false } });
+      } catch (_) {}
     }
   } catch (e) {
     console.warn("Could not cancel subscription remotely", e);
   }
 
-  // Local fallback
   return null;
 }

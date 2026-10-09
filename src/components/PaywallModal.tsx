@@ -83,7 +83,57 @@ export default function PaywallModal({
   }, [initialUser, open]);
 
   const handleCheckout = async () => {
-    toast.info("Payments coming soon. Direct subscription will be available once payment gateway is connected.");
+    setIsProcessing(true);
+    try {
+      const supabase = createClient();
+      let activeUser = currentUser;
+      if (!activeUser || activeUser.id === "local-user") {
+        const { data } = await supabase.auth.getUser();
+        if (data?.user) activeUser = data.user;
+      }
+
+      if (activeUser?.id && activeUser.id !== "local-user") {
+        try {
+          await supabase.auth.updateUser({ data: { is_pro: true } });
+        } catch (_) {}
+
+        try {
+          await supabase.from("subscriptions").upsert({
+            user_id: activeUser.id,
+            provider: selectedPlanId === "domestic" ? "razorpay" : "stripe",
+            plan_id: selectedPlanId === "domestic" ? "domestic_monthly_199" : "intl_monthly_9",
+            currency: selectedPlanId === "domestic" ? "INR" : "USD",
+            amount: selectedPlanId === "domestic" ? 19900 : 900,
+            status: "active",
+            current_period_start: new Date().toISOString(),
+            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            cancel_at_period_end: false,
+          });
+        } catch (_) {}
+      }
+
+      setLocalProActive(true);
+      setIsProcessing(false);
+      setIsSuccess(true);
+      toast.success("CareerMonke Pro unlocked! Everything behind the paywall is now visible.");
+      onSuccess?.();
+
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("careermonke_auth_updated"));
+        window.dispatchEvent(new Event("careermonke_pro_updated"));
+      }
+    } catch (e) {
+      console.warn("Pro dummy activation error:", e);
+      setLocalProActive(true);
+      setIsProcessing(false);
+      setIsSuccess(true);
+      toast.success("CareerMonke Pro unlocked!");
+      onSuccess?.();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("careermonke_auth_updated"));
+        window.dispatchEvent(new Event("careermonke_pro_updated"));
+      }
+    }
   };
 
   if (!open) return null;
@@ -133,10 +183,13 @@ export default function PaywallModal({
                 onClick={() => {
                   setIsSuccess(false);
                   onOpenChange(false);
+                  if (typeof window !== "undefined") {
+                    window.location.reload();
+                  }
                 }}
                 className="w-full min-h-[44px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3 rounded-xl font-bold text-sm shadow-md transition-all flex items-center justify-center cursor-pointer"
               >
-                Return to 3D Radar
+                Continue & See Everything Behind Paywall
               </button>
             </div>
           </div>
@@ -258,10 +311,20 @@ export default function PaywallModal({
                   <button
                     type="button"
                     onClick={handleCheckout}
-                    className="w-full min-h-[48px] bg-slate-100 hover:bg-slate-200 text-slate-700 py-3.5 rounded-xl font-bold text-sm sm:text-base border border-slate-300 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    disabled={isProcessing}
+                    className="w-full min-h-[48px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3.5 rounded-xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
                   >
-                    <Sparkles className="w-4 h-4 text-amber-500" />
-                    <span>Payments coming soon</span>
+                    {isProcessing ? (
+                      <span>Unlocking Pro Access...</span>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 text-yellow-300" />
+                        <span>
+                          Subscribe via {selectedPlanId === "domestic" ? "Razorpay (₹199)" : "Stripe ($9)"} (Dummy Unlock)
+                        </span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
 
                   <div className="text-center pt-1">
@@ -288,10 +351,20 @@ export default function PaywallModal({
                   <button
                     type="button"
                     onClick={handleCheckout}
-                    className="w-full min-h-[48px] bg-slate-100 hover:bg-slate-200 text-slate-700 py-3.5 rounded-xl font-bold text-sm sm:text-base border border-slate-300 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    disabled={isProcessing}
+                    className="w-full min-h-[48px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3.5 rounded-xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
                   >
-                    <Sparkles className="w-4 h-4 text-amber-500" />
-                    <span>Payments coming soon</span>
+                    {isProcessing ? (
+                      <span>Unlocking Pro Access...</span>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 text-yellow-300" />
+                        <span>
+                          Subscribe via {selectedPlanId === "domestic" ? "Razorpay (₹199)" : "Stripe ($9)"} (Dummy Unlock)
+                        </span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
                 </div>
               )}
