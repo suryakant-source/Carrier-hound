@@ -114,11 +114,9 @@ export async function getLiveJobs(options: GetJobsOptions = {}): Promise<GetJobs
   try {
     const supabase = createClient();
 
-    // STRICT PRO GATING AT QUERY LEVEL:
-    // If not pro, NEVER request company, salary_text, or apply_url across the network wire
-    const selectColumns = isPro
-      ? "id, title, location, category, remote, remote_scope, remote_eligibility, country_code, job_type, verified, posted_at, created_at, company, salary_text, apply_url"
-      : "id, title, location, category, remote, remote_scope, remote_eligibility, country_code, job_type, verified, posted_at, created_at";
+    // For blurred teaser card layout, include company, location, salary_text
+    const selectColumns =
+      "id, title, location, category, remote, remote_scope, remote_eligibility, country_code, job_type, verified, posted_at, created_at, company, salary_text, apply_url";
 
     let query = supabase
       .from("jobs")
@@ -159,11 +157,7 @@ export async function getLiveJobs(options: GetJobsOptions = {}): Promise<GetJobs
 
     if (search && search.trim()) {
       const q = search.trim();
-      if (isPro) {
-        query = query.or(`title.ilike.%${q}%,location.ilike.%${q}%,company.ilike.%${q}%`);
-      } else {
-        query = query.or(`title.ilike.%${q}%,location.ilike.%${q}%`);
-      }
+      query = query.or(`title.ilike.%${q}%,location.ilike.%${q}%,company.ilike.%${q}%`);
     }
 
     query = query
@@ -174,34 +168,10 @@ export async function getLiveJobs(options: GetJobsOptions = {}): Promise<GetJobs
 
     if (!error && data && data.length > 0) {
       const mappedJobs: LiveJob[] = data.map((row: any) => {
-        if (!isPro) {
-          // STRICT SERVER-SIDE GATING FOR NON-PRO / VISITOR USERS:
-          // Locked fields (company, salary, location, remote, description, applyUrl) are stripped completely.
-          return {
-            id: row.id,
-            title: row.title || "Untitled Position",
-            company: "",
-            location: "",
-            date: formatDate(row.posted_at || row.created_at),
-            salary: "",
-            category: row.category || "engineering",
-            remote: false,
-            remoteScope: undefined,
-            remoteEligibility: undefined,
-            country: "",
-            type: row.job_type === "internship" ? "Internship" : "Full-time",
-            directSource: false,
-            applyUrl: "",
-            description: "",
-            skills: [],
-            postedAt: row.posted_at || row.created_at,
-          };
-        }
-
         return {
           id: row.id,
           title: row.title || "Untitled Position",
-          company: row.company || "Verified Employer",
+          company: row.company || "Verified Company",
           location: row.location || (row.remote ? "Remote (Worldwide)" : "Remote"),
           date: formatDate(row.posted_at || row.created_at),
           salary: row.salary_text || "",
@@ -228,7 +198,7 @@ export async function getLiveJobs(options: GetJobsOptions = {}): Promise<GetJobs
     console.warn("Supabase live jobs fetch error, falling back:", err);
   }
 
-  // Offline / Error fallback: filter static list with strict payload gating
+  // Offline / Error fallback: filter static list
   let fallbackList = DUMMY_JOBS.slice();
   if (category && category !== "all") {
     const c = category.toLowerCase().trim();
@@ -258,12 +228,7 @@ export async function getLiveJobs(options: GetJobsOptions = {}): Promise<GetJobs
     );
   }
 
-  const pagedFallback = fallbackList.slice(from, to + 1).map((j) => ({
-    ...j,
-    company: isPro ? j.company : "Confidential Employer",
-    salary: isPro ? j.salary : "",
-    applyUrl: isPro ? j.applyUrl : "",
-  }));
+  const pagedFallback = fallbackList.slice(from, to + 1);
 
   return {
     jobs: pagedFallback,

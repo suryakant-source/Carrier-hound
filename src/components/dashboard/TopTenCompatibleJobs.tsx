@@ -22,6 +22,7 @@ import { computeFitDiagnostics, FitDiagnosticsResult } from "@/lib/matcher/scori
 import TailorResumeModal from "@/components/resume/TailorResumeModal";
 import CoverLetterModal from "@/components/resume/CoverLetterModal";
 import { addApplicationToTracker, getTrackedApplications, removeApplicationFromTracker } from "@/lib/tracker/storage";
+import CompanyLogo from "@/components/CompanyLogo";
 import { toast } from "react-toastify";
 
 interface TopTenCompatibleJobsProps {
@@ -211,7 +212,8 @@ export default function TopTenCompatibleJobs({
 
                   {/* Main Role Info */}
                   <div className="space-y-1.5 flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex items-center gap-2.5">
+                      <CompanyLogo company={job.company} applyUrl={job.applyUrl} className="w-8 h-8 shrink-0" />
                       <Link
                         href={`/jobs/detail?id=${encodeURIComponent(job.id)}`}
                         className="text-base sm:text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors break-words line-clamp-1"

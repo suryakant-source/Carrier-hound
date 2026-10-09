@@ -16,6 +16,7 @@ import {
 import { CANONICAL_CATEGORIES } from "@/lib/taxonomy";
 import { createClient } from "@/lib/supabase/client";
 import PaywallModal from "@/components/PaywallModal";
+import CompanyLogo from "@/components/CompanyLogo";
 import {
   RotateCw,
   RotateCcw,
@@ -1476,34 +1477,6 @@ export default function JobRadarGlobe() {
                 const isApplied = appliedJobs[job.id];
                 const gradient = getCompanyGradient(job.company);
 
-                // Tier 1: Signed-out visitor sees only logo + title
-                if (!currentUser) {
-                  return (
-                    <div
-                      key={job.id}
-                      className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800/60 flex items-center justify-between gap-3"
-                    >
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <div
-                          className={`w-9 h-9 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-bold text-sm shadow-md shrink-0`}
-                        >
-                          {job.title.charAt(0).toUpperCase()}
-                        </div>
-                        <span className="text-sm font-bold text-white truncate">
-                          {job.title}
-                        </span>
-                      </div>
-                      <Link
-                        href={`/login?next=${encodeURIComponent(typeof window !== "undefined" ? window.location.pathname + window.location.search : "/radar")}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shrink-0"
-                      >
-                        <Lock className="w-3 h-3" />
-                        <span>Sign in to continue</span>
-                      </Link>
-                    </div>
-                  );
-                }
-
                 return (
                   <div
                     key={job.id}
@@ -1513,15 +1486,15 @@ export default function JobRadarGlobe() {
                         : ""
                     }`}
                   >
-                    {/* Top line: Company Initial Avatar + Job Title + Date */}
+                    {/* Top line: Company Logo + Job Title + Date */}
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
-                        {/* Company Logo / Initial Avatar (Visible to all) */}
-                        <div
-                          className={`w-9 h-9 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-bold text-sm shadow-md shrink-0 ring-1 ring-white/10`}
-                        >
-                          {job.company.charAt(0).toUpperCase()}
-                        </div>
+                        {/* Company Logo (Visible to all) */}
+                        <CompanyLogo
+                          company={job.company}
+                          applyUrl={job.applyUrl}
+                          className="w-9 h-9 shrink-0"
+                        />
                         <div>
                           {/* Role Title & Pro Match Score Badge */}
                           <div className="flex items-center gap-2 flex-wrap">
@@ -1543,27 +1516,10 @@ export default function JobRadarGlobe() {
                             )}
                           </div>
 
-                          {/* Company Name: Pro vs Free Gated */}
+                          {/* Company Name (Visible to all) */}
                           <div className="text-xs font-medium text-slate-400 flex items-center gap-1.5 mt-0.5">
-                            {isPro ? (
-                              <span>{job.company}</span>
-                            ) : (
-                              <button
-                                type="button"
-                                onClick={handleLockedClick}
-                                title="Unlock company name with Pro"
-                                className="inline-flex items-center gap-1.5 group/lock cursor-pointer"
-                              >
-                                <span className="filter blur-[4px] select-none text-slate-400 group-hover/lock:text-slate-200 transition-colors font-mono">
-                                  Confidential Tech
-                                </span>
-                                <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-[#2563EB]/20 border border-[#2563EB]/40 text-[#60A5FA]">
-                                  <Lock className="w-2 h-2" />
-                                </span>
-                              </button>
-                            )}
+                            <span className="text-slate-300 font-semibold">{job.company || "Verified Company"}</span>
                             <span>•</span>
-                            <span className="text-slate-400 capitalize">{job.jobType}</span>
                           </div>
                         </div>
                       </div>

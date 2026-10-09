@@ -32,8 +32,10 @@ import {
   ExternalLink,
   ChevronRight,
   ShieldCheck,
-  Check
+  Check,
+  Globe
 } from "lucide-react";
+import CompanyLogo from "@/components/CompanyLogo";
 import { toast } from "react-toastify";
 
 function JobsPageInner() {
@@ -264,20 +266,21 @@ function JobsPageInner() {
     }
   };
 
-  if (user && !isPro) {
-    return (
-      <div className="min-h-screen bg-[#F8FAFC] text-[#09090B] flex flex-col">
-        <GuideHeader />
-        <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-8">
-          <ProUpgradeScreen
-            title="Unlock CareerMonke Pro"
-            subtitle="Upgrade to Pro to access full job details, company names, salaries, and compatibility scores."
-          />
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  const handleLockedAction = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (!user) {
+      const currentPath =
+        typeof window !== "undefined"
+          ? window.location.pathname + window.location.search
+          : "/jobs";
+      router.push(`/login?next=${encodeURIComponent(currentPath)}`);
+    } else {
+      setIsPaywallOpen(true);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#09090B] flex flex-col">
@@ -503,89 +506,127 @@ function JobsPageInner() {
         ) : (
           <div className="space-y-3">
             {displayedJobs.map((job) => {
-              // TIER 1 - Signed-out visitor: job cards show ONLY company logo + role title. Everything else is hidden.
-              if (!user) {
-                return (
-                  <div
-                    key={job.id}
-                    className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs hover:shadow-md transition flex items-center justify-between gap-4 group"
-                  >
-                    <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 font-extrabold flex items-center justify-center shrink-0 border border-blue-100 text-sm">
-                        {job.title.charAt(0)}
-                      </div>
-                      <Link
-                        href="/login?next=/jobs"
-                        className="text-base sm:text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors line-clamp-1"
-                      >
-                        {job.title}
-                      </Link>
-                    </div>
-
-                    <Link
-                      href="/login?next=/jobs"
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition shadow-2xs shrink-0 cursor-pointer"
-                    >
-                      <Lock className="w-3.5 h-3.5 text-slate-500" />
-                      <span>Sign in to continue</span>
-                    </Link>
-                  </div>
-                );
-              }
-
               const isSaved = savedJobIds.includes(job.id);
               return (
                 <div
                   key={job.id}
                   className="bg-white rounded-2xl border border-slate-200 p-5 shadow-2xs hover:shadow-md transition space-y-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
                 >
-                  <div className="space-y-1.5 flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Link
-                        href={`/jobs/detail?id=${encodeURIComponent(job.id)}`}
-                        className="text-base sm:text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors break-words"
-                      >
-                        {job.title}
-                      </Link>
+                  <div className="flex items-start gap-3.5 min-w-0 flex-1">
+                    <CompanyLogo company={job.company} applyUrl={job.applyUrl} className="w-11 h-11 shrink-0" />
 
-                      <MatchScoreBadge
-                        job={{
-                          id: job.id,
-                          title: job.title,
-                          company: job.company,
-                          location: job.location,
-                          remote_scope: job.remoteScope || (job.remote ? "worldwide" : undefined),
-                          category: job.category,
-                          salary_text: job.salary,
-                          apply_url: job.applyUrl,
-                        }}
-                        size="xs"
-                      />
-                    </div>
+                    <div className="space-y-1.5 flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {isPro ? (
+                          <Link
+                            href={`/jobs/detail?id=${encodeURIComponent(job.id)}`}
+                            className="text-base sm:text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors break-words"
+                          >
+                            {job.title}
+                          </Link>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={handleLockedAction}
+                            className="text-base sm:text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors break-words text-left cursor-pointer"
+                          >
+                            {job.title}
+                          </button>
+                        )}
 
-                    <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 font-medium">
-                      <div className="flex items-center gap-1">
-                        <Building className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span className="font-bold text-slate-900">
-                          {job.company}
-                        </span>
+                        {isPro ? (
+                          <MatchScoreBadge
+                            job={{
+                              id: job.id,
+                              title: job.title,
+                              company: job.company,
+                              location: job.location,
+                              remote_scope: job.remoteScope || (job.remote ? "worldwide" : undefined),
+                              category: job.category,
+                              salary_text: job.salary,
+                              apply_url: job.applyUrl,
+                            }}
+                            size="xs"
+                          />
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={handleLockedAction}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 border border-blue-200/60 text-blue-700 text-[11px] font-bold cursor-pointer hover:bg-blue-100 transition"
+                            title={!user ? "Sign in to view match score" : "Unlock match score with Pro"}
+                          >
+                            <span className="filter blur-[4px] select-none font-mono">92% Match</span>
+                            <Lock className="w-2.5 h-2.5 text-blue-600 shrink-0 ml-0.5" />
+                          </button>
+                        )}
                       </div>
 
-                      <span>•</span>
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 font-medium">
+                        <div className="flex items-center gap-1">
+                          <Building className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span className="font-bold text-slate-900">
+                            {job.company || "Verified Company"}
+                          </span>
+                        </div>
 
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span>{job.location || (job.remote ? "Remote" : "Unknown")}</span>
+                        <span>•</span>
+
+                        <div
+                          onClick={!isPro ? handleLockedAction : undefined}
+                          className={`flex items-center gap-1 ${!isPro ? "cursor-pointer" : ""}`}
+                          title={!isPro ? (!user ? "Sign in to see location" : "Unlock location with Pro") : undefined}
+                        >
+                          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span className={!isPro ? "filter blur-[4.5px] select-none text-slate-600" : ""}>
+                            {job.location || (job.remote ? "Remote (Worldwide)" : "San Francisco, CA")}
+                          </span>
+                          {!isPro && <Lock className="w-2.5 h-2.5 text-slate-400 shrink-0" />}
+                        </div>
+
+                        {job.remote && (
+                          <>
+                            <span>•</span>
+                            <div
+                              onClick={!isPro ? handleLockedAction : undefined}
+                              className={`flex items-center gap-1 ${!isPro ? "cursor-pointer" : ""}`}
+                              title={!isPro ? (!user ? "Sign in to see remote scope" : "Unlock remote scope with Pro") : undefined}
+                            >
+                              <Globe className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span className={!isPro ? "filter blur-[4.5px] select-none text-slate-600" : ""}>
+                                {job.remoteScope === "worldwide" ? "Worldwide Remote" : "Remote Eligible"}
+                              </span>
+                              {!isPro && <Lock className="w-2.5 h-2.5 text-slate-400 shrink-0" />}
+                            </div>
+                          </>
+                        )}
+
+                        {(job.salary || !isPro) && (
+                          <>
+                            <span>•</span>
+                            <div
+                              onClick={!isPro ? handleLockedAction : undefined}
+                              className={`flex items-center gap-1 text-emerald-700 font-semibold ${!isPro ? "cursor-pointer" : ""}`}
+                              title={!isPro ? (!user ? "Sign in to see compensation" : "Unlock compensation with Pro") : undefined}
+                            >
+                              <DollarSign className="w-3.5 h-3.5 shrink-0 text-emerald-600" />
+                              <span className={!isPro ? "filter blur-[5px] select-none text-emerald-700" : ""}>
+                                {job.salary || "$130,000 - $185,000"}
+                              </span>
+                              {!isPro && <Lock className="w-2.5 h-2.5 text-emerald-600/70 shrink-0" />}
+                            </div>
+                          </>
+                        )}
                       </div>
 
-                      {job.salary && (
-                        <>
-                          <span>•</span>
-                          <div className="flex items-center gap-1 text-emerald-700 font-semibold">
-                            <DollarSign className="w-3.5 h-3.5 shrink-0" />
-                            <span>{job.salary}</span>
-                          </div>
-                        </>
+                      {job.description && (
+                        <p
+                          onClick={!isPro ? handleLockedAction : undefined}
+                          className={`text-xs text-slate-500 line-clamp-1 mt-1 ${
+                            !isPro ? "filter blur-[4px] select-none cursor-pointer" : ""
+                          }`}
+                        >
+                          {job.description}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -605,13 +646,24 @@ function JobsPageInner() {
                       <BookmarkPlus className="w-4 h-4" />
                     </button>
 
-                    <Link
-                      href={`/jobs/detail?id=${encodeURIComponent(job.id)}`}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-xs"
-                    >
-                      <span>Inspect Job</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </Link>
+                    {isPro ? (
+                      <Link
+                        href={`/jobs/detail?id=${encodeURIComponent(job.id)}`}
+                        className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-xs"
+                      >
+                        <span>Inspect Job</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleLockedAction}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold transition shadow-2xs border border-blue-200/70 cursor-pointer"
+                      >
+                        <Lock className="w-3.5 h-3.5 text-blue-600" />
+                        <span>{!user ? "Sign In to Inspect" : "Unlock with Pro"}</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               );
