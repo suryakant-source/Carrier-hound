@@ -27,22 +27,42 @@ export interface DailyDigestQueue {
  * Loads today's daily digest for the authenticated user, or computes top matches locally
  * using the live Supabase dataset and consistent Pro field-level gating.
  */
-export async function getTodayDigest(): Promise<DailyDigestQueue> {
+export async function getTodayDigest(userId?: string, isProUser?: boolean): Promise<DailyDigestQueue> {
   const todayStr = new Date().toISOString().split("T")[0];
-  const { isPro } = await getProAccessStatus();
+  let isPro = isProUser;
+  if (isPro === undefined) {
+    const proStatus = await getProAccessStatus(userId);
+    isPro = proStatus.isPro;
+  }
 
   try {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    let resolvedUserId = userId;
 
-    if (user) {
-      const { data, error } = await supabase
+    if (!resolvedUserId) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        resolvedUserId = session.user.id;
+      } else {
+        const { data: { user } } = await supabase.auth.getUser();
+        resolvedUserId = user?.id;
+      }
+    }
+
+    if (resolvedUserId) {
+      const queryPromise = supabase
         .from("daily_digests")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("user_id", resolvedUserId)
         .order("digest_date", { ascending: false })
         .limit(1)
         .maybeSingle();
+
+      const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: new Error("Digest query timeout") }), 4000)
+      );
+
+      const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
 
       if (!error && data && Array.isArray(data.matched_jobs) && data.matched_jobs.length > 0) {
         // Enforce consistent payload-level Pro gating on stored matches

@@ -15,12 +15,6 @@
   force = true
 
 [[redirects]]
-  from = "/jobs/:id.txt"
-  to = "/jobs/detail.txt"
-  status = 200
-  force = true
-
-[[redirects]]
   from = "/jobs/detail"
   to = "/jobs/detail.html"
   status = 200

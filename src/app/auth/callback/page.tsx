@@ -22,7 +22,7 @@ function AuthCallbackContent() {
     };
 
     // 1. Listen for auth state changes (automatically catches hash token / magic link)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: any, session: any) => {
       if (session && (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED")) {
         finish(next);
       }
@@ -50,7 +50,8 @@ function AuthCallbackContent() {
       // 4. If window has hash (e.g. #access_token=... from magic link), give it 2 seconds to complete
       if (typeof window !== "undefined" && window.location.hash.includes("access_token")) {
         setTimeout(() => {
-          supabase.auth.getSession().then(({ data: { session: hashSession } }) => {
+          supabase.auth.getSession().then(({ data }: any) => {
+            const hashSession = data?.session;
             if (hashSession) {
               finish(next);
             } else {

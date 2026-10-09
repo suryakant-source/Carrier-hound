@@ -27,7 +27,22 @@ export function getValidReturnUrl(targetUrl: string | null | undefined, fallback
 export async function getAuthUser(): Promise<User | null> {
   const supabase = createClient();
   try {
-    const { data: { user }, error } = await supabase.auth.getUser();
+    // Check local session first for instantaneous response
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      if (typeof window !== "undefined" && session.user.email) {
+        localStorage.setItem(USER_EMAIL_KEY, session.user.email);
+      }
+      return session.user;
+    }
+
+    // Network validation with timeout
+    const userPromise = supabase.auth.getUser();
+    const timeoutPromise = new Promise<{ data: { user: null }; error: Error }>((resolve) =>
+      setTimeout(() => resolve({ data: { user: null }, error: new Error("Auth timeout") }), 5000)
+    );
+
+    const { data: { user }, error } = await Promise.race([userPromise, timeoutPromise]);
     if (user && !error) {
       if (typeof window !== "undefined" && user.email) {
         localStorage.setItem(USER_EMAIL_KEY, user.email);

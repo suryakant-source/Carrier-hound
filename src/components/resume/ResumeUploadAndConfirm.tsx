@@ -49,6 +49,7 @@ export default function ResumeUploadAndConfirm({
   onProfileConfirmed,
 }: ResumeUploadAndConfirmProps = {}) {
   const [profile, setProfile] = useState<CandidateProfile | null>(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [isParsing, setIsParsing] = useState(false);
   const [parseError, setParseError] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(false);
@@ -69,6 +70,9 @@ export default function ResumeUploadAndConfirm({
       if (p) {
         setInitialProfileStr(JSON.stringify(p));
       }
+      setIsLoadingProfile(false);
+    }).catch(() => {
+      setIsLoadingProfile(false);
     });
   }, []);
 
@@ -967,6 +971,20 @@ export default function ResumeUploadAndConfirm({
         </div>
       );
     };
+
+  if (isLoadingProfile) {
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+          <div className="h-6 w-48 bg-slate-200 rounded mb-4" />
+          <div className="h-4 w-96 max-w-full bg-slate-100 rounded mb-6" />
+          <div className="h-44 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center">
+            <div className="h-8 w-40 bg-slate-200 rounded-lg" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">

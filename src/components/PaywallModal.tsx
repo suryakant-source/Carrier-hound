@@ -74,9 +74,9 @@ export default function PaywallModal({
         setEmail(localEmail);
       } else {
         const supabase = createClient();
-        supabase.auth.getUser().then(({ data }) => {
-          setCurrentUser(data.user);
-          if (data.user?.email) setEmail(data.user.email);
+        supabase.auth.getUser().then(({ data }: any) => {
+          setCurrentUser(data?.user || null);
+          if (data?.user?.email) setEmail(data.user.email);
         });
       }
     }

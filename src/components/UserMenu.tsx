@@ -34,7 +34,7 @@ export default function UserMenu({
     const supabase = createClient();
 
     const checkUser = () => {
-      supabase.auth.getUser().then(({ data, error }) => {
+      supabase.auth.getUser().then(({ data, error }: any) => {
         if (data?.user && !error) {
           setUser(data.user);
           getProAccessStatus().then((res) => setIsPro(res.isPro));
@@ -48,7 +48,7 @@ export default function UserMenu({
 
     checkUser();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       if (session?.user) {
         setUser(session.user);
       } else {

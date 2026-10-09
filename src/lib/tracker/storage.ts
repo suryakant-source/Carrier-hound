@@ -3,10 +3,26 @@ import { createClient } from "../supabase/client";
 
 const LOCAL_STORAGE_KEY = "careermonke_applications_tracker";
 
+function generateUUID(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+function isValidUUID(str?: string | null): boolean {
+  if (!str) return false;
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+}
+
 /**
  * Loads applications from localStorage, then fetches & syncs with Supabase if logged in.
  */
-export async function getTrackedApplications(): Promise<TrackedApplication[]> {
+export async function getTrackedApplications(userId?: string): Promise<TrackedApplication[]> {
   let localApps: TrackedApplication[] = [];
 
   if (typeof window !== "undefined") {
@@ -23,14 +39,30 @@ export async function getTrackedApplications(): Promise<TrackedApplication[]> {
   // Try fetching from Supabase if user is authenticated
   try {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    let resolvedUserId = userId;
 
-    if (user) {
-      const { data, error } = await supabase
+    if (!resolvedUserId) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        resolvedUserId = session.user.id;
+      } else {
+        const { data: { user } } = await supabase.auth.getUser();
+        resolvedUserId = user?.id;
+      }
+    }
+
+    if (resolvedUserId) {
+      const queryPromise = supabase
         .from("applications")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("user_id", resolvedUserId)
         .order("updated_at", { ascending: false });
+
+      const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: new Error("Applications query timeout") }), 4000)
+      );
+
+      const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
 
       if (!error && data && data.length > 0) {
         const remoteApps: TrackedApplication[] = data.map((row: any) => ({
@@ -86,9 +118,10 @@ function saveToLocalStorage(apps: TrackedApplication[]) {
 export async function addApplicationToTracker(
   app: Omit<TrackedApplication, "id" | "createdAt" | "updatedAt">
 ): Promise<TrackedApplication> {
+  const appId = generateUUID();
   const newApp: TrackedApplication = {
     ...app,
-    id: `app-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    id: appId,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -117,12 +150,14 @@ export async function addApplicationToTracker(
   // Sync to Supabase in background
   try {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user || (await supabase.auth.getUser()).data.user;
     if (user) {
-      await supabase.from("applications").upsert({
+      const dbJobId = isValidUUID(newApp.jobId) ? newApp.jobId : null;
+      const { error } = await supabase.from("applications").upsert({
         id: newApp.id,
         user_id: user.id,
-        job_id: newApp.jobId || null,
+        job_id: dbJobId,
         company: newApp.company,
         title: newApp.title,
         location: newApp.location || null,
@@ -134,6 +169,9 @@ export async function addApplicationToTracker(
         follow_up_at: newApp.followUpAt || null,
         updated_at: new Date().toISOString(),
       });
+      if (error) {
+        console.warn("Failed to sync application to Supabase:", error);
+      }
     }
   } catch (e) {}
 
@@ -159,7 +197,8 @@ export async function updateApplicationStage(id: string, stage: ApplicationStage
   // Supabase sync
   try {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (user) {
       await supabase
         .from("applications")
@@ -190,7 +229,8 @@ export async function updateApplicationNotes(id: string, notes: string, followUp
 
   try {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (user) {
       await supabase
         .from("applications")
@@ -216,7 +256,8 @@ export async function deleteApplicationFromTracker(id: string) {
 
   try {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (user) {
       await supabase
         .from("applications")
@@ -239,7 +280,8 @@ export async function removeApplicationFromTracker(jobIdOrId: string) {
 
   try {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (user && target) {
       await supabase
         .from("applications")

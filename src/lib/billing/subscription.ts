@@ -14,19 +14,35 @@ const LOCAL_SUB_KEY = "careermonke_subscription_cache";
  * 2. 7-Day Grace Period on failed renewal
  * Until billing is live and verified on the server, everyone is Free.
  */
-export async function getProAccessStatus(): Promise<ProAccessStatus> {
+export async function getProAccessStatus(userId?: string): Promise<ProAccessStatus> {
   try {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    let resolvedUserId = userId;
 
-    if (user) {
-      const { data: sub, error } = await supabase
+    if (!resolvedUserId) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        resolvedUserId = session.user.id;
+      } else {
+        const { data: { user } } = await supabase.auth.getUser();
+        resolvedUserId = user?.id;
+      }
+    }
+
+    if (resolvedUserId) {
+      const subPromise = supabase
         .from("subscriptions")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("user_id", resolvedUserId)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
+
+      const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: new Error("Subscription query timeout") }), 4000)
+      );
+
+      const { data: sub, error } = await Promise.race([subPromise, timeoutPromise]);
 
       if (!error && sub) {
         const now = new Date();

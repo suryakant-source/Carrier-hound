@@ -48,7 +48,7 @@ export const DEFAULT_CANDIDATE_PROFILE: CandidateProfile = {
  * Gets the confirmed candidate profile from local storage and Supabase.
  * Returns null if the user has not uploaded and confirmed a resume.
  */
-export async function getCandidateProfile(): Promise<CandidateProfile | null> {
+export async function getCandidateProfile(userId?: string): Promise<CandidateProfile | null> {
   let profile: CandidateProfile | null = null;
 
   if (typeof window !== "undefined") {
@@ -68,18 +68,38 @@ export async function getCandidateProfile(): Promise<CandidateProfile | null> {
   // Try fetching from Supabase if logged in
   try {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { data, error } = await supabase
+    let resolvedUserId = userId;
+    let userEmail: string | undefined = undefined;
+
+    if (!resolvedUserId) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        resolvedUserId = session.user.id;
+        userEmail = session.user.email;
+      } else {
+        const { data: { user } } = await supabase.auth.getUser();
+        resolvedUserId = user?.id;
+        userEmail = user?.email;
+      }
+    }
+
+    if (resolvedUserId) {
+      const queryPromise = supabase
         .from("candidate_profiles")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("user_id", resolvedUserId)
         .maybeSingle();
+
+      const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: new Error("Profile query timeout") }), 4000)
+      );
+
+      const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
 
       if (!error && data && data.confirmed_at) {
         const remoteProfile: CandidateProfile = {
           name: data.name || profile?.name || "",
-          email: data.email || user.email || profile?.email || "",
+          email: data.email || userEmail || profile?.email || "",
           phone: data.phone || profile?.phone || "",
           location: data.location || profile?.location || "",
           headline: data.headline || profile?.headline || "",
@@ -128,14 +148,15 @@ export async function saveConfirmedCandidateProfile(profile: CandidateProfile): 
   saveCandidateProfileLocally(updatedProfile);
 
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user || (await supabase.auth.getUser()).data.user;
+
   if (user) {
-    const { error } = await supabase.from("candidate_profiles").upsert({
+    const payload: any = {
       user_id: user.id,
       name: updatedProfile.name,
       email: updatedProfile.email || user.email,
       phone: updatedProfile.phone,
-      location: updatedProfile.location || null,
       headline: updatedProfile.headline,
       summary: updatedProfile.summary,
       skills: updatedProfile.skills,
@@ -145,7 +166,21 @@ export async function saveConfirmedCandidateProfile(profile: CandidateProfile): 
       raw_resume_text: updatedProfile.rawText,
       confirmed_at: updatedProfile.confirmedAt,
       updated_at: updatedProfile.updatedAt,
-    });
+    };
+
+    if (updatedProfile.location) {
+      payload.location = updatedProfile.location;
+    }
+
+    let { error } = await supabase.from("candidate_profiles").upsert(payload);
+
+    // If live table doesn't have location column yet, retry without location
+    if (error && (error.message?.includes("location") || error.code === "42703")) {
+      delete payload.location;
+      const retry = await supabase.from("candidate_profiles").upsert(payload);
+      error = retry.error;
+    }
+
     if (error) {
       console.error("Failed to sync candidate profile to Supabase:", error);
       throw new Error(`Failed to save candidate profile to database: ${error.message}`);

@@ -318,7 +318,7 @@ export default function GuideHeader() {
     {/* =================================================================== */}
     {mobileMenuOpen && (
       <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex justify-end md:hidden animate-fadeIn">
-        <div className="w-full max-w-xs bg-white h-dvh min-h-screen shadow-2xl p-6 flex flex-col justify-between overflow-y-auto">
+        <div className="w-full max-w-xs bg-white h-dvh min-h-screen shadow-2xl p-6 pb-28 sm:pb-24 flex flex-col justify-between overflow-y-auto">
           <div className="space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
               <Link
@@ -447,7 +447,7 @@ export default function GuideHeader() {
             )}
           </div>
 
-          <div className="pt-6 border-t border-gray-100">
+          <div className="pt-6 pb-4 border-t border-gray-100">
             {user ? (
               <button
                 type="button"

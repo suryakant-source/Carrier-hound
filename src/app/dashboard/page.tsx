@@ -7,7 +7,7 @@ import GuideHeader from "@/components/GuideHeader";
 import Footer from "@/components/Footer";
 import { getAuthUser } from "@/lib/auth/session";
 import { getUserPreferences } from "@/lib/auth/session";
-import { UserPreferences } from "@/lib/auth/types";
+import { UserPreferences, DEFAULT_USER_PREFERENCES } from "@/lib/auth/types";
 import { getCandidateProfile } from "@/lib/resume/storage";
 import { CandidateProfile } from "@/lib/resume/types";
 import { getTrackedApplications, addApplicationToTracker } from "@/lib/tracker/storage";
@@ -38,8 +38,8 @@ import {
   HelpCircle,
   X,
   Lock,
-  Globe,
   Download,
+  Globe,
 } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -68,47 +68,72 @@ export default function DashboardPage() {
 
   const hasConfirmedResume = Boolean(candidate && candidate.confirmedAt);
   const [isPro, setIsPro] = useState(false);
-
   const [walkthroughExpanded, setWalkthroughExpanded] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+
+  const loadDashboardData = React.useCallback(async (authUser: User) => {
+    setLoading(true);
+    setLoadError(false);
+
+    const withTimeout = <T,>(promise: Promise<T>, ms: number, fallback: T): Promise<T> =>
+      Promise.race([
+        promise,
+        new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms)),
+      ]);
+
+    // Overall emergency safety timer so dashboard NEVER hangs indefinitely
+    const safetyTimer = setTimeout(() => {
+      setLoading(false);
+    }, 6000);
+
+    try {
+      const [subRes, p, cp, apps, d] = await Promise.all([
+        withTimeout(getProAccessStatus(authUser.id), 3500, { isPro: false, status: "canceled", inGracePeriod: false }),
+        withTimeout(getUserPreferences(authUser.id), 3500, DEFAULT_USER_PREFERENCES),
+        withTimeout(getCandidateProfile(authUser.id), 3500, null),
+        withTimeout(getTrackedApplications(authUser.id), 3500, []),
+        withTimeout(getTodayDigest(authUser.id, false), 3500, {
+          digestDate: new Date().toISOString().split("T")[0],
+          matches: [],
+          isQueuedByCron: false,
+        }),
+      ]);
+
+      setIsPro(subRes.isPro);
+      setPreferences(p);
+      if (cp && cp.confirmedAt) {
+        setCandidate(cp);
+      } else {
+        setCandidate(null);
+      }
+      setApplications(apps);
+      setDigest(d);
+
+      if (!d?.matches || d.matches.length === 0) {
+        getLiveJobs({ page: 1, pageSize: 6, isPro: subRes.isPro }).then((res) => {
+          setFallbackLiveJobs(res.jobs);
+        }).catch(() => {});
+      }
+    } catch (err) {
+      console.warn("Dashboard data load non-fatal error:", err);
+    } finally {
+      clearTimeout(safetyTimer);
+      setLoading(false);
+    }
+  }, []);
 
   // Check auth and load user data without false flash
   useEffect(() => {
+    let isCancelled = false;
+
     getAuthUser().then((authUser) => {
+      if (isCancelled) return;
       if (!authUser) {
         router.replace("/login?next=/dashboard");
         return;
       }
       setUser(authUser);
-
-      Promise.all([
-        getProAccessStatus(),
-        getUserPreferences(authUser.id),
-        getCandidateProfile(),
-        getTrackedApplications(),
-        getTodayDigest(),
-      ])
-        .then(([subRes, p, cp, apps, d]) => {
-          setIsPro(subRes.isPro);
-          setPreferences(p);
-          if (cp && cp.confirmedAt) {
-            setCandidate(cp);
-          } else {
-            setCandidate(null);
-          }
-          setApplications(apps);
-          setDigest(d);
-
-          if (!d?.matches || d.matches.length === 0) {
-            getLiveJobs({ page: 1, pageSize: 6, isPro: subRes.isPro }).then((res) => {
-              setFallbackLiveJobs(res.jobs);
-            });
-          }
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error("Dashboard data load error", err);
-          setLoading(false);
-        });
+      loadDashboardData(authUser);
 
       // Check first-time walkthrough dismiss state
       if (typeof window !== "undefined") {
@@ -117,8 +142,17 @@ export default function DashboardPage() {
           setShowWalkthrough(true);
         }
       }
+    }).catch(() => {
+      if (!isCancelled) {
+        setLoading(false);
+        setLoadError(true);
+      }
     });
-  }, [router]);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [router, loadDashboardData]);
 
   const handleDismissWalkthrough = () => {
     setShowWalkthrough(false);
@@ -212,6 +246,28 @@ export default function DashboardPage() {
           <div className="text-center space-y-3">
             <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-xs font-semibold text-slate-500">Loading your CareerMonke dashboard…</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col">
+        <GuideHeader />
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="text-center space-y-3 max-w-sm mx-auto bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs">
+            <AlertCircle className="w-8 h-8 text-amber-500 mx-auto" />
+            <p className="text-sm font-bold text-slate-800">Connection took longer than expected</p>
+            <p className="text-xs text-slate-500">Some account data could not be loaded immediately. You can retry or proceed.</p>
+            <button
+              type="button"
+              onClick={() => user && loadDashboardData(user)}
+              className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow-xs hover:bg-blue-700 transition cursor-pointer"
+            >
+              Retry Loading
+            </button>
           </div>
         </div>
       </div>

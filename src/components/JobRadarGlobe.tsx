@@ -216,8 +216,8 @@ export default function JobRadarGlobe() {
   // 1. Check user auth & pro status on mount
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) {
+    supabase.auth.getUser().then(({ data }: any) => {
+      if (data?.user) {
         setCurrentUser(data.user);
       }
     });
