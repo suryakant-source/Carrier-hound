@@ -26,7 +26,7 @@ export async function getProAccessStatus(): Promise<ProAccessStatus> {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (!error && sub) {
         const now = new Date();
@@ -101,7 +101,7 @@ export async function getUserSubscription(): Promise<UserSubscription | null> {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (!error && sub) {
         return {
@@ -142,7 +142,7 @@ export async function cancelSubscription(): Promise<UserSubscription | null> {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (sub) {
         await supabase

@@ -74,7 +74,7 @@ export async function getCandidateProfile(): Promise<CandidateProfile | null> {
         .from("candidate_profiles")
         .select("*")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
       if (!error && data && data.confirmed_at) {
         const remoteProfile: CandidateProfile = {

@@ -74,6 +74,7 @@ export async function getAuthUser(): Promise<User | null> {
 
 /**
  * Retrieves user preferences from Supabase with fallback to local storage.
+ * Handles missing row by creating defaults, not by erroring.
  */
 export async function getUserPreferences(userId?: string): Promise<UserPreferences> {
   const supabase = createClient();
@@ -83,7 +84,7 @@ export async function getUserPreferences(userId?: string): Promise<UserPreferenc
         .from("user_preferences")
         .select("*")
         .eq("user_id", userId)
-        .single();
+        .maybeSingle();
 
       if (data && !error) {
         const prefs: UserPreferences = {
@@ -105,8 +106,16 @@ export async function getUserPreferences(userId?: string): Promise<UserPreferenc
         }
         return prefs;
       }
-    } catch (e) {
-      console.warn("Failed to load user preferences from DB:", e);
+
+      // Handle missing row by saving and returning defaults
+      if (!error && !data) {
+        try {
+          await saveUserPreferences(DEFAULT_USER_PREFERENCES, userId);
+        } catch (_) {}
+        return DEFAULT_USER_PREFERENCES;
+      }
+    } catch (_) {
+      // Graceful fallback to local storage / defaults
     }
   }
 
@@ -115,7 +124,7 @@ export async function getUserPreferences(userId?: string): Promise<UserPreferenc
     if (saved) {
       try {
         return JSON.parse(saved);
-      } catch (e) {
+      } catch (_) {
         // ignore parse error
       }
     }
@@ -143,21 +152,21 @@ export async function saveUserPreferences(prefs: UserPreferences, userId?: strin
     try {
       await supabase.from("user_preferences").upsert({
         user_id: userId,
-        roles: updatedPrefs.roles,
-        categories: updatedPrefs.categories,
-        experience_level: updatedPrefs.experienceLevel,
-        employment_types: updatedPrefs.employmentTypes,
-        locations: updatedPrefs.locations,
-        remote_preference: updatedPrefs.remotePreference,
-        work_auth: updatedPrefs.workAuth,
-        min_salary: updatedPrefs.minSalary,
-        salary_currency: updatedPrefs.salaryCurrency,
-        daily_digest_opt_in: updatedPrefs.dailyDigestOptIn,
-        onboarding_completed: updatedPrefs.onboardingCompleted,
+        roles: updatedPrefs.roles || [],
+        categories: updatedPrefs.categories || [],
+        experience_level: updatedPrefs.experienceLevel || "mid",
+        employment_types: updatedPrefs.employmentTypes || ["full-time"],
+        locations: updatedPrefs.locations || ["Remote / Global"],
+        remote_preference: updatedPrefs.remotePreference || "remote",
+        work_auth: updatedPrefs.workAuth || null,
+        min_salary: updatedPrefs.minSalary ?? null,
+        salary_currency: updatedPrefs.salaryCurrency || "USD",
+        daily_digest_opt_in: updatedPrefs.dailyDigestOptIn ?? true,
+        onboarding_completed: updatedPrefs.onboardingCompleted ?? false,
         updated_at: updatedPrefs.updatedAt,
       });
-    } catch (e) {
-      console.warn("Failed to save preferences to DB:", e);
+    } catch (_) {
+      // Graceful offline/missing table handling
     }
   }
 }

@@ -39,7 +39,7 @@ export async function getTodayDigest(): Promise<DailyDigestQueue> {
         .eq("user_id", user.id)
         .order("digest_date", { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (!error && data && Array.isArray(data.matched_jobs) && data.matched_jobs.length > 0) {
         return {

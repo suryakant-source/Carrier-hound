@@ -52,6 +52,9 @@ export default function DashboardPage() {
   const [showWalkthrough, setShowWalkthrough] = useState(false);
   const [fallbackLiveJobs, setFallbackLiveJobs] = useState<LiveJob[]>([]);
 
+  const hasConfirmedResume = Boolean(candidate && candidate.confirmedAt);
+  const isPro = user?.user_metadata?.is_pro === true;
+
   // Check auth and load user data
   useEffect(() => {
     getAuthUser().then((authUser) => {
@@ -199,9 +202,6 @@ export default function DashboardPage() {
       </div>
     );
   }
-
-  const hasConfirmedResume = Boolean(candidate && candidate.confirmedAt);
-  const isPro = user?.user_metadata?.is_pro === true;
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#09090B] flex flex-col">

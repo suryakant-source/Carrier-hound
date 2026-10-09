@@ -77,7 +77,7 @@ export async function runDailyDigestCron(options: {
           metadata: { dryRun: isDryRun, digestDate, minScore },
         })
         .select("id")
-        .single();
+        .maybeSingle();
 
       if (!error && data?.id) {
         runId = data.id;
