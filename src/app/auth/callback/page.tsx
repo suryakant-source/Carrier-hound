@@ -10,33 +10,70 @@ function AuthCallbackContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    let resolved = false;
+    const next = getValidReturnUrl(searchParams.get("next"), "/onboarding");
+    const supabase = createClient();
+
+    const finish = (destination: string) => {
+      if (!resolved) {
+        resolved = true;
+        router.replace(destination);
+      }
+    };
+
+    // 1. Listen for auth state changes (automatically catches hash token / magic link)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session && (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED")) {
+        finish(next);
+      }
+    });
+
     const handleAuth = async () => {
       const code = searchParams.get("code");
-      const next = getValidReturnUrl(searchParams.get("next"), "/onboarding");
-      const supabase = createClient();
 
+      // 2. PKCE code exchange
       if (code) {
         const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (!error) {
-          router.replace(next);
+          finish(next);
           return;
         }
       }
 
-      // Check if session is already active (implicit flow / magic link hash)
+      // 3. Check existing active session
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        router.replace(next);
+        finish(next);
+        return;
+      }
+
+      // 4. If window has hash (e.g. #access_token=... from magic link), give it 2 seconds to complete
+      if (typeof window !== "undefined" && window.location.hash.includes("access_token")) {
+        setTimeout(() => {
+          supabase.auth.getSession().then(({ data: { session: hashSession } }) => {
+            if (hashSession) {
+              finish(next);
+            } else {
+              finish(`/login?error=${encodeURIComponent("Could not authenticate magic link. Please try again.")}`);
+            }
+          });
+        }, 1500);
         return;
       }
 
       // Fallback
-      router.replace(
-        `/login?error=${encodeURIComponent("Could not authenticate session. Please try again.")}`
-      );
+      setTimeout(() => {
+        if (!resolved) {
+          finish(`/login?error=${encodeURIComponent("Could not authenticate session. Please try again.")}`);
+        }
+      }, 1000);
     };
 
     handleAuth();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [router, searchParams]);
 
   return (
