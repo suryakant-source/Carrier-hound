@@ -141,7 +141,7 @@ export default function TailorResumeModal({
           <div className="pr-8 space-y-1">
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                <Sparkles className="w-3 h-3" /> ATS Resume Tailoring
+                <Sparkles className="w-3 h-3" /> ATS Skill Highlighting
               </span>
               <span className="text-xs text-slate-400 font-mono">Zero Hallucinations</span>
             </div>
@@ -171,7 +171,7 @@ export default function TailorResumeModal({
                 Grounded 100% in your verified resume facts
               </p>
               <p className="text-slate-600">
-                Tailoring reorganizes your confirmed technical skills so the requirements for <strong>{job.company}</strong> appear front and center for applicant tracking parsers. No fake credentials or hallucinations are generated.
+                ATS Skill Highlighting prioritizes and reorganizes your verified skills so the core requirements for <strong>{job.company}</strong> appear front and center for applicant tracking parsers. No fake credentials or hallucinations are generated.
               </p>
             </div>
           </div>
@@ -292,7 +292,7 @@ export default function TailorResumeModal({
               className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-xs font-bold shadow-xs transition cursor-pointer min-h-[44px] flex items-center gap-2"
             >
               <Download className="w-4 h-4" />
-              <span>Download Tailored ATS (.docx)</span>
+              <span>Download Aligned ATS (.docx)</span>
             </button>
           </div>
         </div>

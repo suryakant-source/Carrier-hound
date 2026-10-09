@@ -1,6 +1,7 @@
 export type BillingProvider = "razorpay" | "stripe" | "manual";
 
 export type SubscriptionStatus =
+  | "none"
   | "active"
   | "trialing"
   | "in_grace_period"
@@ -33,7 +34,7 @@ export const PLAN_DOMESTIC: BillingPlan = {
     "Direct Company ATS Endpoints (Greenhouse, Lever, Ashby)",
     "Unmasked Verified Salary Bands & Equity",
     "Instant UPI (GPay, PhonePe, Paytm), RuPay & Cards",
-    "Deterministic AI Match Scoring & Tailored Cover Letters",
+    "Compatibility Match Scoring & Tailored Cover Letters",
     "Application Kanban Pipeline with Auto-Sync",
     "Priority 3D Globe Radar Density Filters",
   ],
@@ -52,7 +53,7 @@ export const PLAN_INTERNATIONAL: BillingPlan = {
     "All Direct Company ATS Endpoints Worldwide",
     "Unmasked Verified Compensation across US, EU & APAC",
     "Global Credit/Debit Cards, Apple Pay & Google Pay",
-    "Deterministic AI Match Scoring & Tailored Cover Letters",
+    "Compatibility Match Scoring & Tailored Cover Letters",
     "Application Kanban Pipeline with Auto-Sync",
     "Priority 3D Globe Radar Density Filters",
   ],

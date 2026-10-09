@@ -173,23 +173,51 @@ export async function getLiveJobs(options: GetJobsOptions = {}): Promise<GetJobs
     const { data, count, error } = await query;
 
     if (!error && data && data.length > 0) {
-      const mappedJobs: LiveJob[] = data.map((row: any) => ({
-        id: row.id,
-        title: row.title || "Untitled Position",
-        company: isPro ? (row.company || "Verified Employer") : "Confidential Employer",
-        location: row.location || (row.remote ? "Remote (Unknown Location)" : "Unknown"),
-        date: formatDate(row.posted_at || row.created_at),
-        salary: isPro ? (row.salary_text || "") : "",
-        category: row.category || "engineering",
-        remote: Boolean(row.remote),
-        remoteScope: row.remote_scope || undefined,
-        remoteEligibility: row.remote_eligibility || undefined,
-        country: row.country_code || "US",
-        type: row.job_type === "internship" ? "Internship" : "Full-time",
-        directSource: Boolean(row.verified),
-        applyUrl: isPro ? (row.apply_url || "") : "",
-        postedAt: row.posted_at || row.created_at,
-      }));
+      const mappedJobs: LiveJob[] = data.map((row: any) => {
+        if (!isPro) {
+          // STRICT SERVER-SIDE GATING FOR NON-PRO / VISITOR USERS:
+          // Locked fields (company, salary, location, remote, description, applyUrl) are stripped completely.
+          return {
+            id: row.id,
+            title: row.title || "Untitled Position",
+            company: "",
+            location: "",
+            date: formatDate(row.posted_at || row.created_at),
+            salary: "",
+            category: row.category || "engineering",
+            remote: false,
+            remoteScope: undefined,
+            remoteEligibility: undefined,
+            country: "",
+            type: row.job_type === "internship" ? "Internship" : "Full-time",
+            directSource: false,
+            applyUrl: "",
+            description: "",
+            skills: [],
+            postedAt: row.posted_at || row.created_at,
+          };
+        }
+
+        return {
+          id: row.id,
+          title: row.title || "Untitled Position",
+          company: row.company || "Verified Employer",
+          location: row.location || (row.remote ? "Remote (Worldwide)" : "Remote"),
+          date: formatDate(row.posted_at || row.created_at),
+          salary: row.salary_text || "",
+          category: row.category || "engineering",
+          remote: Boolean(row.remote),
+          remoteScope: row.remote_scope || undefined,
+          remoteEligibility: row.remote_eligibility || undefined,
+          country: row.country_code || "US",
+          type: row.job_type === "internship" ? "Internship" : "Full-time",
+          directSource: Boolean(row.verified),
+          applyUrl: row.apply_url || "",
+          description: row.description || "",
+          skills: row.skills || [],
+          postedAt: row.posted_at || row.created_at,
+        };
+      });
 
       return {
         jobs: mappedJobs,
@@ -254,7 +282,7 @@ export async function getLiveJobById(jobId: string, isPro: boolean = false): Pro
     const supabase = createClient();
     const selectColumns = isPro
       ? "id, title, location, category, remote, remote_scope, remote_eligibility, country_code, job_type, verified, posted_at, created_at, description, skills, company, salary_text, apply_url"
-      : "id, title, location, category, remote, remote_scope, remote_eligibility, country_code, job_type, verified, posted_at, created_at, description, skills";
+      : "id, title, category, job_type, posted_at, created_at";
 
     const { data, error } = await (supabase
       .from("jobs")
@@ -266,13 +294,33 @@ export async function getLiveJobById(jobId: string, isPro: boolean = false): Pro
 
     if (!error && data) {
       const row = data as any;
+      if (!isPro) {
+        return {
+          id: row.id,
+          title: row.title || "Untitled Position",
+          company: "",
+          location: "",
+          date: formatDate(row.posted_at || row.created_at),
+          salary: "",
+          category: row.category || "engineering",
+          remote: false,
+          country: "",
+          type: row.job_type === "internship" ? "Internship" : "Full-time",
+          directSource: false,
+          applyUrl: "",
+          description: "",
+          skills: [],
+          postedAt: row.posted_at || row.created_at,
+        };
+      }
+
       return {
         id: row.id,
         title: row.title || "Untitled Position",
-        company: isPro ? (row.company || "Verified Employer") : "Confidential Employer",
-        location: row.location || (row.remote ? "Remote (Unknown Location)" : "Unknown"),
+        company: row.company || "Verified Employer",
+        location: row.location || (row.remote ? "Remote (Worldwide)" : "Remote"),
         date: formatDate(row.posted_at || row.created_at),
-        salary: isPro ? (row.salary_text || "") : "",
+        salary: row.salary_text || "",
         category: row.category || "engineering",
         remote: Boolean(row.remote),
         remoteScope: row.remote_scope || undefined,
@@ -280,9 +328,9 @@ export async function getLiveJobById(jobId: string, isPro: boolean = false): Pro
         country: row.country_code || "US",
         type: row.job_type === "internship" ? "Internship" : "Full-time",
         directSource: Boolean(row.verified),
-        applyUrl: isPro ? (row.apply_url || "") : "",
-        description: row.description || undefined,
-        skills: row.skills || undefined,
+        applyUrl: row.apply_url || "",
+        description: row.description || "",
+        skills: row.skills || [],
         postedAt: row.posted_at || row.created_at,
       };
     }
@@ -293,11 +341,29 @@ export async function getLiveJobById(jobId: string, isPro: boolean = false): Pro
   // Fallback to static DUMMY_JOBS if matching legacy ID
   const found = DUMMY_JOBS.find((j) => j.id === cleanId);
   if (found) {
+    if (!isPro) {
+      return {
+        id: found.id,
+        title: found.title,
+        company: "",
+        location: "",
+        date: found.date,
+        salary: "",
+        category: found.category,
+        remote: false,
+        country: "",
+        type: found.type,
+        directSource: false,
+        applyUrl: "",
+        description: "",
+        skills: [],
+      };
+    }
     return {
       ...found,
-      company: isPro ? found.company : "Confidential Employer",
-      salary: isPro ? found.salary : "",
-      applyUrl: isPro ? found.applyUrl : "",
+      company: found.company,
+      salary: found.salary,
+      applyUrl: found.applyUrl,
     };
   }
 

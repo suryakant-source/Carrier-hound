@@ -87,9 +87,9 @@ export default function FitDiagnosticsModal({
           <div className="pr-8 space-y-1">
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                <Sparkles className="w-3 h-3" /> Deterministic Fit Diagnostic
+                <Sparkles className="w-3 h-3" /> Match Breakdown
               </span>
-              <span className="text-xs text-slate-400 font-mono">100% Reproducible</span>
+              <span className="text-xs text-slate-400 font-mono">Verified Match</span>
             </div>
             <h2 className="text-lg sm:text-xl font-bold text-white line-clamp-1">{job.title}</h2>
             <p className="text-xs sm:text-sm text-slate-300">
@@ -132,7 +132,7 @@ export default function FitDiagnosticsModal({
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Calculated deterministically against your confirmed resume facts ({candidate.skills.length} skills, {candidate.experience.length} roles).
+                  Calculated from your confirmed profile facts ({candidate.skills.length} skills, {candidate.experience.length} roles).
                 </p>
               </div>
             </div>

@@ -1476,6 +1476,34 @@ export default function JobRadarGlobe() {
                 const isApplied = appliedJobs[job.id];
                 const gradient = getCompanyGradient(job.company);
 
+                // Tier 1: Signed-out visitor sees only logo + title
+                if (!currentUser) {
+                  return (
+                    <div
+                      key={job.id}
+                      className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800/60 flex items-center justify-between gap-3"
+                    >
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div
+                          className={`w-9 h-9 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-bold text-sm shadow-md shrink-0`}
+                        >
+                          {job.title.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="text-sm font-bold text-white truncate">
+                          {job.title}
+                        </span>
+                      </div>
+                      <Link
+                        href={`/login?next=${encodeURIComponent(typeof window !== "undefined" ? window.location.pathname + window.location.search : "/radar")}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shrink-0"
+                      >
+                        <Lock className="w-3 h-3" />
+                        <span>Sign in to continue</span>
+                      </Link>
+                    </div>
+                  );
+                }
+
                 return (
                   <div
                     key={job.id}
@@ -1495,22 +1523,24 @@ export default function JobRadarGlobe() {
                           {job.company.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          {/* Role Title (Visible to all) & Match Score Badge */}
+                          {/* Role Title & Pro Match Score Badge */}
                           <div className="flex items-center gap-2 flex-wrap">
                             <h4 className="text-sm font-extrabold text-white group-hover:text-cyan-300 transition-colors leading-snug break-words">
                               {job.title}
                             </h4>
-                            <MatchScoreBadge
-                              job={{
-                                id: job.id,
-                                title: job.title,
-                                company: job.company,
-                                location: job.location,
-                                salary_text: job.salaryText || undefined,
-                                apply_url: job.applyUrl,
-                              }}
-                              size="sm"
-                            />
+                            {isPro && (
+                              <MatchScoreBadge
+                                job={{
+                                  id: job.id,
+                                  title: job.title,
+                                  company: job.company,
+                                  location: job.location,
+                                  salary_text: job.salaryText || undefined,
+                                  apply_url: job.applyUrl,
+                                }}
+                                size="sm"
+                              />
+                            )}
                           </div>
 
                           {/* Company Name: Pro vs Free Gated */}

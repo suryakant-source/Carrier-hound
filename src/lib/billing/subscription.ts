@@ -9,21 +9,17 @@ import {
 const LOCAL_SUB_KEY = "careermonke_subscription_cache";
 
 /**
- * Checks the user's active Pro access status, strictly server-verified.
- * 1. Active paid subscriptions in Supabase (Razorpay / Stripe)
- * 2. 7-Day Grace Period on failed renewal
- * Until billing is live and verified on the server, everyone is Free.
+ * Checks the user's active Pro access status, strictly server-verified from Supabase subscriptions table.
+ * Default is FALSE (signed-in non-Pro) until server subscription is active.
+ * Client-side overrides (localStorage/user_metadata) are strictly disabled.
  */
 export async function getProAccessStatus(userId?: string): Promise<ProAccessStatus> {
-  // 1. Instant / Local Pro check (Demo / Dummy mode to see behind paywall)
-  if (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true") {
-    return {
-      isPro: true,
-      status: "active",
-      planName: PLAN_DOMESTIC.name,
-      inGracePeriod: false,
-    };
-  }
+  const freeDefault: ProAccessStatus = {
+    isPro: false,
+    status: "none",
+    planName: "Free Tier",
+    inGracePeriod: false,
+  };
 
   try {
     const supabase = createClient();
@@ -33,26 +29,14 @@ export async function getProAccessStatus(userId?: string): Promise<ProAccessStat
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         resolvedUserId = session.user.id;
-        if (session.user.user_metadata?.is_pro === true) {
-          return {
-            isPro: true,
-            status: "active",
-            planName: PLAN_DOMESTIC.name,
-            inGracePeriod: false,
-          };
-        }
       } else {
         const { data: { user } } = await supabase.auth.getUser();
         resolvedUserId = user?.id;
-        if (user?.user_metadata?.is_pro === true) {
-          return {
-            isPro: true,
-            status: "active",
-            planName: PLAN_DOMESTIC.name,
-            inGracePeriod: false,
-          };
-        }
       }
+    }
+
+    if (!resolvedUserId) {
+      return freeDefault;
     }
 
     if (resolvedUserId) {
@@ -118,25 +102,14 @@ export async function getProAccessStatus(userId?: string): Promise<ProAccessStat
 /**
  * Sets Pro status locally and broadcasts update event.
  */
-export function setLocalProActive(active: boolean = true) {
-  if (typeof window !== "undefined") {
-    try {
-      if (active) {
-        localStorage.setItem("careermonke_pro_active", "true");
-      } else {
-        localStorage.removeItem("careermonke_pro_active");
-      }
-      window.dispatchEvent(new Event("careermonke_auth_updated"));
-      window.dispatchEvent(new Event("careermonke_pro_updated"));
-    } catch {}
-  }
+export function setLocalProActive(_active: boolean = false) {
+  // Pro status is strictly managed on the server (Supabase subscriptions).
 }
 
 /**
  * Retrieves the full user subscription object if one exists
  */
 export async function getUserSubscription(): Promise<UserSubscription | null> {
-  const isLocalPro = typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true";
 
   try {
     const supabase = createClient();
@@ -171,21 +144,6 @@ export async function getUserSubscription(): Promise<UserSubscription | null> {
     }
   } catch (e) {
     console.warn("Could not fetch user subscription", e);
-  }
-
-  if (isLocalPro) {
-    return {
-      id: "demo-subscription",
-      userId: "local-user",
-      provider: "manual",
-      planId: PLAN_DOMESTIC.id,
-      currency: "INR",
-      amount: 199,
-      status: "active",
-      currentPeriodStart: new Date().toISOString(),
-      currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-      cancelAtPeriodEnd: false,
-    };
   }
 
   return null;

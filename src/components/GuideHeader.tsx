@@ -447,7 +447,7 @@ export default function GuideHeader() {
             )}
           </div>
 
-          <div className="pt-6 pb-4 border-t border-gray-100">
+          <div className="pt-4 pb-8 border-t border-gray-100">
             {user ? (
               <button
                 type="button"
@@ -458,18 +458,18 @@ export default function GuideHeader() {
                 <span>Sign Out</span>
               </button>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-2.5 pb-6">
                 <Link
                   href="/signup"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center bg-blue-600 text-white py-3 rounded-xl font-bold text-xs shadow-xs"
+                  className="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl font-bold text-xs shadow-xs transition"
                 >
                   Get Started Free
                 </Link>
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center border border-slate-200 text-slate-700 py-2.5 rounded-xl font-semibold text-xs"
+                  className="w-full flex items-center justify-center border border-slate-300 hover:bg-slate-50 bg-white text-slate-800 py-3 rounded-xl font-bold text-xs shadow-2xs transition"
                 >
                   Sign In
                 </Link>

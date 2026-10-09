@@ -85,7 +85,7 @@ export default function MegaMenu({ isOpen, onClose }: MegaMenuProps) {
                   <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-blue-600" />
                 </div>
                 <p className="text-xs text-[#4B5563] mt-1 leading-relaxed">
-                  Spotting ghost listings and dead requisitions before submitting applications.
+                  Spotting ghost listings and expired postings before submitting applications.
                 </p>
               </Link>
             </div>

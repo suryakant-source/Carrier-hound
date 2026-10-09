@@ -49,12 +49,15 @@ export async function getTodayDigest(userId?: string, isProUser?: boolean): Prom
       }
     }
 
+    const profile = await getCandidateProfile();
+
     if (resolvedUserId) {
+      // Query today's digest specifically to avoid presenting stale digests from previous dates
       const queryPromise = supabase
         .from("daily_digests")
         .select("*")
         .eq("user_id", resolvedUserId)
-        .order("digest_date", { ascending: false })
+        .eq("digest_date", todayStr)
         .limit(1)
         .maybeSingle();
 
@@ -64,7 +67,14 @@ export async function getTodayDigest(userId?: string, isProUser?: boolean): Prom
 
       const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
 
-      if (!error && data && Array.isArray(data.matched_jobs) && data.matched_jobs.length > 0) {
+      // Check if profile was updated after this digest was generated
+      const isProfileNewer = Boolean(
+        profile?.updatedAt &&
+        data?.created_at &&
+        new Date(profile.updatedAt).getTime() > new Date(data.created_at).getTime()
+      );
+
+      if (!error && data && Array.isArray(data.matched_jobs) && data.matched_jobs.length > 0 && !isProfileNewer) {
         // Enforce consistent payload-level Pro gating on stored matches
         const sanitizedMatches: DigestMatchItem[] = data.matched_jobs.map((item: any) => ({
           jobId: item.jobId || item.id,
@@ -90,7 +100,7 @@ export async function getTodayDigest(userId?: string, isProUser?: boolean): Prom
     console.warn("Could not retrieve remote digest, computing from live jobs:", e);
   }
 
-  // Fallback: Compute top matches against candidate profile only if confirmed
+  // Compute top matches across the full relevant dataset against candidate profile
   try {
     const profile = await getCandidateProfile();
     if (!profile || !profile.confirmedAt) {
@@ -101,8 +111,8 @@ export async function getTodayDigest(userId?: string, isProUser?: boolean): Prom
       };
     }
 
-    // Use live verified jobs from the exact same source as /jobs
-    const liveRes = await getLiveJobs({ page: 1, pageSize: 50, isPro });
+    // Scan full relevant dataset (up to 200 jobs) rather than subset of 50
+    const liveRes = await getLiveJobs({ page: 1, pageSize: 200, isPro });
     const matches: DigestMatchItem[] = [];
 
     for (const job of liveRes.jobs) {
@@ -117,7 +127,7 @@ export async function getTodayDigest(userId?: string, isProUser?: boolean): Prom
         salary_text: job.salary,
       });
 
-      if (diagnostics.score >= 50) {
+      if (diagnostics.score >= 35) {
         matches.push({
           jobId: job.id,
           title: job.title,

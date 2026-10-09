@@ -174,7 +174,7 @@ export default function HomePage() {
         <div className="mt-12 p-6 sm:p-8 bg-slate-50 border border-slate-200 rounded-2xl max-w-4xl mx-auto shadow-2xs">
           <div className="text-center mb-6">
             <span className="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
-              Deterministic Matching Workflow
+              Verified Matching Workflow
             </span>
             <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mt-2">
               From raw resume to direct hire in 4 honest steps
@@ -214,7 +214,7 @@ export default function HomePage() {
                   4
                 </div>
                 <div className="text-sm font-bold text-slate-900">Score Against Any Job</div>
-                <p className="text-xs text-slate-500 mt-1">0-100% deterministic AI fit diagnostics & skill gap analysis</p>
+                <p className="text-xs text-slate-500 mt-1">0-100% verified AI fit score & skill gap analysis</p>
               </div>
             </div>
           </div>

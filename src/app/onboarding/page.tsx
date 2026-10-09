@@ -407,7 +407,7 @@ function OnboardingPageInner() {
             <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 sm:p-5 flex items-start gap-3 shadow-2xs">
               <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
               <div className="space-y-1 text-xs text-blue-900">
-                <span className="font-bold">Strict Privacy & Deterministic Matching Policy</span>
+                <span className="font-bold">Strict Privacy & Verified Matching Policy</span>
                 <p className="text-blue-800 leading-relaxed">
                   Your resume is parsed to extract real facts (skills, timeline, education).
                   We <strong>never hallucinate credentials</strong> or share your raw file.

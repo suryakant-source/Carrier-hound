@@ -109,7 +109,7 @@ export default function ResourcesIndexPage() {
           <div className="space-y-1">
             <h3 className="font-bold text-base text-slate-900">Explore 150+ Companies Hiring Worldwide</h3>
             <p className="text-xs text-slate-600">
-              Verified distributed organizations with open requisition feeds.
+              Verified distributed organizations with open job feeds.
             </p>
           </div>
           <Link

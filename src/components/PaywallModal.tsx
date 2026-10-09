@@ -83,57 +83,7 @@ export default function PaywallModal({
   }, [initialUser, open]);
 
   const handleCheckout = async () => {
-    setIsProcessing(true);
-    try {
-      const supabase = createClient();
-      let activeUser = currentUser;
-      if (!activeUser || activeUser.id === "local-user") {
-        const { data } = await supabase.auth.getUser();
-        if (data?.user) activeUser = data.user;
-      }
-
-      if (activeUser?.id && activeUser.id !== "local-user") {
-        try {
-          await supabase.auth.updateUser({ data: { is_pro: true } });
-        } catch (_) {}
-
-        try {
-          await supabase.from("subscriptions").upsert({
-            user_id: activeUser.id,
-            provider: selectedPlanId === "domestic" ? "razorpay" : "stripe",
-            plan_id: selectedPlanId === "domestic" ? "domestic_monthly_199" : "intl_monthly_9",
-            currency: selectedPlanId === "domestic" ? "INR" : "USD",
-            amount: selectedPlanId === "domestic" ? 19900 : 900,
-            status: "active",
-            current_period_start: new Date().toISOString(),
-            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-            cancel_at_period_end: false,
-          });
-        } catch (_) {}
-      }
-
-      setLocalProActive(true);
-      setIsProcessing(false);
-      setIsSuccess(true);
-      toast.success("CareerMonke Pro unlocked! Everything behind the paywall is now visible.");
-      onSuccess?.();
-
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new Event("careermonke_auth_updated"));
-        window.dispatchEvent(new Event("careermonke_pro_updated"));
-      }
-    } catch (e) {
-      console.warn("Pro dummy activation error:", e);
-      setLocalProActive(true);
-      setIsProcessing(false);
-      setIsSuccess(true);
-      toast.success("CareerMonke Pro unlocked!");
-      onSuccess?.();
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new Event("careermonke_auth_updated"));
-        window.dispatchEvent(new Event("careermonke_pro_updated"));
-      }
-    }
+    toast.info("Payments coming soon! Pro subscriptions will be available as soon as checkout is live.");
   };
 
   if (!open) return null;
@@ -320,7 +270,7 @@ export default function PaywallModal({
                       <>
                         <Sparkles className="w-4 h-4 text-yellow-300" />
                         <span>
-                          Subscribe via {selectedPlanId === "domestic" ? "Razorpay (₹199)" : "Stripe ($9)"} (Dummy Unlock)
+                          Upgrade to Pro ({selectedPlanId === "domestic" ? "₹199/mo" : "$9/mo"})
                         </span>
                         <ArrowRight className="w-4 h-4" />
                       </>
@@ -359,9 +309,7 @@ export default function PaywallModal({
                     ) : (
                       <>
                         <Sparkles className="w-4 h-4 text-yellow-300" />
-                        <span>
-                          Subscribe via {selectedPlanId === "domestic" ? "Razorpay (₹199)" : "Stripe ($9)"} (Dummy Unlock)
-                        </span>
+                        <span>Payments Coming Soon</span>
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}

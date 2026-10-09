@@ -13,6 +13,7 @@ import { computeFitDiagnostics, FitDiagnosticsResult } from "@/lib/matcher/scori
 import { addApplicationToTracker, getTrackedApplications, removeApplicationFromTracker } from "@/lib/tracker/storage";
 import { getProAccessStatus } from "@/lib/billing/subscription";
 import PaywallModal from "@/components/PaywallModal";
+import ProUpgradeScreen from "@/components/billing/ProUpgradeScreen";
 import CoverLetterModal from "@/components/resume/CoverLetterModal";
 import TailorResumeModal from "@/components/resume/TailorResumeModal";
 import FitDiagnosticsModal from "@/components/matcher/FitDiagnosticsModal";
@@ -127,7 +128,52 @@ function JobDetailInner() {
     );
   }
 
-  // Not found or closed job state
+  // Tier 1: Signed-out visitor
+  if (!user) {
+    const returnUrl = typeof window !== "undefined" ? window.location.pathname + window.location.search : `/jobs/detail?id=${job?.id || ""}`;
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
+        <GuideHeader />
+        <main className="flex-1 max-w-lg w-full mx-auto px-4 py-16 flex flex-col items-center justify-center text-center space-y-5">
+          <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200 shadow-xs">
+            <Lock className="w-7 h-7" />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Sign in to view job details</h1>
+            <p className="text-sm text-slate-600 max-w-sm mx-auto leading-relaxed">
+              Sign in to unlock full role descriptions, company info, salary ranges, and match scores.
+            </p>
+          </div>
+          <Link
+            href={`/login?next=${encodeURIComponent(returnUrl)}`}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white font-bold text-sm shadow-xs hover:bg-blue-700 transition"
+          >
+            <span>Sign In to Continue</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Tier 2: Signed-in non-Pro member
+  if (!isPro) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
+        <GuideHeader />
+        <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-8">
+          <ProUpgradeScreen
+            title="Unlock Full Job Details"
+            subtitle="Upgrade to CareerMonke Pro to see verified company names, compensation, direct ATS apply links, and compatibility scores."
+          />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Not found or closed job state (for Pro user)
   if (!job) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -136,9 +182,9 @@ function JobDetailInner() {
           <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200">
             <AlertCircle className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">Job Not Found or Requisition Closed</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Job Opening Not Found</h1>
           <p className="text-sm text-slate-600 max-w-md mx-auto">
-            This opening may have been unlisted or filled by the employer&apos;s ATS portal.
+            This opening may have been unlisted or closed by the employer.
           </p>
           <div className="pt-4">
             <Link
@@ -259,7 +305,7 @@ function JobDetailInner() {
           </Link>
 
           <span className="text-[11px] font-bold text-slate-400">
-            Requisition ID: {job.id.slice(0, 16)}…
+            Job ID: {job.id.slice(0, 8)}
           </span>
         </div>
 
@@ -307,31 +353,13 @@ function JobDetailInner() {
                 {job.title}
               </h1>
 
-              {/* Company & Location (with Pro access gate) */}
+              {/* Company & Location */}
               <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-slate-600 font-medium">
                 <div className="flex items-center gap-1.5">
                   <Building className="w-4 h-4 text-slate-400 shrink-0" />
-                  <span
-                    onClick={!isPro ? () => setIsPaywallOpen(true) : undefined}
-                    className={
-                      !isPro
-                        ? "filter blur-[5px] select-none text-slate-800 cursor-pointer font-bold"
-                        : "font-bold text-slate-900"
-                    }
-                    title={!isPro ? "Click to unlock company with Pro" : undefined}
-                  >
+                  <span className="font-bold text-slate-900">
                     {job.company}
                   </span>
-                  {!isPro && (
-                    <button
-                      type="button"
-                      onClick={() => setIsPaywallOpen(true)}
-                      className="text-[10px] font-bold text-blue-600 hover:text-blue-800 flex items-center gap-0.5 cursor-pointer ml-1"
-                    >
-                      <Lock className="w-3 h-3" />
-                      <span>Unlock (Pro)</span>
-                    </button>
-                  )}
                 </div>
 
                 <span>•</span>
@@ -353,17 +381,17 @@ function JobDetailInner() {
               </div>
             </div>
 
-            {/* Direct Ingestion Badge */}
+            {/* Direct Feed Badge */}
             <div className="sm:text-right shrink-0 space-y-1">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
                 <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-                <span>Verified Direct ATS Feed</span>
+                <span>Verified Direct Feed</span>
               </span>
-              <p className="text-[10px] text-slate-400">Scraped from official career portal</p>
+              <p className="text-[10px] text-slate-400">Official career portal</p>
             </div>
           </div>
 
-          {/* Prominent Match Score Header Banner */}
+          {/* Match Score Banner */}
           {candidate && diagnostics ? (
             <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
@@ -386,16 +414,16 @@ function JobDetailInner() {
                     <Sparkles className="w-4 h-4 text-blue-600" />
                     <span>
                       {diagnostics.score >= 80
-                        ? "High Deterministic Match"
+                        ? "Strong Match"
                         : diagnostics.score >= 65
-                        ? "Strong Role Alignment"
+                        ? "Good Alignment"
                         : diagnostics.score >= 45
-                        ? "Moderate Fit — Review Skills"
-                        : "Low Alignment"}
+                        ? "Moderate Fit"
+                        : "Low Match"}
                     </span>
                   </div>
                   <p className="text-xs text-slate-600 leading-relaxed">
-                    {diagnostics.matchedSkills.length} matched skills • {diagnostics.missingSkills.length} missing • ~{diagnostics.breakdown.yearsOfExperience}y experience alignment
+                    {diagnostics.matchedSkills.length} matched skills • {diagnostics.missingSkills.length} missing • {diagnostics.breakdown.yearsOfExperience}y experience alignment
                   </p>
                 </div>
               </div>
@@ -405,7 +433,7 @@ function JobDetailInner() {
                 onClick={() => setIsDiagnosticsOpen(true)}
                 className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-xs font-bold text-slate-800 shadow-2xs transition cursor-pointer shrink-0 min-h-[44px]"
               >
-                <span>Inspect Fit Diagnostics</span>
+                <span>View Match Breakdown</span>
                 <ChevronRight className="w-4 h-4 text-blue-600" />
               </button>
             </div>
@@ -467,7 +495,7 @@ function JobDetailInner() {
                 type="button"
                 onClick={() => {
                   if (!candidate) {
-                    toast.info("Please upload your resume first to tailor it for this job.");
+                    toast.info("Please upload your resume first to view ATS skill highlighting for this job.");
                     router.push("/resume");
                     return;
                   }
@@ -476,7 +504,7 @@ function JobDetailInner() {
                 className="inline-flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-xl border border-emerald-300 bg-emerald-50 hover:bg-emerald-100/80 text-emerald-900 text-xs font-bold transition cursor-pointer shadow-2xs"
               >
                 <Sparkles className="w-4 h-4 text-emerald-600" />
-                <span>Tailor Resume</span>
+                <span>ATS Skill Highlighting</span>
               </button>
 
               <button
@@ -499,20 +527,20 @@ function JobDetailInner() {
         </div>
 
         {/* ========================================================================= */}
-        {/* 2. FIT DIAGNOSTICS & GAP ANALYSIS SECTION                                 */}
+        {/* 2. MATCH & SKILL ANALYSIS SECTION                                         */}
         {/* ========================================================================= */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-2xs space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-blue-600" />
               <h2 className="text-base sm:text-lg font-bold text-slate-900">
-                Fit Diagnostics & Gap Analysis
+                Match & Skill Analysis
               </h2>
             </div>
 
             {diagnostics && (
               <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                {diagnostics.score}% Deterministic Match
+                {diagnostics.score}% Match
               </span>
             )}
           </div>
@@ -522,10 +550,10 @@ function JobDetailInner() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                 <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-100 space-y-2 text-xs">
                   <span className="font-bold text-emerald-900 block text-xs">
-                    ✓ Why You Fit (Matched Skills)
+                    ✓ Matched Skills
                   </span>
                   <p className="text-emerald-800 text-[11px]">
-                    Skills from your confirmed resume found in this requisition:
+                    Skills from your profile found in this job:
                   </p>
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {diagnostics?.matchedSkills.length ? (
@@ -535,17 +563,17 @@ function JobDetailInner() {
                         </span>
                       ))
                     ) : (
-                      <span className="text-slate-400 italic">No specific direct skill overlap detected</span>
+                      <span className="text-slate-400 italic">No direct skill overlap</span>
                     )}
                   </div>
                 </div>
 
                 <div className="p-4 rounded-xl bg-amber-50/60 border border-amber-100 space-y-2 text-xs">
                   <span className="font-bold text-amber-900 block text-xs">
-                    ⚠ Missing Skills (Gaps to Address)
+                    ⚠ Missing Skills
                   </span>
                   <p className="text-amber-800 text-[11px]">
-                    Target skills mentioned in the job description that were not flagged in your resume facts:
+                    Required skills not currently on your profile:
                   </p>
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {diagnostics?.missingSkills.length ? (
@@ -555,7 +583,7 @@ function JobDetailInner() {
                         </span>
                       ))
                     ) : (
-                      <span className="text-emerald-700 font-semibold">Zero critical skill gaps detected!</span>
+                      <span className="text-emerald-700 font-semibold">Zero critical skill gaps!</span>
                     )}
                   </div>
                 </div>
@@ -568,7 +596,7 @@ function JobDetailInner() {
                     onClick={() => setIsDiagnosticsOpen(true)}
                     className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 cursor-pointer"
                   >
-                    <span>View Full Scoring Heuristics Breakdown →</span>
+                    <span>View Full Score Breakdown →</span>
                   </button>
 
                   <button
@@ -577,7 +605,7 @@ function JobDetailInner() {
                     className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition cursor-pointer"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Tailor ATS Resume for this Role →</span>
+                    <span>Highlight Skills for this Role →</span>
                   </button>
                 </div>
               )}
@@ -585,39 +613,40 @@ function JobDetailInner() {
           ) : (
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center space-y-2">
               <p className="text-xs text-slate-600">
-                Connect your resume to unlock real-time match percentage and skill gap diagnostics for this role.
+                Upload your resume to see your match score and skill gaps.
               </p>
               <Link
                 href="/resume"
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-800"
               >
-                <span>Upload & Confirm Resume Facts →</span>
+                <span>Upload Resume →</span>
               </Link>
             </div>
           )}
         </div>
 
         {/* ========================================================================= */}
-        {/* 3. FULL REQUISITION DESCRIPTION                                           */}
+        {/* 3. ROLE OVERVIEW                                                          */}
         {/* ========================================================================= */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-2xs space-y-4">
           <h2 className="text-base sm:text-lg font-bold text-slate-900">
-            About the Role & Responsibilities
+            About the Role
           </h2>
 
           <div className="text-xs sm:text-sm text-slate-700 leading-relaxed space-y-3">
-            <p>
-              This position was retrieved directly from the employer&apos;s verified career portal. Below is the published job overview and primary scope:
-            </p>
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2 font-mono text-xs text-slate-800">
               <p>• Category: {job.category || "General Tech"}</p>
-              <p>• Location Eligibility: {job.location || "Unknown"}</p>
-              <p>• Employment Type: {job.type || "Full-Time Direct Hire"}</p>
-              <p>• Reported Compensation: {isPro && job.salary ? job.salary : "Locked (Pro Membership)"}</p>
+              <p>• Location: {job.location || "Remote"}</p>
+              <p>• Employment Type: {job.type || "Full-Time"}</p>
+              {job.salary && <p>• Compensation: {job.salary}</p>}
             </div>
-            <p>
-              Candidates are encouraged to tailor their application to address the core responsibilities outlined above and apply directly through the company&apos;s ATS link.
-            </p>
+            {job.description ? (
+              <div className="pt-2 whitespace-pre-wrap">{job.description}</div>
+            ) : (
+              <p className="text-slate-500">
+                Apply directly on the employer&apos;s site to view the complete posting and application requirements.
+              </p>
+            )}
           </div>
         </div>
       </main>

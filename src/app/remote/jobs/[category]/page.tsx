@@ -189,7 +189,7 @@ export default function CategoryLandingPage({ params }: PageProps) {
                 Search the complete title family
               </h2>
               <p className="text-sm text-[#4B5563]">
-                Click any specific alias to filter exact requisitions across employer boards.
+                Click any specific title to filter exact openings across employer boards.
               </p>
             </div>
 

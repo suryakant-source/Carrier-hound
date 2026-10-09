@@ -1,23 +1,30 @@
 import { CandidateProfile, ExtractedFact, ParsedResumeResult, WorkExperienceItem, EducationItem } from "./types";
 
-// Canonical dictionary of tech & industry skills (case-insensitive mapping)
+// Canonical dictionary of tech & industry skills across domains
 export const SKILLS_TAXONOMY: string[] = [
-  // Programming Languages
+  // Programming & Software Engineering
   "JavaScript", "TypeScript", "Python", "Java", "C++", "C#", "Go", "Golang", "Rust", "PHP", "Ruby", "Swift", "Kotlin", "SQL", "HTML", "CSS", "Bash", "Shell",
   // Frontend
   "React", "Next.js", "Vue", "Vue.js", "Angular", "Svelte", "Redux", "Tailwind CSS", "Bootstrap", "Material-UI", "Webpack", "Vite", "GraphQL", "REST API", "Responsive Design",
-  // Backend & Frameworks
-  "Node.js", "Express", "NestJS", "FastAPI", "Django", "Flask", "Spring Boot", "ASP.NET", "Ruby on Rails", "Laravel", "Microservices", "gRPC", "WebSockets",
-  // Databases
+  // Backend & Architecture
+  "Node.js", "Express", "NestJS", "FastAPI", "Django", "Flask", "Spring Boot", "ASP.NET", "Ruby on Rails", "Laravel", "Microservices", "gRPC", "WebSockets", "System Design", "Software Architecture",
+  // Databases & Cloud
   "PostgreSQL", "MySQL", "MongoDB", "Redis", "SQLite", "Supabase", "DynamoDB", "Elasticsearch", "Cassandra", "Snowflake", "BigQuery", "Firebase", "Prisma",
-  // Cloud & DevOps
   "AWS", "Amazon Web Services", "GCP", "Google Cloud", "Azure", "Docker", "Kubernetes", "Terraform", "CI/CD", "GitHub Actions", "GitLab CI", "Linux", "Nginx", "Ansible", "Helm",
-  // AI, Data & ML
-  "Machine Learning", "Deep Learning", "TensorFlow", "PyTorch", "Pandas", "NumPy", "Scikit-Learn", "NLP", "Computer Vision", "OpenAI", "LangChain", "LLM", "Data Analysis",
-  // Testing & Methodologies
-  "Jest", "Cypress", "Playwright", "Selenium", "Unit Testing", "Integration Testing", "Git", "GitHub", "GitLab", "Jira", "Agile", "Scrum",
-  // Roles & Domains
-  "System Design", "Software Architecture", "UI/UX", "Product Management", "Performance Optimization", "Security", "OAuth", "API Design"
+  // Data Engineering & Analytics
+  "Data Analysis", "Data Modeling", "ETL", "Tableau", "Power BI", "Data Visualization", "dbt", "Spark", "Apache Spark", "Airflow", "Apache Airflow", "Kafka", "Pandas", "NumPy", "Scikit-Learn",
+  // AI & Machine Learning
+  "Machine Learning", "Deep Learning", "TensorFlow", "PyTorch", "NLP", "Computer Vision", "OpenAI", "LangChain", "LLM",
+  // Marketing & Growth
+  "SEO", "Search Engine Optimization", "SEM", "Google Ads", "Meta Ads", "Facebook Ads", "HubSpot", "Google Analytics", "Content Strategy", "Content Marketing", "Copywriting", "Email Marketing", "Social Media Marketing", "PPC", "Growth Marketing", "Inbound Marketing", "Lead Generation", "Market Research", "Brand Strategy", "Affiliate Marketing", "Mailchimp",
+  // Product & Design
+  "Product Management", "UI/UX", "UI Design", "UX Research", "Figma", "Sketch", "Adobe XD", "Photoshop", "Illustrator", "Wireframing", "Prototyping", "Design Systems",
+  // Finance & Accounting
+  "Financial Modeling", "Accounting", "QuickBooks", "SAP", "Excel", "Financial Analysis", "Forecasting", "Budgeting", "Auditing", "Valuation",
+  // HR & Operations
+  "Recruiting", "Talent Acquisition", "HRIS", "Employee Relations", "Payroll", "Onboarding", "Operations Management", "Salesforce", "CRM", "B2B Sales", "Business Development",
+  // Methodologies & Tools
+  "Git", "GitHub", "GitLab", "Jira", "Agile", "Scrum", "Jest", "Cypress", "Playwright", "Selenium", "Unit Testing", "Integration Testing", "Performance Optimization", "Security", "OAuth", "API Design"
 ];
 
 /**
@@ -132,6 +139,10 @@ async function extractTextFromPdf(file: File): Promise<string> {
  * NEVER invents facts: ambiguities are marked as "needs_review".
  */
 export function parseResumeText(rawText: string): ParsedResumeResult {
+  if (!rawText || rawText.trim().length < 15) {
+    throw new Error("Resume content is empty or unreadable. Please paste your resume text or upload a valid PDF/Word file.");
+  }
+
   const lines = rawText
     .split(/\r?\n/)
     .map((l) => l.trim())
@@ -174,17 +185,46 @@ export function parseResumeText(rawText: string): ParsedResumeResult {
     });
   }
 
+  // Location extraction
+  let location = "";
+  for (let i = 0; i < Math.min(8, lines.length); i++) {
+    const line = lines[i];
+    const locMatch = line.match(/(?:location|address)\s*:\s*([^,\n|]+(?:,\s*[^,\n|]+)?)/i);
+    if (locMatch) {
+      location = locMatch[1].trim();
+      break;
+    }
+    const geoMatch = line.match(/\b([A-Z][a-zA-Z\s.-]+,\s*(?:[A-Z]{2}|[A-Z][a-zA-Z\s]+))\b/);
+    if (geoMatch && !line.includes("@") && !line.includes("http") && line.length < 60) {
+      location = geoMatch[0].trim();
+      break;
+    }
+    if (/\b(remote|worldwide)\b/i.test(line) && line.length < 40 && !line.includes("@")) {
+      location = line.trim();
+      break;
+    }
+  }
+
+  if (location) {
+    facts.push({
+      id: "fact-location",
+      category: "contact",
+      label: "Location",
+      value: location,
+      confidence: "high",
+    });
+  }
+
   // 2. Candidate Name & Headline (typically first 1-3 lines)
   let name = "";
   let headline = "";
   for (let i = 0; i < Math.min(5, lines.length); i++) {
     const line = lines[i];
-    // Ignore line if it has email or phone or is too long
     if (!line.includes("@") && !line.match(/\d{5,}/) && line.length < 50 && !name) {
       name = line.replace(/^(name\s*:\s*|resume\s*of\s*)/i, "").trim();
       continue;
     }
-    if (name && !headline && line.length < 80 && !line.includes("@")) {
+    if (name && !headline && line.length < 80 && !line.includes("@") && !line.includes("http")) {
       headline = line;
       break;
     }
@@ -215,7 +255,6 @@ export function parseResumeText(rawText: string): ParsedResumeResult {
 
   for (const skill of SKILLS_TAXONOMY) {
     const lowerSkill = skill.toLowerCase();
-    // Escape special regex chars like C++, C#, .NET
     const escaped = lowerSkill.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const regex = new RegExp(`(?:^|[\\s,;/|])${escaped}(?:$|[\\s,;/|])`, "i");
     if (regex.test(lowerText)) {
@@ -244,7 +283,6 @@ export function parseResumeText(rawText: string): ParsedResumeResult {
       const startDate = match[1];
       const endDate = match[2];
 
-      // The role/company is usually either on this line or the immediate preceding line
       let roleCandidate = "";
       let companyCandidate = "";
 
@@ -263,7 +301,6 @@ export function parseResumeText(rawText: string): ParsedResumeResult {
         companyCandidate = lines[i - 1];
       }
 
-      // Collect bullets from subsequent lines until next header or date
       const bullets: string[] = [];
       let j = i + 1;
       while (j < lines.length && j < i + 6) {
@@ -286,7 +323,7 @@ export function parseResumeText(rawText: string): ParsedResumeResult {
         role: roleCandidate || "Role Title (Needs Confirmation)",
         startDate,
         endDate,
-        bullets: bullets.length > 0 ? bullets : ["Collaborated with cross-functional engineering teams on core deliverables."],
+        bullets: bullets, // ZERO FABRICATION: do not invent fake achievements
         needsReview: isUnclear,
       };
 
@@ -302,82 +339,142 @@ export function parseResumeText(rawText: string): ParsedResumeResult {
     }
   }
 
-  // 5. Education Extraction
+  // 5. Education Extraction (Section-aware & strict word boundary matches)
   const education: EducationItem[] = [];
-  const degreeKeywords = ["Bachelor", "B.Tech", "B.S.", "B.E.", "Master", "M.S.", "M.Tech", "MCA", "MBA", "Ph.D", "Computer Science", "Engineering"];
+  const degreeRegexes = [
+    /\b(bachelor(?:'s)?(?:\s+of\s+[a-zA-Z\s]+)?|b\.?s\.?|b\.?a\.?|b\.?tech|b\.?e\.?)\b/i,
+    /\b(master(?:'s)?(?:\s+of\s+[a-zA-Z\s]+)?|m\.?s\.?|m\.?tech|m\.?e\.?|mca|\bmba\b)\b/i,
+    /\b(ph\.?d|doctorate|associate(?:'s)?\s+degree)\b/i,
+  ];
 
+  let inEducationSection = false;
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    for (const deg of degreeKeywords) {
-      if (line.toLowerCase().includes(deg.toLowerCase())) {
+    if (/^(education|academic|qualifications|academic\s+background)\b/i.test(line)) {
+      inEducationSection = true;
+      continue;
+    }
+    if (inEducationSection && /^(experience|work\s+history|skills|projects|certifications|awards)\b/i.test(line)) {
+      inEducationSection = false;
+      continue;
+    }
+
+    const matchedRegex = degreeRegexes.find((rx) => rx.test(line));
+    // Guard: ignore common city names that happen to contain substring letters
+    const isCityOnly = /^(mumbai|delhi|bangalore|pune|hyderabad|new york|san francisco|london|chicago|austin)\b/i.test(line.trim());
+
+    if (!isCityOnly && (inEducationSection || matchedRegex)) {
+      if (matchedRegex || (inEducationSection && line.length > 5 && line.length < 80)) {
+        if (/^(education|degrees|academics)$/i.test(line.trim())) continue;
+
         const yearMatch = line.match(/\b(19\d{2}|20\d{2})\b/);
         const year = yearMatch ? yearMatch[0] : "";
-        const nextLine = i + 1 < lines.length ? lines[i + 1] : "";
+        const nextLine = i + 1 < lines.length && !degreeRegexes.some((rx) => rx.test(lines[i + 1])) ? lines[i + 1] : "";
+        const isNextLineInstitution = nextLine && !nextLine.match(/^(experience|skills|projects)/i) && nextLine.length < 80;
 
         const eduItem: EducationItem = {
           id: `edu-${education.length + 1}`,
-          degree: line,
-          institution: nextLine.length < 80 ? nextLine : "University / Institution",
-          year: year || "Completed",
+          degree: line.replace(/\b(19\d{2}|20\d{2})\b/g, "").trim(),
+          institution: isNextLineInstitution ? nextLine.trim() : (inEducationSection ? "University / College" : ""),
+          year: year || "",
           needsReview: !year,
         };
 
-        education.push(eduItem);
-        facts.push({
-          id: eduItem.id,
-          category: "education",
-          label: eduItem.degree,
-          value: `${eduItem.institution} (${eduItem.year})`,
-          confidence: eduItem.needsReview ? "needs_review" : "high",
-        });
-        break;
+        if (eduItem.degree) {
+          education.push(eduItem);
+          facts.push({
+            id: eduItem.id,
+            category: "education",
+            label: eduItem.degree,
+            value: eduItem.year ? `${eduItem.institution} (${eduItem.year})` : eduItem.institution,
+            confidence: eduItem.needsReview ? "needs_review" : "high",
+          });
+        }
+        if (isNextLineInstitution) i++;
       }
     }
   }
 
-  // 6. Certifications
+  // 6. Certifications (Preserve full titles from document)
   const certifications: string[] = [];
-  const certKeywords = ["AWS Certified", "Google Cloud Certified", "Azure Certified", "CKA", "PMP", "Scrum Master"];
-  for (const cert of certKeywords) {
-    if (rawText.toLowerCase().includes(cert.toLowerCase())) {
-      certifications.push(cert);
-      facts.push({
-        id: `cert-${cert.toLowerCase().replace(/[^a-z0-9]/g, "-")}`,
-        category: "certification",
-        label: "Certification",
-        value: cert,
-        confidence: "high",
-      });
+  const certTriggers = [
+    "aws certified", "google cloud certified", "azure certified", "cka", "pmp",
+    "scrum master", "cissp", "comptia", "hubspot", "meta certified", "salesforce certified",
+    "certified data", "certified solutions", "certified developer", "certified professional"
+  ];
+
+  let inCertSection = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^(certifications|licenses|courses\s*&?\s*certifications|credentials)\b/i.test(line)) {
+      inCertSection = true;
+      continue;
+    }
+    if (inCertSection && /^(experience|skills|education|projects|summary)\b/i.test(line)) {
+      inCertSection = false;
+      continue;
+    }
+
+    const lower = line.toLowerCase();
+    const hasTrigger = certTriggers.some((ct) => lower.includes(ct));
+
+    if ((inCertSection && line.length > 4 && line.length < 100) || hasTrigger) {
+      const cleanCert = line.replace(/^[•\-\*]\s*/, "").trim();
+      if (cleanCert && !certifications.includes(cleanCert) && !/^(certifications|licenses)$/i.test(cleanCert)) {
+        certifications.push(cleanCert);
+        facts.push({
+          id: `cert-${certifications.length}`,
+          category: "certification",
+          label: "Certification",
+          value: cleanCert,
+          confidence: "high",
+        });
+      }
     }
   }
+
+  // Extract actual summary if present in document
+  let extractedSummary = "";
+  let inSummary = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^(professional\s+summary|summary|profile|about\s+me|objective)\b/i.test(line)) {
+      inSummary = true;
+      continue;
+    }
+    if (inSummary) {
+      if (/^(experience|work\s+history|skills|education|projects|certifications)\b/i.test(line)) {
+        break;
+      }
+      extractedSummary += (extractedSummary ? " " : "") + line;
+      if (extractedSummary.length > 350) break;
+    }
+  }
+
+  const factualSummary = extractedSummary
+    ? extractedSummary
+    : confirmedSkills.length > 0
+    ? `Professional with background in ${confirmedSkills.slice(0, 5).join(", ")}. Focused on delivering measurable results and collaborating across teams.`
+    : "";
+
+  const factualHeadline = headline
+    ? headline
+    : experience.length > 0
+    ? experience[0].role
+    : confirmedSkills.length > 0
+    ? `${confirmedSkills.slice(0, 2).join(" / ")} Specialist`
+    : "";
 
   const profile: CandidateProfile = {
     name: name || "Candidate",
     email,
     phone,
-    headline: headline || (confirmedSkills[0] ? `${confirmedSkills[0]} Developer` : "Software Engineer"),
-    summary: `Dedicated technical professional with hands-on proficiency in ${confirmedSkills.slice(0, 5).join(", ") || "software engineering"}. Experienced in architecting robust solutions, collaborating across cross-functional teams, and driving software delivery.`,
+    location,
+    headline: factualHeadline,
+    summary: factualSummary,
     skills: confirmedSkills,
-    experience: experience.length > 0 ? experience : [
-      {
-        id: "exp-default",
-        company: "Software Company (Please Confirm)",
-        role: "Software Developer",
-        startDate: "2022",
-        endDate: "Present",
-        bullets: ["Developed scalable web applications and backend service APIs.", "Ensured clean code standards and automated test coverage."],
-        needsReview: true,
-      }
-    ],
-    education: education.length > 0 ? education : [
-      {
-        id: "edu-default",
-        degree: "Bachelor of Science in Computer Science (or equivalent)",
-        institution: "University",
-        year: "2022",
-        needsReview: true,
-      }
-    ],
+    experience, // ZERO FABRICATION: strictly empty array [] if fresher or no experience in text
+    education,  // ZERO FABRICATION: strictly empty array [] if no education in text
     certifications,
     rawText,
     updatedAt: new Date().toISOString(),

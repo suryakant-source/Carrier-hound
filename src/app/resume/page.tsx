@@ -3,10 +3,12 @@
 import React, { useState, useEffect } from "react";
 import GuideHeader from "@/components/GuideHeader";
 import Footer from "@/components/Footer";
+import ProUpgradeScreen from "@/components/billing/ProUpgradeScreen";
 import ResumeUploadAndConfirm from "@/components/resume/ResumeUploadAndConfirm";
 import { getCandidateProfile, deleteCandidateProfile } from "@/lib/resume/storage";
 import { CandidateProfile } from "@/lib/resume/types";
 import { getAuthUser } from "@/lib/auth/session";
+import { getProAccessStatus } from "@/lib/billing/subscription";
 import {
   FileText,
   ShieldCheck,
@@ -23,17 +25,26 @@ import { useRouter } from "next/navigation";
 export default function ResumePage() {
   const router = useRouter();
   const [candidate, setCandidate] = useState<CandidateProfile | null>(null);
+  const [isPro, setIsPro] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const loadProfile = () => {
-    getCandidateProfile().then((cp) => {
+  const loadData = async (userId?: string) => {
+    try {
+      const [proRes, cp] = await Promise.all([
+        getProAccessStatus(userId),
+        getCandidateProfile(userId),
+      ]);
+      setIsPro(proRes.isPro);
       if (cp && cp.confirmedAt) {
         setCandidate(cp);
       } else {
         setCandidate(null);
       }
+    } catch {
+      setCandidate(null);
+    } finally {
       setLoading(false);
-    });
+    }
   };
 
   useEffect(() => {
@@ -42,10 +53,14 @@ export default function ResumePage() {
         router.replace("/login?next=/resume");
         return;
       }
-      loadProfile();
+      loadData(u.id);
     });
 
-    const handleUpdate = () => loadProfile();
+    const handleUpdate = () => {
+      getAuthUser().then((u) => {
+        if (u) loadData(u.id);
+      });
+    };
     window.addEventListener("careermonke_profile_updated", handleUpdate);
     return () => window.removeEventListener("careermonke_profile_updated", handleUpdate);
   }, [router]);
@@ -58,6 +73,33 @@ export default function ResumePage() {
     setCandidate(null);
     toast.info("Resume facts deleted. Personalized match scores reset.");
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between">
+        <GuideHeader />
+        <main className="flex-1 flex items-center justify-center p-6">
+          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!isPro) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between">
+        <GuideHeader />
+        <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 w-full">
+          <ProUpgradeScreen
+            title="Unlock CareerMonke Pro"
+            subtitle="Upgrade to Pro to upload your resume, compute compatibility scores, and generate AI tailored applications."
+          />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#09090B] flex flex-col justify-between selection:bg-blue-100 selection:text-blue-900">
@@ -83,7 +125,7 @@ export default function ResumePage() {
               )}
             </div>
             <p className="text-xs text-slate-500">
-              Deterministic fact extraction without invented achievements. Review and confirm facts before saving.
+              Verified fact extraction with zero invented achievements. Review and confirm facts before saving.
             </p>
           </div>
 
@@ -110,14 +152,18 @@ export default function ResumePage() {
         <section className="bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs space-y-3">
           <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
             <FileCheck className="w-4 h-4 text-blue-600" />
-            <span>Job-Specific Tailoring & Cover Letters</span>
+            <span>Role-Specific Resumes & Cover Letters</span>
           </div>
           <p className="text-xs text-slate-600 leading-relaxed">
-            Tailoring happens directly in the context of each specific job requisition. When viewing any position in the{" "}
+            AI resume tools are applied directly to specific roles. From your{" "}
+            <a href="/dashboard" className="text-blue-600 font-semibold hover:underline">
+              Top 10 Jobs
+            </a>
+            {" "}or the{" "}
             <a href="/jobs" className="text-blue-600 font-semibold hover:underline">
               Jobs Feed
             </a>
-            , click <strong>&quot;Inspect Job&quot;</strong> and select <strong>&quot;Prepare Cover Letter&quot;</strong> or <strong>&quot;Tailor Resume&quot;</strong>. The output will be grounded 100% in your confirmed facts above without hallucinations.
+            , click <strong>&quot;AI Resume&quot;</strong> or <strong>&quot;Cover Letter&quot;</strong>. All generated content is strictly grounded in your confirmed facts with zero hallucinations.
           </p>
         </section>
       </main>

@@ -42,11 +42,14 @@ import { useRouter } from "next/navigation";
 import { getTodayDigest, DigestMatchItem } from "@/lib/cron/digestStorage";
 import { toast } from "react-toastify";
 import MatchScoreBadge from "@/components/matcher/MatchScoreBadge";
+import ProUpgradeScreen from "@/components/billing/ProUpgradeScreen";
 import { getAuthUser } from "@/lib/auth/session";
+import { getProAccessStatus } from "@/lib/billing/subscription";
 
 export default function TrackerPage() {
   const router = useRouter();
   const [applications, setApplications] = useState<TrackedApplication[]>([]);
+  const [isPro, setIsPro] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
@@ -77,11 +80,15 @@ export default function TrackerPage() {
   const [newNotes, setNewNotes] = useState("");
   const [formErrors, setFormErrors] = useState<{ title?: string; company?: string }>({});
 
-  const loadData = async () => {
+  const loadData = async (userId?: string) => {
     setIsLoading(true);
     setLoadError(null);
     try {
-      const apps = await getTrackedApplications();
+      const [subRes, apps] = await Promise.all([
+        getProAccessStatus(userId),
+        getTrackedApplications(userId),
+      ]);
+      setIsPro(subRes.isPro);
       setApplications(apps);
     } catch (err: any) {
       console.error("Failed to load tracked applications", err);
@@ -97,12 +104,14 @@ export default function TrackerPage() {
         router.replace("/login?next=/tracker");
         return;
       }
-      loadData();
+      loadData(u.id);
       getTodayDigest().then((d) => setDigest(d));
     });
 
     const handleUpdate = () => {
-      loadData();
+      getAuthUser().then((u) => {
+        if (u) loadData(u.id);
+      });
     };
 
     window.addEventListener("careermonke_tracker_updated", handleUpdate);
@@ -259,6 +268,33 @@ export default function TrackerPage() {
     },
     { saved: 0, applied: 0, interview: 0, offer: 0, rejected: 0 }
   );
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between">
+        <GuideHeader />
+        <main className="flex-1 flex items-center justify-center p-6">
+          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!isPro) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between">
+        <GuideHeader />
+        <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+          <ProUpgradeScreen
+            title="Unlock Application Tracker"
+            subtitle="Upgrade to CareerMonke Pro to save jobs, track interview stages, and manage your pipeline."
+          />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#09090B] flex flex-col justify-between selection:bg-blue-100 selection:text-blue-900">
@@ -500,7 +536,7 @@ export default function TrackerPage() {
             <div className="pt-2">
               <button
                 type="button"
-                onClick={loadData}
+                onClick={() => loadData()}
                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-xs transition cursor-pointer"
               >
                 <span>Retry Connection</span>

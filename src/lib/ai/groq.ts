@@ -1,5 +1,9 @@
 import { CandidateProfile } from "../resume/types";
-import { generateTailoredCoverLetter as fallbackGenerateCoverLetter } from "../resume/tailor";
+import {
+  generateTailoredCoverLetter as fallbackGenerateCoverLetter,
+  validateCoverLetter,
+  formatContactHeader,
+} from "../resume/tailor";
 
 export const FAST_MODEL =
   process.env.FAST_MODEL ||
@@ -86,11 +90,13 @@ export async function extractResumeFactsWithGroq(
   if (!apiKey) return baseProfile;
 
   const systemPrompt = `You are an elite, zero-hallucination resume facts extraction engine.
-CRITICAL RULES:
-1. ONLY extract information directly present in the source text.
-2. NEVER invent, infer, or hallucinate companies, degrees, dates, or certifications.
-3. If dates, roles, or institutions are ambiguous, set "needsReview": true.
-4. Return a valid JSON object matching the CandidateProfile schema:
+CRITICAL ZERO-FABRICATION RULES:
+1. ONLY extract information directly evidenced in the source text.
+2. NEVER invent, infer, or hallucinate employers, roles, degrees, dates, achievements, or certifications.
+3. If the candidate is a fresher or has no work experience mentioned, "experience" MUST be an empty array [].
+4. Extract skills objectively across all fields (Marketing, Design, HR, Finance, Operations, Engineering). Do NOT bias towards software terms.
+5. If dates, roles, or institutions are ambiguous, set "needsReview": true.
+6. Return a valid JSON object matching the CandidateProfile schema:
 {
   "name": string,
   "headline": string,
@@ -141,8 +147,8 @@ CRITICAL RULES:
         headline: parsed.headline || baseProfile.headline,
         summary: parsed.summary || baseProfile.summary,
         skills: Array.isArray(parsed.skills) && parsed.skills.length > 0 ? parsed.skills : baseProfile.skills,
-        experience: Array.isArray(parsed.experience) && parsed.experience.length > 0 ? parsed.experience : baseProfile.experience,
-        education: Array.isArray(parsed.education) && parsed.education.length > 0 ? parsed.education : baseProfile.education,
+        experience: Array.isArray(parsed.experience) ? parsed.experience : baseProfile.experience,
+        education: Array.isArray(parsed.education) ? parsed.education : baseProfile.education,
         certifications: Array.isArray(parsed.certifications) ? parsed.certifications : baseProfile.certifications,
       };
     }
@@ -153,9 +159,15 @@ CRITICAL RULES:
   return baseProfile;
 }
 
+export interface GroqCoverLetterResponse {
+  text: string;
+  isValidated: boolean;
+  error?: string;
+}
+
 /**
  * 1-Click Tailored Cover Letter using SMART_MODEL (openai/gpt-oss-120b)
- * Uses candidate's real confirmed facts + target job description.
+ * Hard evidence validation: rejects any unevidenced employers, contacts, or dates.
  */
 export async function generateGroqTailoredCoverLetter(
   candidate: CandidateProfile,
@@ -164,20 +176,33 @@ export async function generateGroqTailoredCoverLetter(
     company: string;
     description?: string;
   }
-): Promise<string> {
+): Promise<GroqCoverLetterResponse> {
   const fallback = fallbackGenerateCoverLetter(candidate, job);
 
   const apiKey = getGroqApiKey();
-  if (!apiKey) return fallback.fullText;
+  if (!apiKey) {
+    return {
+      text: fallback.fullText,
+      isValidated: true,
+    };
+  }
 
-  const systemPrompt = `You are a career strategist. Draft a concise, high-impact job-tailored cover letter for the candidate applying to the specified position.
-RULES:
-1. Strictly ground the cover letter in the candidate's real confirmed facts:
+  const hasExperience = Array.isArray(candidate.experience) && candidate.experience.length > 0;
+  const expSummary = hasExperience
+    ? candidate.experience.map((e) => `${e.role} at ${e.company} (${e.startDate || ""} - ${e.endDate || ""})`).slice(0, 3).join("; ")
+    : "NO PRIOR WORK EXPERIENCE (Fresher/Student). Strictly DO NOT mention previous employers or tenure.";
+
+  const systemPrompt = `You are a career strategist. Draft 3-4 concise, high-impact body paragraphs for a job cover letter.
+CRITICAL RULES:
+1. Generate ONLY the body paragraphs. DO NOT include contact headers (name, email, phone, location), salutations ("Dear..."), or sign-offs ("Sincerely...").
+2. Strictly ground the content in the candidate's verified facts:
 - Real skills: ${(candidate.skills || []).slice(0, 10).join(", ")}
-- Recent roles: ${(candidate.experience || []).map((e) => `${e.role} at ${e.company}`).slice(0, 3).join("; ")}
-2. DO NOT invent false employment history, metrics, or credentials.
-3. Tailor the tone to the target role (${job.title}) at ${job.company}.
-4. Keep length to 3-4 professional paragraphs.`;
+- Work history: ${expSummary}
+3. ZERO HALLUCINATIONS:
+- NEVER invent false employers, project names, metrics, or years of experience.
+- If candidate has NO prior work experience, DO NOT claim "throughout my tenure" or "previous roles". Focus strictly on verified skills and enthusiasm.
+- DO NOT include any emails, phone numbers, or URLs.
+4. Tailor tone to ${job.title} at ${job.company}.`;
 
   try {
     const output = await callGroqCompletion({
@@ -186,18 +211,44 @@ RULES:
         { role: "system", content: systemPrompt },
         {
           role: "user",
-          content: `Candidate Details:\nName: ${candidate.name}\nHeadline: ${candidate.headline}\nSummary: ${candidate.summary}\n\nJob Target:\nTitle: ${job.title}\nCompany: ${job.company}\nDescription: ${job.description || "Leading tech engineering team"}`,
+          content: `Candidate Facts:\nName: ${candidate.name}\nHeadline: ${candidate.headline || "Professional"}\nSummary: ${candidate.summary || ""}\nSkills: ${(candidate.skills || []).join(", ")}\n\nJob Target:\nTitle: ${job.title}\nCompany: ${job.company}\nDescription: ${job.description || ""}`,
         },
       ],
-      temperature: 0.3,
+      temperature: 0.2,
     });
 
-    if (output && output.trim().length > 100) {
-      return output.trim();
+    if (output && output.trim().length > 80) {
+      // Validate the generated paragraphs against candidate facts
+      const validation = validateCoverLetter(output, candidate, job);
+      if (!validation.valid) {
+        console.warn("Groq cover letter failed strict evidence verification:", validation.reasons);
+        return {
+          text: fallback.fullText,
+          isValidated: true,
+          error: `AI output contained unverified claims (${validation.reasons[0]}). Safely reverted to verified factual draft.`,
+        };
+      }
+
+      // Assemble full letter deterministically with protected contact header
+      const header = formatContactHeader(candidate);
+      const blocks: string[] = [];
+      if (header) blocks.push(header);
+      blocks.push(`Dear Hiring Team at ${job.company},`);
+      blocks.push(output.trim());
+      blocks.push("Sincerely,");
+      blocks.push(candidate.name || "Candidate");
+
+      return {
+        text: blocks.join("\n\n"),
+        isValidated: true,
+      };
     }
   } catch (e) {
     console.warn("Groq cover letter generation failed, using deterministic template:", e);
   }
 
-  return fallback.fullText;
+  return {
+    text: fallback.fullText,
+    isValidated: true,
+  };
 }

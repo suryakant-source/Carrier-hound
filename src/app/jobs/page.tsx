@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import CategoryPillBar from "@/components/CategoryPillBar";
 import PaywallModal from "@/components/PaywallModal";
 import MatchScoreBadge from "@/components/matcher/MatchScoreBadge";
+import ProUpgradeScreen from "@/components/billing/ProUpgradeScreen";
 import { getLiveJobs, LiveJob } from "@/lib/jobs/service";
 import { getAuthUser, getUserPreferences } from "@/lib/auth/session";
 import { getCandidateProfile } from "@/lib/resume/storage";
@@ -263,6 +264,21 @@ function JobsPageInner() {
     }
   };
 
+  if (user && !isPro) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] text-[#09090B] flex flex-col">
+        <GuideHeader />
+        <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-8">
+          <ProUpgradeScreen
+            title="Unlock CareerMonke Pro"
+            subtitle="Upgrade to Pro to access full job details, company names, salaries, and compatibility scores."
+          />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#09090B] flex flex-col">
       <GuideHeader />
@@ -273,10 +289,10 @@ function JobsPageInner() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                Verified ATS Career Requisitions
+                Explore Open Roles
               </h1>
               <p className="text-xs text-slate-500">
-                Synchronized directly from 500+ employer Greenhouse, Lever, and Ashby portals.
+                Openings synced directly from verified company career portals.
               </p>
             </div>
 
@@ -453,7 +469,7 @@ function JobsPageInner() {
                   ? "Click the bookmark icon on any job card to save it to your pipeline."
                   : Boolean(search || selectedCategory || remoteOnly)
                   ? "Try clearing your search terms or expanding your category preferences to see more openings."
-                  : "Check back soon as new verified requisitions are indexed regularly."}
+                  : "Check back soon as new verified openings are added regularly."}
               </p>
             </div>
             {activeTab === "foryou" && !user ? (
@@ -487,6 +503,36 @@ function JobsPageInner() {
         ) : (
           <div className="space-y-3">
             {displayedJobs.map((job) => {
+              // TIER 1 - Signed-out visitor: job cards show ONLY company logo + role title. Everything else is hidden.
+              if (!user) {
+                return (
+                  <div
+                    key={job.id}
+                    className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-2xs hover:shadow-md transition flex items-center justify-between gap-4 group"
+                  >
+                    <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 font-extrabold flex items-center justify-center shrink-0 border border-blue-100 text-sm">
+                        {job.title.charAt(0)}
+                      </div>
+                      <Link
+                        href="/login?next=/jobs"
+                        className="text-base sm:text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors line-clamp-1"
+                      >
+                        {job.title}
+                      </Link>
+                    </div>
+
+                    <Link
+                      href="/login?next=/jobs"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition shadow-2xs shrink-0 cursor-pointer"
+                    >
+                      <Lock className="w-3.5 h-3.5 text-slate-500" />
+                      <span>Sign in to continue</span>
+                    </Link>
+                  </div>
+                );
+              }
+
               const isSaved = savedJobIds.includes(job.id);
               return (
                 <div
@@ -520,22 +566,9 @@ function JobsPageInner() {
                     <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 font-medium">
                       <div className="flex items-center gap-1">
                         <Building className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span
-                          onClick={!isPro ? () => setIsPaywallOpen(true) : undefined}
-                          className={
-                            !isPro
-                              ? "filter blur-[5px] select-none text-slate-800 cursor-pointer font-bold"
-                              : "font-bold text-slate-900"
-                          }
-                          title={!isPro ? "Unlock company name with Pro" : undefined}
-                        >
+                        <span className="font-bold text-slate-900">
                           {job.company}
                         </span>
-                        {!isPro && (
-                          <span className="text-[10px] font-bold text-blue-600 ml-1">
-                            (Pro)
-                          </span>
-                        )}
                       </div>
 
                       <span>•</span>

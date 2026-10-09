@@ -179,7 +179,7 @@ export default function RoleTitlesPage({ params }: PageProps) {
               Recent openings captured directly from employer applicant tracking systems before public syndication.
             </p>
             <JobPreview
-              title={`Live ${guide.roleName} Requisitions`}
+              title={`Live ${guide.roleName} Openings`}
               subtitle="Crawled directly from employer ATS endpoints every 15 minutes"
               jobs={roleJobs}
               limit={4}

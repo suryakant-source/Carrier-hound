@@ -6,13 +6,113 @@ export interface TailoredCoverLetterResult {
   company: string;
   jobTitle: string;
   salutation: string;
+  contactHeader: string;
   paragraphs: string[];
   fullText: string;
+  isValidated: boolean;
+}
+
+export interface CoverLetterValidationResult {
+  valid: boolean;
+  reasons: string[];
+}
+
+/**
+ * Deterministically renders the candidate's verified contact header.
+ * AI models are strictly prohibited from generating or modifying this block.
+ */
+export function formatContactHeader(candidate: CandidateProfile): string {
+  const parts: string[] = [];
+  if (candidate.name && candidate.name.trim() && candidate.name !== "Candidate") {
+    parts.push(candidate.name.trim());
+  }
+  const details = [candidate.email, candidate.phone, candidate.location].filter(Boolean);
+  if (details.length > 0) {
+    parts.push(details.join(" | "));
+  }
+  return parts.join("\n");
+}
+
+/**
+ * Validates cover letter text against verified candidate facts to enforce Zero Hallucinations.
+ * Rejects unevidenced employers, unverified emails/phones, false URLs, or fake years of experience.
+ */
+export function validateCoverLetter(
+  letterBody: string,
+  candidate: CandidateProfile,
+  job: { title: string; company: string }
+): CoverLetterValidationResult {
+  const reasons: string[] = [];
+  const text = letterBody || "";
+
+  // 1. Email check: No unverified emails
+  const emailMatches = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
+  for (const foundEmail of emailMatches) {
+    if (!candidate.email || foundEmail.toLowerCase() !== candidate.email.toLowerCase()) {
+      reasons.push(`Contains unverified email: "${foundEmail}"`);
+    }
+  }
+
+  // 2. Phone check: No fabricated phone numbers
+  const phoneMatches = text.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g) || [];
+  for (const foundPhone of phoneMatches) {
+    const cleanFound = foundPhone.replace(/\D/g, "");
+    const cleanCand = (candidate.phone || "").replace(/\D/g, "");
+    if (!cleanCand || cleanFound !== cleanCand) {
+      reasons.push(`Contains unverified phone: "${foundPhone}"`);
+    }
+  }
+
+  // 3. Fake URLs check: No fabricated LinkedIn or portfolio links
+  const urlMatches = text.match(/(?:https?:\/\/|www\.)[^\s]+/gi) || [];
+  for (const url of urlMatches) {
+    reasons.push(`Contains unverified link: "${url}"`);
+  }
+
+  // 4. Fresher / Zero experience check:
+  const hasNoExperience = !candidate.experience || candidate.experience.length === 0;
+  if (hasNoExperience) {
+    if (/\b(\d+|\w+)\s+years\s+(?:of\s+)?experience\b/i.test(text)) {
+      reasons.push("Claims years of work experience when profile has 0 verified roles.");
+    }
+    if (/\b(?:my\s+tenure|previous\s+(?:roles|employers|companies|engineering\s+roles))\b/i.test(text)) {
+      reasons.push("References previous employment or tenure not evidenced in profile.");
+    }
+  }
+
+  // 5. Foreign company hallucination check:
+  const verifiedCompanies = new Set<string>();
+  if (job.company) verifiedCompanies.add(job.company.toLowerCase().trim());
+  (candidate.experience || []).forEach((exp) => {
+    if (exp.company) verifiedCompanies.add(exp.company.toLowerCase().trim());
+  });
+  (candidate.education || []).forEach((edu) => {
+    if (edu.institution) verifiedCompanies.add(edu.institution.toLowerCase().trim());
+  });
+
+  const companyPhrases = text.match(/\b(?:worked\s+at|tenure\s+at|employed\s+at|engineer\s+at|developer\s+at|manager\s+at)\s+([A-Z][A-Za-z0-9&.\s]{2,25})\b/g) || [];
+  for (const phrase of companyPhrases) {
+    const match = phrase.match(/\b(?:at)\s+([A-Z][A-Za-z0-9&.\s]{2,25})/);
+    if (match && match[1]) {
+      const extractedCompany = match[1].trim().toLowerCase();
+      if (["the", "this", "scale", "present", "my", "our", "all"].includes(extractedCompany)) continue;
+      const isKnown = Array.from(verifiedCompanies).some((vc) => vc.includes(extractedCompany) || extractedCompany.includes(vc));
+      if (!isKnown) {
+        reasons.push(`Mentions unverified employer: "${match[1].trim()}"`);
+      }
+    }
+  }
+
+  return {
+    valid: reasons.length === 0,
+    reasons,
+  };
 }
 
 /**
  * Generates a 1-click tailored cover letter grounded strictly in real resume facts.
- * Never invents facts; highlights matched skills and actual past companies.
+ * Adapts tone dynamically across tech, marketing, design, and finance domains.
+ * Adapts cleanly for freshers with 0 previous roles without fabricating tenure.
  */
 export function generateTailoredCoverLetter(
   candidate: CandidateProfile,
@@ -27,43 +127,89 @@ export function generateTailoredCoverLetter(
     jobSkills.some((js) => js.toLowerCase() === s.toLowerCase())
   );
 
-  const topSkills = matched.length > 0 ? matched.slice(0, 4).join(", ") : (candidate.skills || []).slice(0, 3).join(", ") || "software engineering";
-  const latestExp = candidate.experience?.[0];
-  const pastRole = latestExp?.role || candidate.headline || "Software Engineer";
-  const pastCompany = latestExp?.company && !latestExp.company.includes("Needs Confirmation") ? latestExp.company : "my previous engineering roles";
+  const topSkills = matched.length > 0 ? matched.slice(0, 4).join(", ") : (candidate.skills || []).slice(0, 3).join(", ") || "core professional competencies";
+  const hasExperience = Array.isArray(candidate.experience) && candidate.experience.length > 0;
 
-  const paragraphs: string[] = [
-    // Paragraph 1: Intent & Alignment
-    `I am writing to express my strong enthusiasm for the ${job.title} opportunity at ${job.company}. Having built robust technical applications and scaled modern software solutions, I am eager to contribute my hands-on background in ${topSkills} to ${job.company}'s engineering objectives.`,
+  // Domain detection
+  const domainString = `${candidate.headline || ""} ${(candidate.skills || []).join(" ")} ${job.title}`.toLowerCase();
+  const isMarketing = /marketing|seo|growth|content|social media|advertising|brand|copywriting|pr/i.test(domainString);
+  const isDesign = /design|ui|ux|figma|product design|creative/i.test(domainString);
+  const isFinance = /finance|accounting|audit|financial|tax|treasury|controller/i.test(domainString);
+  const isHR = /recruiting|talent|human resources|hr|people operations/i.test(domainString);
+  const isSales = /sales|account exec|business development|bdr|sdr/i.test(domainString);
 
-    // Paragraph 2: Proven Impact from real history
-    `Throughout my tenure as a ${pastRole} at ${pastCompany}, I focused on delivering high-impact, reliable software systems. My core technical strengths span ${(candidate.skills || []).slice(0, 5).join(", ") || "full-stack development"}, where I have consistently collaborated across technical teams, maintained rigorous code quality, and resolved complex architectural bottlenecks.`,
+  let domainFocus = "operational and strategic priorities";
+  let domainStrengths = "delivering high-impact, reliable outcomes and collaborating cross-functionally";
+  let teamLabel = "team";
 
-    // Paragraph 3: Direct Job Value
-    `What particularly excites me about ${job.company} is the opportunity to solve critical technical challenges at scale. Given your emphasis on ${jobSkills.slice(0, 3).join(" and ") || "high-performance architecture"}, my proven proficiency in ${topSkills} will enable me to hit the ground running and make meaningful contributions from day one.`,
+  if (isMarketing) {
+    domainFocus = "growth and marketing initiatives";
+    domainStrengths = "scaling user acquisition, optimizing campaign performance, and driving measurable brand impact";
+    teamLabel = "growth & marketing team";
+  } else if (isDesign) {
+    domainFocus = "design and product experience goals";
+    domainStrengths = "crafting intuitive user experiences, scalable design systems, and engaging interfaces";
+    teamLabel = "product design team";
+  } else if (isFinance) {
+    domainFocus = "financial planning and operational goals";
+    domainStrengths = "accurate financial analysis, rigorous reporting, and data-driven business modeling";
+    teamLabel = "finance team";
+  } else if (isHR) {
+    domainFocus = "talent and people operations strategy";
+    domainStrengths = "streamlining talent acquisition, elevating employee engagement, and scaling operational workflows";
+    teamLabel = "people operations team";
+  } else if (isSales) {
+    domainFocus = "revenue growth and commercial targets";
+    domainStrengths = "driving high-value sales pipelines, building client relationships, and accelerating revenue";
+    teamLabel = "sales team";
+  } else if (/software|engineer|developer|data|tech|frontend|backend|cloud/i.test(domainString)) {
+    domainFocus = "engineering and technology objectives";
+    domainStrengths = "delivering robust technical solutions, collaborating cross-functionally, and maintaining high engineering standards";
+    teamLabel = "engineering team";
+  }
 
-    // Paragraph 4: Professional Close
-    `Thank you for your time and consideration. I would welcome the opportunity to discuss how my technical skills and disciplined problem-solving approach align with the goals of the ${job.company} engineering team.`
-  ];
+  let paragraphs: string[] = [];
 
-  const fullText = [
-    `Dear Hiring Team at ${job.company},`,
-    "",
-    ...paragraphs,
-    "",
-    "Sincerely,",
-    candidate.name || "Candidate",
-    candidate.email ? `Email: ${candidate.email}` : "",
-    candidate.phone ? `Phone: ${candidate.phone}` : ""
-  ].filter(Boolean).join("\n\n");
+  if (hasExperience) {
+    const latestExp = candidate.experience[0];
+    const pastRole = latestExp.role || candidate.headline || "Professional";
+    const pastCompany = latestExp.company;
+
+    paragraphs = [
+      `I am writing to express my strong enthusiasm for the ${job.title} opportunity at ${job.company}. Having developed hands-on proficiency in ${topSkills}, I am eager to apply my practical background to ${job.company}'s ${domainFocus}.`,
+      `In my work as a ${pastRole} at ${pastCompany}, I focused on ${domainStrengths}. My evidenced strengths include ${(candidate.skills || []).slice(0, 5).join(", ") || topSkills}, where I have consistently collaborated across teams to deliver measurable results.`,
+      `What particularly excites me about ${job.company} is the opportunity to contribute directly to your mission. With proficiency in ${topSkills}, I am prepared to ramp up quickly and make immediate, valuable contributions to the ${teamLabel}.`,
+      `Thank you for your time and consideration. I would welcome the opportunity to discuss how my verified background and disciplined problem-solving approach align with the priorities at ${job.company}.`
+    ];
+  } else {
+    // Fresher / No prior work experience: Strictly zero invented history or tenure
+    paragraphs = [
+      `I am writing to express my enthusiastic interest in the ${job.title} position at ${job.company}. With a verified foundation in ${topSkills}, I am eager to bring my dedicated focus, fast learning curve, and practical skills to ${job.company}'s ${domainFocus}.`,
+      `Through rigorous coursework, hands-on projects, and dedicated skill mastery, I have built competencies in ${(candidate.skills || []).slice(0, 5).join(", ") || topSkills}. I focus on ${domainStrengths}, with an emphasis on discipline and accountability.`,
+      `I am deeply inspired by ${job.company}'s work and look forward to contributing with energy, high standards, and a genuine eagerness to support the ${teamLabel}.`,
+      `Thank you for your consideration. I welcome the opportunity to discuss how my foundational skills and strong work ethic align with this opening at ${job.company}.`
+    ];
+  }
+
+  const contactHeader = formatContactHeader(candidate);
+  const fullTextBlocks: string[] = [];
+  if (contactHeader) fullTextBlocks.push(contactHeader);
+  fullTextBlocks.push(`Dear Hiring Team at ${job.company},`);
+  fullTextBlocks.push(...paragraphs);
+  fullTextBlocks.push("Sincerely,");
+  fullTextBlocks.push(candidate.name || "Candidate");
+
+  const fullText = fullTextBlocks.join("\n\n");
 
   return {
     recipient: `Hiring Team at ${job.company}`,
     company: job.company,
     jobTitle: job.title,
     salutation: `Dear Hiring Team at ${job.company},`,
+    contactHeader,
     paragraphs,
     fullText,
+    isValidated: true,
   };
 }
 

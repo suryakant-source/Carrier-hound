@@ -21,6 +21,7 @@ import {
   FileCheck,
   ShieldCheck,
   Info,
+  Edit3,
 } from "lucide-react";
 import {
   CandidateProfile,
@@ -168,6 +169,26 @@ export default function ResumeUploadAndConfirm({
   const handleLoadSample = () => {
     const sample = getSampleCandidateProfile();
     setProfile(sample);
+    setIsSaved(false);
+    setParseError(null);
+  };
+
+  const handleManualEntry = () => {
+    const emptyProfile: CandidateProfile = {
+      name: "",
+      email: "",
+      phone: "",
+      location: "",
+      headline: "",
+      summary: "",
+      skills: [],
+      experience: [], // ZERO defaults, empty is allowed
+      education: [],  // ZERO defaults, empty is allowed
+      certifications: [],
+      rawText: "",
+      updatedAt: new Date().toISOString(),
+    };
+    setProfile(emptyProfile);
     setIsSaved(false);
     setParseError(null);
   };
@@ -415,20 +436,29 @@ export default function ResumeUploadAndConfirm({
       <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
         <button
           type="button"
+          onClick={handleManualEntry}
+          className="text-xs font-bold text-slate-700 hover:text-blue-600 hover:underline inline-flex items-center gap-1.5 cursor-pointer min-h-[44px] py-2 px-1"
+        >
+          <Edit3 className="w-3.5 h-3.5 text-blue-600" />
+          <span>Skip & fill manually</span>
+        </button>
+        <span className="text-xs text-slate-400">•</span>
+        <button
+          type="button"
           onClick={() => setShowPasteBox(!showPasteBox)}
           className="text-xs font-semibold text-slate-600 hover:text-slate-800 hover:underline inline-flex items-center gap-1 cursor-pointer min-h-[44px] py-2 px-1"
         >
           <FileText className="w-3.5 h-3.5" />
-          {showPasteBox ? "Hide Paste Box" : "Paste plain text instead"}
+          {showPasteBox ? "Hide Paste Box" : "Paste plain text"}
         </button>
-        <span className="text-xs text-slate-400">or</span>
+        <span className="text-xs text-slate-400">•</span>
         <button
           type="button"
           onClick={handleLoadSample}
           className="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 cursor-pointer min-h-[44px] py-2 px-1"
         >
           <FileCheck className="w-3.5 h-3.5" />
-          Load Sample Software Engineer Resume
+          <span>Load Sample Resume</span>
         </button>
       </div>
 
@@ -536,7 +566,7 @@ export default function ResumeUploadAndConfirm({
           <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-              <span>You have unsaved edits in your resume facts. Confirm and save below to update your deterministic match scores.</span>
+              <span>You have unsaved edits in your resume facts. Confirm and save below to update your match scores.</span>
             </div>
             <button
               type="button"
@@ -640,7 +670,7 @@ export default function ResumeUploadAndConfirm({
               <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                 2. Extracted Technical Skills ({profile.skills.length})
               </h4>
-              <span className="text-[11px] text-slate-400">Used for deterministic match scoring</span>
+              <span className="text-[11px] text-slate-400">Used for match scoring</span>
             </div>
 
             <div className="flex flex-wrap gap-2 p-4 bg-slate-50 rounded-xl border border-slate-200 min-h-[60px]">
@@ -802,6 +832,14 @@ export default function ResumeUploadAndConfirm({
                   </div>
                 </div>
               ))}
+              {profile.experience.length === 0 && (
+                <div className="p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50/80 text-center space-y-1">
+                  <p className="text-xs font-medium text-slate-700">No work experience detected in document.</p>
+                  <p className="text-[11px] text-slate-500">
+                    If you are a fresher or student, this remains completely empty with zero hallucinations. If you have past roles to include, click &quot;Add Position&quot; above.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -822,6 +860,15 @@ export default function ResumeUploadAndConfirm({
                   <span>Add Degree</span>
                 </button>
               </div>
+
+              {profile.education.length === 0 && (
+                <div className="p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50/80 text-center space-y-1">
+                  <p className="text-xs font-medium text-slate-700">No education detected.</p>
+                  <p className="text-[11px] text-slate-500">
+                    Click &quot;Add Degree&quot; above if you wish to record degrees or coursework.
+                  </p>
+                </div>
+              )}
 
               <div className="space-y-3">
                 {profile.education.map((edu, idx) => (
@@ -935,7 +982,7 @@ export default function ResumeUploadAndConfirm({
                   </span>
                 ) : (
                   <span>
-                    Saving binds your verified facts to real-time deterministic match scores across all job postings.
+                    Saving updates your real-time match scores across all job openings.
                   </span>
                 )}
               </div>

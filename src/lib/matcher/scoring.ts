@@ -259,14 +259,28 @@ export function computeFitDiagnostics(
     }
   }
 
-  // If no explicit skills in listing description, neutral skill baseline of 35/50
-  const skillRatio = jobEvidencedSkills.length > 0
-    ? matchedSkills.length / jobEvidencedSkills.length
-    : 0.7;
-  const skillScore = Math.round(skillRatio * 50);
+  // If no explicit skills in listing description, check category/title overlap instead of blind 35/50
+  let skillScore = 0;
+  if (jobEvidencedSkills.length > 0) {
+    const skillRatio = matchedSkills.length / jobEvidencedSkills.length;
+    skillScore = Math.round(skillRatio * 50);
+  } else {
+    const jobTitleLower = job.title.toLowerCase();
+    const candidateHasRelevantSkill = (candidate.skills || []).some((s) => {
+      const sLower = s.toLowerCase();
+      return jobTitleLower.includes(sLower) || (job.category && job.category.toLowerCase().includes(sLower));
+    });
+    if (candidateHasRelevantSkill) {
+      skillScore = 20;
+    } else if ((candidate.skills || []).length > 0) {
+      skillScore = 10;
+    } else {
+      skillScore = 0;
+    }
+  }
 
   // 2. Title & Role Alignment (Weight: 25%)
-  let titleScore = 12;
+  let titleScore = 0;
   const jobTitleLower = job.title.toLowerCase();
   const headlineLower = (candidate.headline || "").toLowerCase();
 
@@ -285,17 +299,19 @@ export function computeFitDiagnostics(
   }
 
   if (titleMatches >= 2) titleScore = 25;
-  else if (titleMatches === 1) titleScore = 20;
-  else titleScore = 14;
+  else if (titleMatches >= 1) titleScore = 18;
+  else if (titleMatches >= 0.5) titleScore = 10;
+  else titleScore = 0; // STRICT: 0 points if no title match
 
   // 3. Experience & Seniority Alignment (Weight: 15% - based on actual years, not position count)
   const yearsOfExperience = calculateYearsOfExperience(candidate.experience);
-  let experienceScore = 12;
+  let experienceScore = 0;
 
   if (yearsOfExperience >= 5) experienceScore = 15;
   else if (yearsOfExperience >= 2) experienceScore = 12;
-  else if (yearsOfExperience >= 0.5) experienceScore = 9;
-  else experienceScore = 6;
+  else if (yearsOfExperience >= 0.5) experienceScore = 8;
+  else if (yearsOfExperience > 0) experienceScore = 4;
+  else experienceScore = 0; // ZERO years = 0 points!
 
   const isSeniorJob =
     jobTitleLower.includes("senior") ||
@@ -303,8 +319,12 @@ export function computeFitDiagnostics(
     jobTitleLower.includes("staff") ||
     jobTitleLower.includes("principal");
 
-  if (isSeniorJob && yearsOfExperience < 4) {
-    experienceScore = Math.min(experienceScore, 8);
+  if (isSeniorJob) {
+    if (yearsOfExperience < 1) {
+      experienceScore = 0; // 0 points for senior role with 0 or negligible years
+    } else if (yearsOfExperience < 4) {
+      experienceScore = Math.min(experienceScore, 4);
+    }
   }
 
   // 4. Remote & Location Compatibility (Weight: 10%)
@@ -331,18 +351,18 @@ export function computeFitDiagnostics(
   } else if (isGeographicallyRestricted) {
     remoteScore = 0; // Restricted to another region
   } else if (jobRemote === "remote" || jobLoc.includes("remote")) {
-    remoteScore = 6; // General remote with unspecified eligibility
+    remoteScore = 5; // General remote with unspecified eligibility
   } else {
-    remoteScore = 3;
+    remoteScore = 0;
   }
 
   // Sum components
-  const finalScore = Math.min(100, Math.max(10, skillScore + titleScore + experienceScore + remoteScore));
+  const finalScore = Math.min(100, Math.max(5, skillScore + titleScore + experienceScore + remoteScore));
 
-  let scoreGrade: "high" | "good" | "moderate" | "low" = "moderate";
-  if (finalScore >= 80) scoreGrade = "high";
-  else if (finalScore >= 65) scoreGrade = "good";
-  else if (finalScore >= 45) scoreGrade = "moderate";
+  let scoreGrade: "high" | "good" | "moderate" | "low" = "low";
+  if (finalScore >= 75) scoreGrade = "high";
+  else if (finalScore >= 55) scoreGrade = "good";
+  else if (finalScore >= 35) scoreGrade = "moderate";
   else scoreGrade = "low";
 
   // Construct factual "Why You Fit" reasons

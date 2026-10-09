@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Copy, Download, Check, Sparkles, FileText, ArrowRight } from "lucide-react";
+import { X, Copy, Download, Check, Sparkles, FileText, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
 import { CandidateProfile } from "@/lib/resume/types";
-import { generateTailoredCoverLetter } from "@/lib/resume/tailor";
+import { generateTailoredCoverLetter, validateCoverLetter } from "@/lib/resume/tailor";
 import { generateGroqTailoredCoverLetter, getGroqApiKey } from "@/lib/ai/groq";
 import { toast } from "react-toastify";
 
@@ -27,19 +27,30 @@ export default function CoverLetterModal({
   const [content, setContent] = useState("");
   const [copied, setCopied] = useState(false);
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+  const [isValidated, setIsValidated] = useState(true);
 
   useEffect(() => {
     if (open && candidate && job) {
-      // 1. Instantly set deterministic baseline
+      // 1. Instantly set deterministic baseline with protected header
       const result = generateTailoredCoverLetter(candidate, job);
       setContent(result.fullText);
+      setIsValidated(true);
 
-      // 2. If Groq API Key is configured, enhance with SMART_MODEL (openai/gpt-oss-120b)
+      // 2. If Groq API Key is configured, enhance with SMART_MODEL under hard evidence validation
       if (getGroqApiKey()) {
         setIsGeneratingAi(true);
         generateGroqTailoredCoverLetter(candidate, job)
-          .then((aiText) => {
-            if (aiText) setContent(aiText);
+          .then((res) => {
+            if (res.text) {
+              setContent(res.text);
+              setIsValidated(res.isValidated);
+              if (res.error) {
+                toast.warn(res.error);
+              }
+            }
+          })
+          .catch(() => {
+            setIsValidated(true);
           })
           .finally(() => {
             setIsGeneratingAi(false);
@@ -49,6 +60,12 @@ export default function CoverLetterModal({
   }, [open, candidate, job]);
 
   if (!open) return null;
+
+  const handleContentChange = (newVal: string) => {
+    setContent(newVal);
+    const validation = validateCoverLetter(newVal, candidate, job);
+    setIsValidated(validation.valid);
+  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(content);
@@ -96,12 +113,22 @@ export default function CoverLetterModal({
         {/* Header */}
         <div className="p-5 sm:p-6 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 text-white flex items-start justify-between relative">
           <div className="pr-8 space-y-1">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 text-white backdrop-blur-xs">
                 <Sparkles className={`w-3 h-3 ${isGeneratingAi ? "animate-spin text-cyan-300" : "text-yellow-300"}`} />
-                {isGeneratingAi ? "Refining with Groq SMART_MODEL..." : "1-Click Tailored Cover Letter"}
+                {isGeneratingAi ? "Validating evidence..." : "1-Click Tailored Cover Letter"}
               </span>
-              <span className="text-xs text-blue-200">Grounded in verified facts</span>
+              {isValidated ? (
+                <span className="text-xs text-blue-200 flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
+                  Grounded in verified facts
+                </span>
+              ) : (
+                <span className="text-xs text-amber-200 flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  Contains unverified claims
+                </span>
+              )}
             </div>
             <h2 className="text-lg sm:text-xl font-bold text-white line-clamp-1">
               Application for {job.title}
@@ -130,7 +157,7 @@ export default function CoverLetterModal({
 
           <textarea
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={(e) => handleContentChange(e.target.value)}
             rows={14}
             className="w-full p-4 rounded-xl border border-slate-200 font-sans text-xs sm:text-sm text-slate-800 leading-relaxed focus:ring-2 focus:ring-blue-500 focus:outline-hidden resize-none bg-slate-50/50"
             placeholder="Generated cover letter will appear here..."
