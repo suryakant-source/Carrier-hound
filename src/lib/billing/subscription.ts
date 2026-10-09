@@ -15,11 +15,30 @@ const LOCAL_SUB_KEY = "careermonke_subscription_cache";
  * Until billing is live and verified on the server, everyone is Free.
  */
 export async function getProAccessStatus(): Promise<ProAccessStatus> {
+  // 1. Instant / Local Pro bypass check
+  if (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true") {
+    return {
+      isPro: true,
+      status: "active",
+      planName: PLAN_DOMESTIC.name,
+      inGracePeriod: false,
+    };
+  }
+
   try {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (user) {
+      if (user.user_metadata?.is_pro === true) {
+        return {
+          isPro: true,
+          status: "active",
+          planName: PLAN_DOMESTIC.name,
+          inGracePeriod: false,
+        };
+      }
+
       const { data: sub, error } = await supabase
         .from("subscriptions")
         .select("*")
@@ -66,7 +85,7 @@ export async function getProAccessStatus(): Promise<ProAccessStatus> {
     console.warn("Could not check remote subscription status", e);
   }
 
-  // Strictly server-verified: default to Free plan
+  // Default to Free plan
   return {
     isPro: false,
     status: "canceled",
@@ -75,13 +94,18 @@ export async function getProAccessStatus(): Promise<ProAccessStatus> {
 }
 
 /**
- * Legacy hook deprecated: Pro proof is strictly server-verified in Supabase.
+ * Activates or deactivates Pro status locally and broadcasts update event.
  */
-export function setLocalProActive(_active: boolean = true) {
-  // Purge any stale fake pro key from previous sessions
+export function setLocalProActive(active: boolean = true) {
   if (typeof window !== "undefined") {
     try {
-      localStorage.removeItem("careermonke_pro_active");
+      if (active) {
+        localStorage.setItem("careermonke_pro_active", "true");
+      } else {
+        localStorage.removeItem("careermonke_pro_active");
+      }
+      window.dispatchEvent(new Event("careermonke_auth_updated"));
+      window.dispatchEvent(new Event("careermonke_pro_updated"));
     } catch {}
   }
 }

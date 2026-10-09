@@ -216,9 +216,10 @@ export default function JobRadarGlobe() {
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
+      const isLocalPro = typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true";
       if (data.user) {
         setCurrentUser(data.user);
-        setIsPro(Boolean(data.user.user_metadata?.is_pro));
+        setIsPro(Boolean(data.user.user_metadata?.is_pro) || isLocalPro);
       } else {
         const localEmail =
           typeof window !== "undefined"
@@ -226,7 +227,9 @@ export default function JobRadarGlobe() {
             : null;
         if (localEmail) {
           setCurrentUser({ email: localEmail, id: "local-user" });
-          setIsPro(false);
+          setIsPro(isLocalPro);
+        } else if (isLocalPro) {
+          setIsPro(true);
         }
       }
     });

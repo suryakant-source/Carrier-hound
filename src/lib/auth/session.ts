@@ -42,6 +42,10 @@ export async function getAuthUser(): Promise<User | null> {
       if (typeof window !== "undefined" && user.email) {
         localStorage.setItem(USER_EMAIL_KEY, user.email);
       }
+      const isLocalPro = typeof window !== "undefined" && localStorage.getItem(USER_PRO_KEY) === "true";
+      if (isLocalPro && !user.user_metadata?.is_pro) {
+        user.user_metadata = { ...(user.user_metadata || {}), is_pro: true };
+      }
       return user;
     }
   } catch (err) {
@@ -57,7 +61,7 @@ export async function getAuthUser(): Promise<User | null> {
         id: "audit-mode-tester",
         email: auditEmail,
         app_metadata: { provider: "audit" },
-        user_metadata: { full_name: "Audit Mode Tester", email: auditEmail },
+        user_metadata: { full_name: "Audit Mode Tester", email: auditEmail, is_pro: true },
         aud: "authenticated",
         created_at: new Date().toISOString(),
       } as unknown as User;

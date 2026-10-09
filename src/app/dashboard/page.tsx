@@ -53,7 +53,7 @@ export default function DashboardPage() {
   const [fallbackLiveJobs, setFallbackLiveJobs] = useState<LiveJob[]>([]);
 
   const hasConfirmedResume = Boolean(candidate && candidate.confirmedAt);
-  const isPro = user?.user_metadata?.is_pro === true;
+  const isPro = user?.user_metadata?.is_pro === true || (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true");
 
   // Check auth and load user data
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function DashboardPage() {
         return;
       }
       setUser(authUser);
-      const isPro = authUser?.user_metadata?.is_pro === true;
+      const isPro = authUser?.user_metadata?.is_pro === true || (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true");
 
       // Load live jobs for dashboard
       getLiveJobs({ page: 1, pageSize: 6, isPro }).then((res) => {

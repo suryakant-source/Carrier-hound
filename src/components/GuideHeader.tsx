@@ -72,7 +72,7 @@ export default function GuideHeader() {
     router.push("/");
   };
 
-  const isPro = user?.user_metadata?.is_pro === true;
+  const isPro = user?.user_metadata?.is_pro === true || (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true");
   const userInitials = (user?.email ? user.email.slice(0, 2).toUpperCase() : "CM");
 
   return (

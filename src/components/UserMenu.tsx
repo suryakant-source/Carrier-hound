@@ -133,7 +133,7 @@ export default function UserMenu({
   }
 
   // ── Signed IN ─────────────────────────────────────────────────────────────
-  const isPro = user.user_metadata?.is_pro === true;
+  const isPro = user.user_metadata?.is_pro === true || (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true");
 
   const initial = (user.email?.[0] ?? "U").toUpperCase();
   const shortEmail = user.email

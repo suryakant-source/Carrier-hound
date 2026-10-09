@@ -94,7 +94,7 @@ function JobsPageInner() {
     });
   }, []);
 
-  const isPro = user?.user_metadata?.is_pro === true;
+  const isPro = user?.user_metadata?.is_pro === true || (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true");
   const hasConfirmedResume = Boolean(candidate && candidate.confirmedAt);
 
   // Fetch live verified jobs from Supabase whenever search/category/filters or Pro status updates

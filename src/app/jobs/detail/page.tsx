@@ -78,7 +78,7 @@ function JobDetailInner() {
     // 1. Load user & profile
     getAuthUser().then((u) => {
       setUser(u);
-      const isPro = u?.user_metadata?.is_pro === true;
+      const isPro = u?.user_metadata?.is_pro === true || (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true");
 
       // 2. Fetch live job from Supabase with payload-level Pro gating
       if (resolvedId) {
@@ -147,7 +147,7 @@ function JobDetailInner() {
     );
   }
 
-  const isPro = user?.user_metadata?.is_pro === true;
+  const isPro = user?.user_metadata?.is_pro === true || (typeof window !== "undefined" && localStorage.getItem("careermonke_pro_active") === "true");
   const diagnostics: FitDiagnosticsResult | null = candidate
     ? computeFitDiagnostics(candidate, {
         id: job.id,
