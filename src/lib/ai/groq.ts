@@ -4,91 +4,77 @@ import {
   validateCoverLetter,
   formatContactHeader,
 } from "../resume/tailor";
-
-export const FAST_MODEL =
-  process.env.FAST_MODEL ||
-  process.env.NEXT_PUBLIC_FAST_MODEL ||
-  "openai/gpt-oss-20b";
-
-export const SMART_MODEL =
-  process.env.SMART_MODEL ||
-  process.env.NEXT_PUBLIC_SMART_MODEL ||
-  "openai/gpt-oss-120b";
-
-export const GROQ_API_BASE_URL =
-  process.env.GROQ_API_BASE_URL || "https://api.groq.com/openai/v1";
+import { createClient } from "../supabase/client";
 
 /**
- * Gets the active Groq API Key from environment or local config
+ * Checks if server-side AI enhancement is available.
+ * Backward-compatible helper used across frontend components.
  */
-export function getGroqApiKey(): string | null {
-  if (typeof process !== "undefined" && process.env) {
-    if (process.env.GROQ_API_KEY) return process.env.GROQ_API_KEY;
-    if (process.env.NEXT_PUBLIC_GROQ_API_KEY) return process.env.NEXT_PUBLIC_GROQ_API_KEY;
-  }
-  if (typeof window !== "undefined") {
-    try {
-      const stored = localStorage.getItem("careermonke_groq_api_key");
-      if (stored) return stored;
-    } catch {}
-  }
-  return null;
+export function getGroqApiKey(): boolean {
+  return true;
 }
 
+export const isAiAvailable = getGroqApiKey;
+
 /**
- * Generic OpenAI-compatible chat completion caller targeting Groq API
+ * Proxies AI completion requests to our secure server-side endpoint (/api/ai).
+ * The server securely injects GROQ_API_KEY and calls Groq on the backend.
+ * Secrets, API keys, and vendor endpoints are NEVER exposed to the browser.
  */
 export async function callGroqCompletion(options: {
-  model: string;
+  model?: string;
   messages: Array<{ role: "system" | "user" | "assistant"; content: string }>;
   temperature?: number;
   jsonMode?: boolean;
+  feature?: string;
 }): Promise<string | null> {
-  const apiKey = getGroqApiKey();
-  if (!apiKey) {
-    return null;
-  }
-
   try {
-    const response = await fetch(`${GROQ_API_BASE_URL}/chat/completions`, {
+    const supabase = createClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+
+    if (!token) {
+      console.warn("User not authenticated; utilizing deterministic local algorithms.");
+      return null;
+    }
+
+    const response = await fetch("/api/ai", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
+        feature: options.feature || "completion",
         model: options.model,
         messages: options.messages,
         temperature: options.temperature ?? 0.2,
-        ...(options.jsonMode ? { response_format: { type: "json_object" } } : {}),
+        jsonMode: options.jsonMode,
       }),
     });
 
     if (!response.ok) {
-      const errText = await response.text();
-      console.warn(`Groq API returned HTTP ${response.status}:`, errText);
+      const errData = await response.json().catch(() => ({}));
+      console.warn("[AI] Server endpoint returned error:", errData.error || response.status);
       return null;
     }
 
     const data = await response.json();
-    return data?.choices?.[0]?.message?.content || null;
+    return data?.content || data?.text || null;
   } catch (err) {
-    console.warn("Groq API completion call failed, falling back to local engine:", err);
+    console.warn("[AI] Secure completion request failed, falling back to local engine:", err);
     return null;
   }
 }
 
 /**
- * AI-enhanced Resume Fact Extraction using FAST_MODEL (openai/gpt-oss-20b)
- * Strictly instructs the model never to invent or hallucinate facts.
+ * AI-enhanced Resume Fact Extraction via server-side /api/ai.
+ * Strictly enforces zero-hallucination extraction without exposing keys.
  */
 export async function extractResumeFactsWithGroq(
   rawText: string,
   baseProfile: CandidateProfile
 ): Promise<CandidateProfile> {
-  const apiKey = getGroqApiKey();
-  if (!apiKey) return baseProfile;
-
   const systemPrompt = `You are an elite, zero-hallucination resume facts extraction engine.
 CRITICAL ZERO-FABRICATION RULES:
 1. ONLY extract information directly evidenced in the source text.
@@ -127,7 +113,7 @@ CRITICAL ZERO-FABRICATION RULES:
 
   try {
     const output = await callGroqCompletion({
-      model: FAST_MODEL,
+      feature: "resume-extraction",
       messages: [
         { role: "system", content: systemPrompt },
         {
@@ -153,7 +139,7 @@ CRITICAL ZERO-FABRICATION RULES:
       };
     }
   } catch (err) {
-    console.warn("Failed to parse Groq extraction output, retaining deterministic output:", err);
+    console.warn("Failed to parse AI extraction output, retaining deterministic output:", err);
   }
 
   return baseProfile;
@@ -166,7 +152,7 @@ export interface GroqCoverLetterResponse {
 }
 
 /**
- * 1-Click Tailored Cover Letter using SMART_MODEL (openai/gpt-oss-120b)
+ * 1-Click Tailored Cover Letter via server-side /api/ai.
  * Hard evidence validation: rejects any unevidenced employers, contacts, or dates.
  */
 export async function generateGroqTailoredCoverLetter(
@@ -178,14 +164,6 @@ export async function generateGroqTailoredCoverLetter(
   }
 ): Promise<GroqCoverLetterResponse> {
   const fallback = fallbackGenerateCoverLetter(candidate, job);
-
-  const apiKey = getGroqApiKey();
-  if (!apiKey) {
-    return {
-      text: fallback.fullText,
-      isValidated: true,
-    };
-  }
 
   const hasExperience = Array.isArray(candidate.experience) && candidate.experience.length > 0;
   const expSummary = hasExperience
@@ -206,7 +184,7 @@ CRITICAL RULES:
 
   try {
     const output = await callGroqCompletion({
-      model: SMART_MODEL,
+      feature: "cover-letter",
       messages: [
         { role: "system", content: systemPrompt },
         {
@@ -221,7 +199,7 @@ CRITICAL RULES:
       // Validate the generated paragraphs against candidate facts
       const validation = validateCoverLetter(output, candidate, job);
       if (!validation.valid) {
-        console.warn("Groq cover letter failed strict evidence verification:", validation.reasons);
+        console.warn("AI cover letter failed strict evidence verification:", validation.reasons);
         return {
           text: fallback.fullText,
           isValidated: true,
@@ -244,7 +222,7 @@ CRITICAL RULES:
       };
     }
   } catch (e) {
-    console.warn("Groq cover letter generation failed, using deterministic template:", e);
+    console.warn("AI cover letter generation failed, using deterministic template:", e);
   }
 
   return {

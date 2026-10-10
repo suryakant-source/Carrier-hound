@@ -10,6 +10,12 @@
   force = true
 
 [[redirects]]
+  from = "/api/ai"
+  to = "/.netlify/functions/ai"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/job-search"
   to = "/job-search/all"
   status = 301
