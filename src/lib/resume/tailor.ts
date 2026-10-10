@@ -114,24 +114,70 @@ export function validateCoverLetter(
  * Adapts tone dynamically across tech, marketing, design, and finance domains.
  * Adapts cleanly for freshers with 0 previous roles without fabricating tenure.
  */
+/**
+ * Extracts a concise role focus snippet from the job description if available.
+ */
+function extractJdCoreFocus(description?: string): string {
+  if (!description || description.trim().length < 20) return "";
+
+  // Split into sentences or bullets
+  const snippets = description
+    .split(/\r?\n|[•·\-\*]|\.\s+/)
+    .map((s) => s.trim().replace(/^[^a-zA-Z]+/, ""))
+    .filter((s) => s.length >= 25 && s.length <= 140);
+
+  // Find sentences/phrases matching active engineering or product goals
+  const targetSnippet = snippets.find((s) =>
+    /\b(building|developing|scaling|designing|architecting|delivering|driving|optimizing|implementing|maintaining|creating)\b/i.test(s)
+  );
+
+  if (targetSnippet) {
+    // Sanitize punctuation
+    return targetSnippet.replace(/[.;,:]+$/, "").trim();
+  }
+
+  return "";
+}
+
+/**
+ * Generates a 1-click tailored cover letter grounded strictly in real resume facts.
+ * Deeply personalized to the target job title, company, and job description.
+ * Adapts tone dynamically across tech, marketing, design, and finance domains.
+ * Adapts cleanly for freshers with 0 previous roles without fabricating tenure.
+ */
 export function generateTailoredCoverLetter(
   candidate: CandidateProfile,
   job: {
+    id?: string;
     title: string;
     company: string;
     description?: string;
+    location?: string;
   }
 ): TailoredCoverLetterResult {
-  const jobSkills = extractSkillsFromJob(job);
+  const jobSkills = extractSkillsFromJob({
+    title: job.title,
+    description: job.description || `${job.title} at ${job.company}`,
+  });
+
   const matched = (candidate.skills || []).filter((s) =>
-    jobSkills.some((js) => js.toLowerCase() === s.toLowerCase())
+    jobSkills.some(
+      (js) =>
+        js.toLowerCase() === s.toLowerCase() ||
+        s.toLowerCase().includes(js.toLowerCase()) ||
+        js.toLowerCase().includes(s.toLowerCase())
+    )
   );
 
-  const topSkills = matched.length > 0 ? matched.slice(0, 4).join(", ") : (candidate.skills || []).slice(0, 3).join(", ") || "core professional competencies";
+  const topSkills = matched.length > 0
+    ? matched.slice(0, 4).join(", ")
+    : (candidate.skills || []).slice(0, 3).join(", ") || "core technical capabilities";
+
   const hasExperience = Array.isArray(candidate.experience) && candidate.experience.length > 0;
+  const jdFocusSnippet = extractJdCoreFocus(job.description);
 
   // Domain detection
-  const domainString = `${candidate.headline || ""} ${(candidate.skills || []).join(" ")} ${job.title}`.toLowerCase();
+  const domainString = `${candidate.headline || ""} ${(candidate.skills || []).join(" ")} ${job.title} ${job.description || ""}`.toLowerCase();
   const isMarketing = /marketing|seo|growth|content|social media|advertising|brand|copywriting|pr/i.test(domainString);
   const isDesign = /design|ui|ux|figma|product design|creative/i.test(domainString);
   const isFinance = /finance|accounting|audit|financial|tax|treasury|controller/i.test(domainString);
@@ -162,9 +208,9 @@ export function generateTailoredCoverLetter(
     domainFocus = "revenue growth and commercial targets";
     domainStrengths = "driving high-value sales pipelines, building client relationships, and accelerating revenue";
     teamLabel = "sales team";
-  } else if (/software|engineer|developer|data|tech|frontend|backend|cloud/i.test(domainString)) {
-    domainFocus = "engineering and technology objectives";
-    domainStrengths = "delivering robust technical solutions, collaborating cross-functionally, and maintaining high engineering standards";
+  } else if (/software|engineer|developer|data|tech|frontend|backend|cloud|full[- ]?stack/i.test(domainString)) {
+    domainFocus = "engineering and technical objectives";
+    domainStrengths = "delivering robust software systems, writing clean maintainable code, and maintaining high engineering standards";
     teamLabel = "engineering team";
   }
 
@@ -175,20 +221,32 @@ export function generateTailoredCoverLetter(
     const pastRole = latestExp.role || candidate.headline || "Professional";
     const pastCompany = latestExp.company;
 
-    paragraphs = [
-      `I am writing to express my strong enthusiasm for the ${job.title} opportunity at ${job.company}. Having developed hands-on proficiency in ${topSkills}, I am eager to apply my practical background to ${job.company}'s ${domainFocus}.`,
-      `In my work as a ${pastRole} at ${pastCompany}, I focused on ${domainStrengths}. My evidenced strengths include ${(candidate.skills || []).slice(0, 5).join(", ") || topSkills}, where I have consistently collaborated across teams to deliver measurable results.`,
-      `What particularly excites me about ${job.company} is the opportunity to contribute directly to your mission. With proficiency in ${topSkills}, I am prepared to ramp up quickly and make immediate, valuable contributions to the ${teamLabel}.`,
-      `Thank you for your time and consideration. I would welcome the opportunity to discuss how my verified background and disciplined problem-solving approach align with the priorities at ${job.company}.`
-    ];
+    const openingP = jdFocusSnippet
+      ? `I am writing to express my strong enthusiasm for the ${job.title} opportunity at ${job.company}. Having developed hands-on proficiency in ${topSkills}, I am eager to apply my practical background to ${job.company}'s work in ${jdFocusSnippet.toLowerCase().replace(/^(building|developing|scaling)/, (m) => m.toLowerCase())}.`
+      : `I am writing to express my strong enthusiasm for the ${job.title} opportunity at ${job.company}. Having developed hands-on proficiency in ${topSkills}, I am eager to apply my practical background to ${job.company}'s ${domainFocus}.`;
+
+    const bodyP = `In my work as a ${pastRole} at ${pastCompany}, I focused on ${domainStrengths}. My evidenced strengths include ${(candidate.skills || []).slice(0, 5).join(", ") || topSkills}, where I have consistently collaborated across teams to deliver measurable results.`;
+
+    const impactP = jdFocusSnippet
+      ? `What particularly excites me about ${job.company} is the opportunity to contribute directly to this role's objectives. With verified strengths in ${topSkills}, I am prepared to ramp up quickly, address key deliverables, and make immediate contributions to the ${teamLabel}.`
+      : `What particularly excites me about ${job.company} is the opportunity to contribute directly to your mission. With proficiency in ${topSkills}, I am prepared to ramp up quickly and make immediate, valuable contributions to the ${teamLabel}.`;
+
+    const closeP = `Thank you for your time and consideration. I would welcome the opportunity to discuss how my verified background and disciplined problem-solving approach align with the priorities at ${job.company}.`;
+
+    paragraphs = [openingP, bodyP, impactP, closeP];
   } else {
     // Fresher / No prior work experience: Strictly zero invented history or tenure
-    paragraphs = [
-      `I am writing to express my enthusiastic interest in the ${job.title} position at ${job.company}. With a verified foundation in ${topSkills}, I am eager to bring my dedicated focus, fast learning curve, and practical skills to ${job.company}'s ${domainFocus}.`,
-      `Through rigorous coursework, hands-on projects, and dedicated skill mastery, I have built competencies in ${(candidate.skills || []).slice(0, 5).join(", ") || topSkills}. I focus on ${domainStrengths}, with an emphasis on discipline and accountability.`,
-      `I am deeply inspired by ${job.company}'s work and look forward to contributing with energy, high standards, and a genuine eagerness to support the ${teamLabel}.`,
-      `Thank you for your consideration. I welcome the opportunity to discuss how my foundational skills and strong work ethic align with this opening at ${job.company}.`
-    ];
+    const openingP = jdFocusSnippet
+      ? `I am writing to express my enthusiastic interest in the ${job.title} position at ${job.company}. With a verified foundation in ${topSkills}, I am eager to bring my dedicated focus and practical skills to your initiatives in ${jdFocusSnippet.toLowerCase()}.`
+      : `I am writing to express my enthusiastic interest in the ${job.title} position at ${job.company}. With a verified foundation in ${topSkills}, I am eager to bring my dedicated focus, fast learning curve, and practical skills to ${job.company}'s ${domainFocus}.`;
+
+    const bodyP = `Through rigorous coursework, hands-on projects, and dedicated skill mastery, I have built competencies in ${(candidate.skills || []).slice(0, 5).join(", ") || topSkills}. I focus on ${domainStrengths}, with an emphasis on discipline and accountability.`;
+
+    const impactP = `I am deeply inspired by ${job.company}'s work and look forward to contributing with energy, high standards, and a genuine eagerness to support the ${teamLabel}.`;
+
+    const closeP = `Thank you for your consideration. I welcome the opportunity to discuss how my foundational skills and strong work ethic align with this opening at ${job.company}.`;
+
+    paragraphs = [openingP, bodyP, impactP, closeP];
   }
 
   const contactHeader = formatContactHeader(candidate);

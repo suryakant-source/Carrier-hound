@@ -1,5 +1,7 @@
 import { CandidateProfile } from "./types";
 import { createClient } from "../supabase/client";
+import type { TailoredJobResumeResult } from "./atsScorer";
+import type { TailoredCoverLetterResult } from "./tailor";
 
 const PROFILE_STORAGE_KEY = "careermonke_candidate_profile";
 
@@ -213,3 +215,63 @@ export async function deleteCandidateProfile(): Promise<void> {
     console.warn("Could not delete candidate profile from Supabase", err);
   }
 }
+
+const TAILORED_RESUME_PREFIX = "careermonke_tailored_resume_";
+const TAILORED_COVER_LETTER_PREFIX = "careermonke_tailored_cover_letter_";
+
+/**
+ * Gets cached job-specific tailored resume from localStorage.
+ */
+export function getCachedTailoredResume(jobId: string): TailoredJobResumeResult | null {
+  if (typeof window === "undefined" || !jobId) return null;
+  try {
+    const raw = localStorage.getItem(`${TAILORED_RESUME_PREFIX}${jobId}`);
+    if (raw) {
+      return JSON.parse(raw);
+    }
+  } catch (e) {
+    console.warn(`Could not read cached tailored resume for ${jobId}`, e);
+  }
+  return null;
+}
+
+/**
+ * Persists job-specific tailored resume into localStorage.
+ */
+export function saveCachedTailoredResume(jobId: string, data: TailoredJobResumeResult): void {
+  if (typeof window === "undefined" || !jobId) return;
+  try {
+    localStorage.setItem(`${TAILORED_RESUME_PREFIX}${jobId}`, JSON.stringify(data));
+  } catch (e) {
+    console.warn(`Could not save cached tailored resume for ${jobId}`, e);
+  }
+}
+
+/**
+ * Gets cached job-specific cover letter from localStorage.
+ */
+export function getCachedTailoredCoverLetter(jobId: string): TailoredCoverLetterResult | null {
+  if (typeof window === "undefined" || !jobId) return null;
+  try {
+    const raw = localStorage.getItem(`${TAILORED_COVER_LETTER_PREFIX}${jobId}`);
+    if (raw) {
+      return JSON.parse(raw);
+    }
+  } catch (e) {
+    console.warn(`Could not read cached tailored cover letter for ${jobId}`, e);
+  }
+  return null;
+}
+
+/**
+ * Persists job-specific cover letter into localStorage.
+ */
+export function saveCachedTailoredCoverLetter(jobId: string, data: TailoredCoverLetterResult): void {
+  if (typeof window === "undefined" || !jobId) return;
+  try {
+    localStorage.setItem(`${TAILORED_COVER_LETTER_PREFIX}${jobId}`, JSON.stringify(data));
+  } catch (e) {
+    console.warn(`Could not save cached tailored cover letter for ${jobId}`, e);
+  }
+}
+

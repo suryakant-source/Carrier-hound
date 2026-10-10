@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { X, Copy, Download, Check, Sparkles, FileText, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
 import { CandidateProfile } from "@/lib/resume/types";
-import { generateTailoredCoverLetter, validateCoverLetter } from "@/lib/resume/tailor";
+import { generateTailoredCoverLetter, validateCoverLetter, formatContactHeader } from "@/lib/resume/tailor";
+import { getCachedTailoredCoverLetter, saveCachedTailoredCoverLetter } from "@/lib/resume/storage";
 import { generateGroqTailoredCoverLetter, getGroqApiKey } from "@/lib/ai/groq";
 import { toast } from "react-toastify";
 
@@ -12,9 +13,11 @@ interface CoverLetterModalProps {
   onOpenChange: (open: boolean) => void;
   candidate: CandidateProfile;
   job: {
+    id?: string;
     title: string;
     company: string;
     description?: string;
+    location?: string;
   };
 }
 
@@ -29,14 +32,25 @@ export default function CoverLetterModal({
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
   const [isValidated, setIsValidated] = useState(true);
 
+  const jobId = job.id || `${(job.company || "").replace(/\s+/g, "-")}_${(job.title || "").replace(/\s+/g, "-")}`;
+
   useEffect(() => {
     if (open && candidate && job) {
-      // 1. Instantly set deterministic baseline with protected header
+      // 1. Check per-job cache first
+      const cached = getCachedTailoredCoverLetter(jobId);
+      if (cached && cached.fullText) {
+        setContent(cached.fullText);
+        setIsValidated(cached.isValidated ?? true);
+        return;
+      }
+
+      // 2. Generate deterministic tailored cover letter from job context
       const result = generateTailoredCoverLetter(candidate, job);
       setContent(result.fullText);
       setIsValidated(true);
+      saveCachedTailoredCoverLetter(jobId, result);
 
-      // 2. If Groq API Key is configured, enhance with SMART_MODEL under hard evidence validation
+      // 3. If Groq API Key is configured, enhance with SMART_MODEL under hard evidence validation
       if (getGroqApiKey()) {
         setIsGeneratingAi(true);
         generateGroqTailoredCoverLetter(candidate, job)
@@ -44,6 +58,12 @@ export default function CoverLetterModal({
             if (res.text) {
               setContent(res.text);
               setIsValidated(res.isValidated);
+              saveCachedTailoredCoverLetter(jobId, {
+                ...result,
+                fullText: res.text,
+                paragraphs: res.text.split("\n\n").filter(Boolean),
+                isValidated: res.isValidated,
+              });
               if (res.error) {
                 toast.warn(res.error);
               }
@@ -57,7 +77,7 @@ export default function CoverLetterModal({
           });
       }
     }
-  }, [open, candidate, job]);
+  }, [open, candidate, job, jobId]);
 
   if (!open) return null;
 
@@ -65,6 +85,16 @@ export default function CoverLetterModal({
     setContent(newVal);
     const validation = validateCoverLetter(newVal, candidate, job);
     setIsValidated(validation.valid);
+    saveCachedTailoredCoverLetter(jobId, {
+      recipient: `Hiring Team at ${job.company}`,
+      company: job.company,
+      jobTitle: job.title,
+      salutation: `Dear Hiring Team at ${job.company},`,
+      contactHeader: formatContactHeader(candidate),
+      paragraphs: newVal.split("\n\n").filter(Boolean),
+      fullText: newVal,
+      isValidated: validation.valid,
+    });
   };
 
   const handleCopy = () => {
@@ -79,7 +109,7 @@ export default function CoverLetterModal({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `Cover_Letter_${job.company.replace(/\s+/g, "_")}.txt`;
+    a.download = `Cover_Letter_${(job.company || "Company").replace(/\s+/g, "_")}_${(job.title || "Role").replace(/\s+/g, "_")}.txt`;
     a.click();
     URL.revokeObjectURL(url);
     toast.success("Cover letter downloaded as text file!");
@@ -98,7 +128,7 @@ export default function CoverLetterModal({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `Cover_Letter_${job.company.replace(/\s+/g, "_")}.doc`;
+    a.download = `Cover_Letter_${(job.company || "Company").replace(/\s+/g, "_")}_${(job.title || "Role").replace(/\s+/g, "_")}.doc`;
     a.click();
     URL.revokeObjectURL(url);
     toast.success("Cover letter downloaded as Word document!");

@@ -321,8 +321,10 @@ export default function TopTenCompatibleJobs({
           onOpenChange={(open) => !open && setActiveCoverLetterJob(null)}
           candidate={candidate}
           job={{
+            id: activeCoverLetterJob.id,
             title: activeCoverLetterJob.title,
             company: activeCoverLetterJob.company,
+            location: activeCoverLetterJob.location,
             description: activeCoverLetterJob.description,
           }}
         />

@@ -706,9 +706,11 @@ function JobDetailInner() {
           onOpenChange={setIsCoverLetterOpen}
           candidate={candidate}
           job={{
+            id: job.id,
             title: job.title,
             company: job.company,
-            description: `${job.title} at ${job.company} (${job.location}, ${job.category}).`,
+            location: job.location,
+            description: job.description || `${job.title} at ${job.company} (${job.location}, ${job.category}).`,
           }}
         />
       )}
@@ -726,7 +728,7 @@ function JobDetailInner() {
             location: job.location,
             category: job.category,
             skills: job.skills,
-            description: `${job.title} at ${job.company} (${job.location}, ${job.category}).`,
+            description: job.description || `${job.title} at ${job.company} (${job.location}, ${job.category}).`,
           }}
           onOpenCoverLetter={() => setIsCoverLetterOpen(true)}
         />
