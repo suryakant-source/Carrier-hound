@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
+import { useState } from "react";
 import {
   Lock,
   Sparkles,
@@ -11,8 +10,11 @@ import {
   FileCheck2,
   CheckCircle2,
   LogOut,
+  Loader2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { PLAN_DOMESTIC, PLAN_INTERNATIONAL, BillingPlan } from "@/lib/billing/types";
+import { handleProCheckout } from "@/lib/billing/checkout";
 
 interface ProUpgradeScreenProps {
   title?: string;
@@ -23,6 +25,27 @@ export default function ProUpgradeScreen({
   title = "Unlock CareerMonke Pro",
   subtitle = "Complete your membership to access full job details, match scores, and AI application tools.",
 }: ProUpgradeScreenProps) {
+  const [selectedPlanId, setSelectedPlanId] = useState<"domestic" | "intl">("domestic");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const selectedPlan = selectedPlanId === "domestic" ? PLAN_DOMESTIC : PLAN_INTERNATIONAL;
+
+  const handleUpgrade = async () => {
+    setLoading(true);
+    setError(null);
+    await handleProCheckout(selectedPlan, {
+      redirectTarget: typeof window !== "undefined" ? window.location.pathname + window.location.search : "/dashboard",
+      onError: (err) => {
+        setError(err);
+        setLoading(false);
+      },
+      onSuccess: () => {
+        setLoading(false);
+      },
+    });
+  };
+
   const handleSignOut = async () => {
     try {
       const supabase = createClient();
@@ -77,6 +100,34 @@ export default function ProUpgradeScreen({
           </p>
         </div>
 
+        {/* Plan Switcher */}
+        <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-2xl">
+          <button
+            type="button"
+            onClick={() => setSelectedPlanId("domestic")}
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
+              selectedPlanId === "domestic"
+                ? "bg-white text-blue-600 shadow-xs"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <span>India Domestic</span>
+            <span className="text-[11px] font-semibold text-slate-500">₹199 / month</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedPlanId("intl")}
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
+              selectedPlanId === "intl"
+                ? "bg-white text-blue-600 shadow-xs"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <span>International</span>
+            <span className="text-[11px] font-semibold text-slate-500">$9 / month</span>
+          </button>
+        </div>
+
         {/* Feature Cards Grid */}
         <div className="grid grid-cols-1 gap-2.5 text-left">
           {proFeatures.map((feat) => {
@@ -103,18 +154,36 @@ export default function ProUpgradeScreen({
           })}
         </div>
 
+        {error && (
+          <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 text-center">
+            {error}
+          </div>
+        )}
+
         {/* Upgrade Action Button */}
-        <div className="pt-2 space-y-3">
+        <div className="pt-2 space-y-2">
           <button
             type="button"
-            disabled
-            className="w-full py-3.5 px-6 rounded-2xl bg-slate-200 text-slate-400 font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2"
+            onClick={handleUpgrade}
+            disabled={loading}
+            className="w-full py-3.5 px-6 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold text-sm shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
           >
-            <Sparkles className="w-4 h-4 text-slate-400" />
-            <span>Payments Coming Soon</span>
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
+                <span>Activating Pro membership…</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 text-yellow-300" />
+                <span>
+                  Subscribe to Pro — {selectedPlan.formattedPrice}
+                </span>
+              </>
+            )}
           </button>
           <p className="text-[11px] text-slate-400">
-            Billing gateway integration is in progress. Pro unlocks automatically once checkout is live.
+            Instant Pro activation • Auto-renews monthly • Cancel anytime in Settings
           </p>
         </div>
 

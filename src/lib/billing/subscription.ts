@@ -87,6 +87,17 @@ export async function getProAccessStatus(userId?: string): Promise<ProAccessStat
           };
         }
       }
+
+      // Check server-persisted user_metadata in Supabase auth
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.id === resolvedUserId && user.user_metadata?.is_pro === true) {
+        return {
+          isPro: true,
+          status: "active",
+          planName: user.user_metadata?.pro_plan === PLAN_INTERNATIONAL.id ? PLAN_INTERNATIONAL.name : PLAN_DOMESTIC.name,
+          inGracePeriod: false,
+        };
+      }
     }
   } catch (e) {
     console.warn("Could not check remote subscription status", e);

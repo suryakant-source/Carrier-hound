@@ -17,6 +17,7 @@ import {
   CreditCard,
   QrCode,
   Globe,
+  Loader2,
 } from "lucide-react";
 import BrandIcon from "./BrandIcon";
 import { createClient } from "@/lib/supabase/client";
@@ -26,6 +27,7 @@ import { openRazorpayCheckout } from "@/lib/billing/razorpay";
 import { redirectToStripeCheckout } from "@/lib/billing/stripe";
 import { toast } from "react-toastify";
 import { setLocalProActive } from "@/lib/billing/subscription";
+import { handleProCheckout } from "@/lib/billing/checkout";
 
 interface PaywallModalProps {
   open: boolean;
@@ -82,8 +84,22 @@ export default function PaywallModal({
     }
   }, [initialUser, open]);
 
+  const selectedPlan = selectedPlanId === "domestic" ? PLAN_DOMESTIC : PLAN_INTERNATIONAL;
+
   const handleCheckout = async () => {
-    toast.info("Payments coming soon! Pro subscriptions will be available as soon as checkout is live.");
+    setIsProcessing(true);
+    await handleProCheckout(selectedPlan, {
+      redirectTarget: loginNextUrl,
+      onError: (err) => {
+        toast.error(err);
+        setIsProcessing(false);
+      },
+      onSuccess: () => {
+        setIsSuccess(true);
+        setIsProcessing(false);
+        onSuccess?.();
+      },
+    });
   };
 
   if (!open) return null;
@@ -256,15 +272,20 @@ export default function PaywallModal({
 
               {/* Action State: Sign In vs Checkout */}
               {!currentUser ? (
-                /* User is NOT logged in */
+                /* Visitor is NOT signed in: send through sign-in first, then continue */
                 <div className="space-y-3 pt-1">
                   <button
                     type="button"
-                    disabled
-                    className="w-full min-h-[48px] bg-slate-200 text-slate-400 py-3.5 rounded-xl font-bold text-sm sm:text-base cursor-not-allowed flex items-center justify-center gap-2"
+                    onClick={() => {
+                      onOpenChange(false);
+                      window.location.href = `/login?next=${encodeURIComponent(loginNextUrl)}`;
+                    }}
+                    className="w-full min-h-[48px] bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white py-3.5 rounded-xl font-bold text-sm sm:text-base shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <Sparkles className="w-4 h-4 text-slate-400" />
-                    <span>Payments Coming Soon</span>
+                    <Sparkles className="w-4 h-4 text-yellow-300" />
+                    <span>
+                      Unlock Pro — {selectedPlan.formattedPrice}
+                    </span>
                   </button>
 
                   <div className="text-center pt-1">
@@ -279,7 +300,7 @@ export default function PaywallModal({
                   </div>
                 </div>
               ) : (
-                /* User IS logged in */
+                /* User IS signed in */
                 <div className="space-y-3 pt-1">
                   <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
                     <span className="text-slate-500 font-medium">Logged in account:</span>
@@ -290,11 +311,23 @@ export default function PaywallModal({
 
                   <button
                     type="button"
-                    disabled
-                    className="w-full min-h-[48px] bg-slate-200 text-slate-400 py-3.5 rounded-xl font-bold text-sm sm:text-base cursor-not-allowed flex items-center justify-center gap-2"
+                    onClick={handleCheckout}
+                    disabled={isProcessing}
+                    className="w-full min-h-[48px] bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white py-3.5 rounded-xl font-bold text-sm sm:text-base shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
                   >
-                    <Sparkles className="w-4 h-4 text-slate-400" />
-                    <span>Payments Coming Soon</span>
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
+                        <span>Processing checkout…</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 text-yellow-300" />
+                        <span>
+                          Subscribe to Pro — {selectedPlan.formattedPrice}
+                        </span>
+                      </>
+                    )}
                   </button>
                 </div>
               )}
