@@ -137,7 +137,7 @@ export async function searchJobs(params: SearchJobsParams = {}): Promise<SearchJ
         "Notion",
       ]);
     } else if (categoryTokens.includes("internships")) {
-      query = query.or("job_type.eq.internship,title.ilike.%internship%,title.ilike.%internships%,title.ilike.% intern %,title.ilike.intern %,title.ilike.% intern,title.ilike.%-intern%,title.ilike.%(intern)%");
+      query = query.or("job_type.eq.internship,title.ilike.%internship%,title.ilike.%internships%,title.ilike.% intern %,title.ilike.intern %,title.ilike.% intern,title.ilike.%-intern%,title.ilike.%(intern)%,title.ilike.%co-op%,title.ilike.%coop%");
     } else if (categoryTokens.includes("remote")) {
       query = query.eq("remote_scope", "remote");
     } else if (categoryTokens.includes("fresher")) {

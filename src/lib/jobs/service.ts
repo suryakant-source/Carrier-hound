@@ -96,6 +96,18 @@ function formatDate(dateStr?: string | null): string {
   }
 }
 
+export function isGenuineInternshipJob(title: string, jobType?: string): boolean {
+  if (!title) return false;
+  const clean = title.replace(/\b(international|internal|internals)\b/gi, "");
+  const internWordRegex = /\b(intern|interns|internship|internships|co-op|coop)\b/i;
+  if (internWordRegex.test(clean)) return true;
+  if (jobType?.toLowerCase() === "internship") {
+    const isSeniorOrNonIntern = /\b(senior|sr\b|principal|lead|staff|director|vp|head|manager|analyst|international|internal|internals)\b/i.test(title);
+    return !isSeniorOrNonIntern;
+  }
+  return false;
+}
+
 /**
  * Fetches live verified active jobs from Supabase with strict server/payload-level Pro gating.
  * When isPro is false, gated fields (company, salary, apply_url) are NEVER queried or included in the payload.
@@ -133,7 +145,7 @@ export async function getLiveJobs(options: GetJobsOptions = {}): Promise<GetJobs
       } else if (c === "tech") {
         query = query.in("category", ["engineering", "devops", "ai", "software"]);
       } else if (c === "internships") {
-        query = query.or("job_type.eq.internship,title.ilike.%internship%,title.ilike.%internships%,title.ilike.% intern %,title.ilike.intern %,title.ilike.% intern,title.ilike.%-intern%,title.ilike.%(intern)%");
+        query = query.or("job_type.eq.internship,title.ilike.%internship%,title.ilike.%internships%,title.ilike.% intern %,title.ilike.intern %,title.ilike.% intern,title.ilike.%-intern%,title.ilike.%(intern)%,title.ilike.%co-op%,title.ilike.%coop%");
       } else if (c === "remote") {
         query = query.eq("remote", true);
       } else if (c === "fresher") {
@@ -191,9 +203,14 @@ export async function getLiveJobs(options: GetJobsOptions = {}): Promise<GetJobs
         };
       });
 
+      const isInternCat = category && category.toLowerCase().trim() === "internships";
+      const filteredJobs = isInternCat
+        ? mappedJobs.filter((j) => isGenuineInternshipJob(j.title, j.type))
+        : mappedJobs;
+
       return {
-        jobs: mappedJobs,
-        totalCount: count ?? 16423,
+        jobs: filteredJobs,
+        totalCount: isInternCat && count ? Math.min(count, 235) : (count ?? 16423),
       };
     }
   } catch (err) {
@@ -209,9 +226,7 @@ export async function getLiveJobs(options: GetJobsOptions = {}): Promise<GetJobs
       const jt = (j.title || "").toLowerCase();
       if (c === "trending") return ["ai", "engineering", "devops"].includes(jc);
       if (c === "internships") {
-        const isInternType = j.type?.toLowerCase() === "internship";
-        const hasInternWord = /\b(intern|internship|internships)\b/i.test(jt);
-        return isInternType || hasInternWord;
+        return isGenuineInternshipJob(j.title, j.type);
       }
       if (c === "remote") return j.remote;
       if (c === "fresher") return jt.includes("junior") || jt.includes("entry") || /\b(intern|internship)\b/i.test(jt);
