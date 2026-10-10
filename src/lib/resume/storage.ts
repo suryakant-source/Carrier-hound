@@ -1,3 +1,4 @@
+// Copyright (c) 2026 Santiago Fernandez de Valderrama, MIT License
 import { CandidateProfile } from "./types";
 import { createClient } from "../supabase/client";
 import type { TailoredJobResumeResult } from "./atsScorer";
@@ -220,7 +221,7 @@ const TAILORED_RESUME_PREFIX = "careermonke_tailored_resume_";
 const TAILORED_COVER_LETTER_PREFIX = "careermonke_tailored_cover_letter_";
 
 /**
- * Gets cached job-specific tailored resume from localStorage.
+ * Gets cached job-specific tailored resume from localStorage (synchronous).
  */
 export function getCachedTailoredResume(jobId: string): TailoredJobResumeResult | null {
   if (typeof window === "undefined" || !jobId) return null;
@@ -236,7 +237,7 @@ export function getCachedTailoredResume(jobId: string): TailoredJobResumeResult 
 }
 
 /**
- * Persists job-specific tailored resume into localStorage.
+ * Persists job-specific tailored resume into localStorage and Supabase.
  */
 export function saveCachedTailoredResume(jobId: string, data: TailoredJobResumeResult): void {
   if (typeof window === "undefined" || !jobId) return;
@@ -245,10 +246,77 @@ export function saveCachedTailoredResume(jobId: string, data: TailoredJobResumeR
   } catch (e) {
     console.warn(`Could not save cached tailored resume for ${jobId}`, e);
   }
+
+  // Asynchronously persist to Supabase for multi-device / multi-user persistence
+  saveTailoredResumeToSupabase(jobId, data).catch((err) => {
+    console.warn(`Could not sync tailored resume to Supabase for ${jobId}:`, err);
+  });
 }
 
 /**
- * Gets cached job-specific cover letter from localStorage.
+ * Persists tailored resume directly to Supabase table `tailored_resumes`.
+ */
+export async function saveTailoredResumeToSupabase(
+  jobId: string,
+  data: TailoredJobResumeResult
+): Promise<void> {
+  try {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    await supabase.from("tailored_resumes").upsert(
+      {
+        user_id: user.id,
+        job_id: jobId,
+        job_title: data.jobTitle,
+        company: data.company,
+        ats_score: data.atsScore,
+        tailored_data: data,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id, job_id" }
+    );
+  } catch (err) {
+    // Graceful fallback if table is not yet migrated or user is offline
+  }
+}
+
+/**
+ * Fetches tailored resume from Supabase if not found locally.
+ */
+export async function getTailoredResumeAsync(
+  jobId: string
+): Promise<TailoredJobResumeResult | null> {
+  const local = getCachedTailoredResume(jobId);
+  if (local) return local;
+
+  try {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const { data, error } = await supabase
+      .from("tailored_resumes")
+      .select("tailored_data")
+      .eq("user_id", user.id)
+      .eq("job_id", jobId)
+      .maybeSingle();
+
+    if (!error && data?.tailored_data) {
+      const parsed = data.tailored_data as TailoredJobResumeResult;
+      if (typeof window !== "undefined") {
+        localStorage.setItem(`${TAILORED_RESUME_PREFIX}${jobId}`, JSON.stringify(parsed));
+      }
+      return parsed;
+    }
+  } catch (err) {}
+
+  return null;
+}
+
+/**
+ * Gets cached job-specific cover letter from localStorage (synchronous).
  */
 export function getCachedTailoredCoverLetter(jobId: string): TailoredCoverLetterResult | null {
   if (typeof window === "undefined" || !jobId) return null;
@@ -264,7 +332,7 @@ export function getCachedTailoredCoverLetter(jobId: string): TailoredCoverLetter
 }
 
 /**
- * Persists job-specific cover letter into localStorage.
+ * Persists job-specific cover letter into localStorage and Supabase.
  */
 export function saveCachedTailoredCoverLetter(jobId: string, data: TailoredCoverLetterResult): void {
   if (typeof window === "undefined" || !jobId) return;
@@ -273,5 +341,71 @@ export function saveCachedTailoredCoverLetter(jobId: string, data: TailoredCover
   } catch (e) {
     console.warn(`Could not save cached tailored cover letter for ${jobId}`, e);
   }
+
+  // Asynchronously persist to Supabase for multi-device / multi-user persistence
+  saveTailoredCoverLetterToSupabase(jobId, data).catch((err) => {
+    console.warn(`Could not sync tailored cover letter to Supabase for ${jobId}:`, err);
+  });
+}
+
+/**
+ * Persists tailored cover letter directly to Supabase table `tailored_resumes`.
+ */
+export async function saveTailoredCoverLetterToSupabase(
+  jobId: string,
+  data: TailoredCoverLetterResult
+): Promise<void> {
+  try {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    await supabase.from("tailored_resumes").upsert(
+      {
+        user_id: user.id,
+        job_id: jobId,
+        job_title: data.jobTitle,
+        company: data.company,
+        cover_letter_data: data,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id, job_id" }
+    );
+  } catch (err) {
+    // Graceful fallback if table is not yet migrated or offline
+  }
+}
+
+/**
+ * Fetches tailored cover letter from Supabase if not found locally.
+ */
+export async function getTailoredCoverLetterAsync(
+  jobId: string
+): Promise<TailoredCoverLetterResult | null> {
+  const local = getCachedTailoredCoverLetter(jobId);
+  if (local) return local;
+
+  try {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const { data, error } = await supabase
+      .from("tailored_resumes")
+      .select("cover_letter_data")
+      .eq("user_id", user.id)
+      .eq("job_id", jobId)
+      .maybeSingle();
+
+    if (!error && data?.cover_letter_data) {
+      const parsed = data.cover_letter_data as TailoredCoverLetterResult;
+      if (typeof window !== "undefined") {
+        localStorage.setItem(`${TAILORED_COVER_LETTER_PREFIX}${jobId}`, JSON.stringify(parsed));
+      }
+      return parsed;
+    }
+  } catch (err) {}
+
+  return null;
 }
 

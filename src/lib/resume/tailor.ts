@@ -1,3 +1,4 @@
+// Copyright (c) 2026 Santiago Fernandez de Valderrama, MIT License
 import { CandidateProfile } from "./types";
 import { extractSkillsFromJob } from "../matcher/scoring";
 
@@ -169,26 +170,56 @@ export function generateTailoredCoverLetter(
     )
   );
 
-  const topSkills = matched.length > 0
-    ? matched.slice(0, 4).join(", ")
-    : (candidate.skills || []).slice(0, 3).join(", ") || "core technical capabilities";
-
   const hasExperience = Array.isArray(candidate.experience) && candidate.experience.length > 0;
   const jdFocusSnippet = extractJdCoreFocus(job.description);
 
-  // Domain detection
   const domainString = `${candidate.headline || ""} ${(candidate.skills || []).join(" ")} ${job.title} ${job.description || ""}`.toLowerCase();
+  const isAi = /\b(ai|artificial intelligence|ml|machine learning|deep learning|llm|nlp|ai platform|neural)\b/i.test(domainString);
+  const isBackend = /\b(backend|back-end|api|microservices|distributed systems|card|payment|banking|transactions?|database|server|golang|python|java)\b/i.test(domainString) && !isAi && !/\b(frontend|front-end)\b/i.test(job.title.toLowerCase());
+  const isFrontend = /\b(frontend|front-end|ui|ux|react|next\.js|client-side|vue|angular)\b/i.test(domainString) && !/\b(full[- ]?stack|backend)\b/i.test(job.title.toLowerCase());
+  const isDevOps = /\b(devops|sre|cloud|infrastructure|kubernetes|docker|platform engineer)\b/i.test(domainString) && !isAi && !isBackend;
   const isMarketing = /marketing|seo|growth|content|social media|advertising|brand|copywriting|pr/i.test(domainString);
   const isDesign = /design|ui|ux|figma|product design|creative/i.test(domainString);
   const isFinance = /finance|accounting|audit|financial|tax|treasury|controller/i.test(domainString);
   const isHR = /recruiting|talent|human resources|hr|people operations/i.test(domainString);
   const isSales = /sales|account exec|business development|bdr|sdr/i.test(domainString);
 
+  // Compute domain-aligned top skills from candidate's verified skills
+  const rankSkill = (s: string): number => {
+    const sl = s.toLowerCase();
+    if (isAi && /\b(python|gcp|google cloud|data structures|algorithms|system design|docker|linux|orchestration)\b/i.test(sl)) return 3;
+    if (isBackend && /\b(node|sql|express|postgres|mysql|rest|api|orchestration|system design|docker)\b/i.test(sl)) return 3;
+    if (isFrontend && /\b(react|next|typescript|javascript|tailwind|css|html|ui)\b/i.test(sl)) return 3;
+    if (isDevOps && /\b(docker|gcp|cloud|linux|git|system design)\b/i.test(sl)) return 3;
+    return 1;
+  };
+
+  const domainSortedSkills = [...(candidate.skills || [])].sort((a, b) => rankSkill(b) - rankSkill(a));
+  const topSkills = matched.length > 0
+    ? matched.slice(0, 4).join(", ")
+    : domainSortedSkills.slice(0, 3).join(", ") || "core technical capabilities";
+
   let domainFocus = "operational and strategic priorities";
   let domainStrengths = "delivering high-impact, reliable outcomes and collaborating cross-functionally";
   let teamLabel = "team";
 
-  if (isMarketing) {
+  if (isAi) {
+    domainFocus = "AI platform and intelligent systems initiatives";
+    domainStrengths = "architecting scalable platform services, optimizing pipeline throughput, and deploying reliable microservices";
+    teamLabel = "AI platform engineering team";
+  } else if (isBackend) {
+    domainFocus = "backend architecture and transactional services";
+    domainStrengths = "building high-throughput APIs, optimizing relational query performance, and maintaining fault-tolerant transaction pipelines";
+    teamLabel = "backend engineering team";
+  } else if (isFrontend) {
+    domainFocus = "frontend architecture and user experience goals";
+    domainStrengths = "building high-performance web applications, optimizing client-side latency, and standardizing modular design systems";
+    teamLabel = "frontend engineering team";
+  } else if (isDevOps) {
+    domainFocus = "cloud infrastructure and deployment reliability";
+    domainStrengths = "containerized deployments, automated CI/CD workflows, and high-availability systems";
+    teamLabel = "infrastructure and platform team";
+  } else if (isMarketing) {
     domainFocus = "growth and marketing initiatives";
     domainStrengths = "scaling user acquisition, optimizing campaign performance, and driving measurable brand impact";
     teamLabel = "growth & marketing team";
@@ -208,7 +239,7 @@ export function generateTailoredCoverLetter(
     domainFocus = "revenue growth and commercial targets";
     domainStrengths = "driving high-value sales pipelines, building client relationships, and accelerating revenue";
     teamLabel = "sales team";
-  } else if (/software|engineer|developer|data|tech|frontend|backend|cloud|full[- ]?stack/i.test(domainString)) {
+  } else if (/software|engineer|developer|data|tech|full[- ]?stack/i.test(domainString)) {
     domainFocus = "engineering and technical objectives";
     domainStrengths = "delivering robust software systems, writing clean maintainable code, and maintaining high engineering standards";
     teamLabel = "engineering team";

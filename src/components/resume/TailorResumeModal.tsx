@@ -19,7 +19,12 @@ import {
 } from "lucide-react";
 import { CandidateProfile } from "@/lib/resume/types";
 import { tailorProfileForJobWithAts, TailoredJobResumeResult } from "@/lib/resume/atsScorer";
-import { getCachedTailoredResume, saveCachedTailoredResume } from "@/lib/resume/storage";
+import {
+  getCachedTailoredResume,
+  saveCachedTailoredResume,
+  getTailoredResumeAsync,
+} from "@/lib/resume/storage";
+import { downloadAtsResumePdf } from "@/lib/resume/atsPdfGenerator";
 import {
   downloadAtsResumeDocx,
   downloadAtsResumeText,
@@ -67,9 +72,22 @@ export default function TailorResumeModal({
       if (cached && cached.jobId === jobId) {
         setTailoredResult(cached);
       } else {
-        const fresh = tailorProfileForJobWithAts(candidate, job);
-        saveCachedTailoredResume(jobId, fresh);
-        setTailoredResult(fresh);
+        // Check Supabase per-job cache asynchronously first
+        getTailoredResumeAsync(jobId)
+          .then((remote) => {
+            if (remote && remote.jobId === jobId) {
+              setTailoredResult(remote);
+            } else {
+              const fresh = tailorProfileForJobWithAts(candidate, job);
+              saveCachedTailoredResume(jobId, fresh);
+              setTailoredResult(fresh);
+            }
+          })
+          .catch(() => {
+            const fresh = tailorProfileForJobWithAts(candidate, job);
+            saveCachedTailoredResume(jobId, fresh);
+            setTailoredResult(fresh);
+          });
       }
     }
   }, [open, jobId, candidate, job]);
@@ -85,6 +103,12 @@ export default function TailorResumeModal({
   }, [tailoredCandidate]);
 
   if (!open) return null;
+
+  const handleDownloadPdf = () => {
+    const filename = `${(candidate.name || "Resume").replace(/\s+/g, "_")}_Tailored_${(job.company || "Company").replace(/\s+/g, "_")}_${(job.title || "Role").replace(/\s+/g, "_")}_ATS.pdf`;
+    downloadAtsResumePdf(tailoredCandidate, filename);
+    toast.success(`Downloaded ATS PDF tailored for ${job.company}!`);
+  };
 
   const handleDownloadDocx = () => {
     const filename = `${(candidate.name || "Resume").replace(/\s+/g, "_")}_Tailored_${(job.company || "Company").replace(/\s+/g, "_")}_${(job.title || "Role").replace(/\s+/g, "_")}_ATS.docx`;
@@ -311,19 +335,28 @@ export default function TailorResumeModal({
             <button
               type="button"
               onClick={handleDownloadTxt}
-              className="px-3.5 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold transition cursor-pointer min-h-[44px] flex items-center gap-1.5"
+              className="px-3 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold transition cursor-pointer min-h-[44px] flex items-center gap-1.5"
             >
               <FileCode className="w-3.5 h-3.5 text-slate-500" />
-              <span>Export Text (.txt)</span>
+              <span>Text (.txt)</span>
             </button>
 
             <button
               type="button"
               onClick={handleDownloadDocx}
+              className="px-3 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold transition cursor-pointer min-h-[44px] flex items-center gap-1.5"
+            >
+              <Download className="w-3.5 h-3.5 text-slate-500" />
+              <span>Word (.docx)</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
               className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-xs font-bold shadow-xs transition cursor-pointer min-h-[44px] flex items-center gap-2"
             >
               <Download className="w-4 h-4" />
-              <span>Download Aligned ATS (.docx)</span>
+              <span>Download PDF (.pdf)</span>
             </button>
           </div>
         </div>

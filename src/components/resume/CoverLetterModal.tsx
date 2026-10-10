@@ -4,7 +4,12 @@ import React, { useState, useEffect } from "react";
 import { X, Copy, Download, Check, Sparkles, FileText, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
 import { CandidateProfile } from "@/lib/resume/types";
 import { generateTailoredCoverLetter, validateCoverLetter, formatContactHeader } from "@/lib/resume/tailor";
-import { getCachedTailoredCoverLetter, saveCachedTailoredCoverLetter } from "@/lib/resume/storage";
+import {
+  getCachedTailoredCoverLetter,
+  saveCachedTailoredCoverLetter,
+  getTailoredCoverLetterAsync,
+} from "@/lib/resume/storage";
+import { downloadCoverLetterPdf } from "@/lib/resume/atsPdfGenerator";
 import { generateGroqTailoredCoverLetter, getGroqApiKey } from "@/lib/ai/groq";
 import { toast } from "react-toastify";
 
@@ -44,42 +49,68 @@ export default function CoverLetterModal({
         return;
       }
 
-      // 2. Generate deterministic tailored cover letter from job context
-      const result = generateTailoredCoverLetter(candidate, job);
-      setContent(result.fullText);
-      setIsValidated(true);
-      saveCachedTailoredCoverLetter(jobId, result);
+      // Check remote Supabase cache before fresh generation
+      getTailoredCoverLetterAsync(jobId)
+        .then((remote) => {
+          if (remote && remote.fullText) {
+            setContent(remote.fullText);
+            setIsValidated(remote.isValidated ?? true);
+            return;
+          }
 
-      // 3. If Groq API Key is configured, enhance with SMART_MODEL under hard evidence validation
-      if (getGroqApiKey()) {
-        setIsGeneratingAi(true);
-        generateGroqTailoredCoverLetter(candidate, job)
-          .then((res) => {
-            if (res.text) {
-              setContent(res.text);
-              setIsValidated(res.isValidated);
-              saveCachedTailoredCoverLetter(jobId, {
-                ...result,
-                fullText: res.text,
-                paragraphs: res.text.split("\n\n").filter(Boolean),
-                isValidated: res.isValidated,
+          // 2. Generate deterministic tailored cover letter from job context
+          const result = generateTailoredCoverLetter(candidate, job);
+          setContent(result.fullText);
+          setIsValidated(true);
+          saveCachedTailoredCoverLetter(jobId, result);
+
+          // 3. If Groq API Key is configured, enhance with SMART_MODEL under hard evidence validation
+          if (getGroqApiKey()) {
+            setIsGeneratingAi(true);
+            generateGroqTailoredCoverLetter(candidate, job)
+              .then((res) => {
+                if (res.text) {
+                  setContent(res.text);
+                  setIsValidated(res.isValidated);
+                  saveCachedTailoredCoverLetter(jobId, {
+                    ...result,
+                    fullText: res.text,
+                    paragraphs: res.text.split("\n\n").filter(Boolean),
+                    isValidated: res.isValidated,
+                  });
+                  if (res.error) {
+                    toast.warn(res.error);
+                  }
+                }
+              })
+              .catch(() => {
+                setIsValidated(true);
+              })
+              .finally(() => {
+                setIsGeneratingAi(false);
               });
-              if (res.error) {
-                toast.warn(res.error);
-              }
-            }
-          })
-          .catch(() => {
-            setIsValidated(true);
-          })
-          .finally(() => {
-            setIsGeneratingAi(false);
-          });
-      }
+          }
+        })
+        .catch(() => {
+          const result = generateTailoredCoverLetter(candidate, job);
+          setContent(result.fullText);
+          setIsValidated(true);
+          saveCachedTailoredCoverLetter(jobId, result);
+        });
     }
   }, [open, candidate, job, jobId]);
 
   if (!open) return null;
+
+  const handleDownloadPdf = () => {
+    downloadCoverLetterPdf({
+      candidate,
+      company: job.company,
+      jobTitle: job.title,
+      content,
+    });
+    toast.success("Cover letter downloaded as clean PDF!");
+  };
 
   const handleContentChange = (newVal: string) => {
     setContent(newVal);
@@ -196,14 +227,22 @@ export default function CoverLetterModal({
 
         {/* Action Footer */}
         <div className="p-4 bg-slate-50 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2.5">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-[#2563EB] hover:bg-[#1D4ED8] text-white shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[44px]"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Download PDF (.pdf)</span>
+            </button>
             <button
               type="button"
               onClick={handleDownloadDoc}
               className="px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[44px]"
             >
-              <Download className="w-3.5 h-3.5 text-blue-600" />
-              <span>Download Word (.doc)</span>
+              <Download className="w-3.5 h-3.5 text-slate-500" />
+              <span>Word (.doc)</span>
             </button>
             <button
               type="button"
@@ -211,24 +250,24 @@ export default function CoverLetterModal({
               className="px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer min-h-[44px]"
             >
               <FileText className="w-3.5 h-3.5 text-slate-500" />
-              <span>Download (.txt)</span>
+              <span>Text (.txt)</span>
             </button>
           </div>
 
           <button
             type="button"
             onClick={handleCopy}
-            className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#2563EB] hover:bg-[#1D4ED8] text-white shadow-md flex items-center gap-1.5 transition-all cursor-pointer min-h-[44px]"
+            className="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-xs flex items-center gap-1.5 transition-all cursor-pointer min-h-[44px]"
           >
             {copied ? (
               <>
                 <Check className="w-4 h-4 text-emerald-300" />
-                <span>Copied to Clipboard!</span>
+                <span>Copied!</span>
               </>
             ) : (
               <>
                 <Copy className="w-4 h-4" />
-                <span>Copy to Clipboard</span>
+                <span>Copy</span>
               </>
             )}
           </button>
