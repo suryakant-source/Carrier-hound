@@ -75,12 +75,6 @@ export default function HomePage() {
               <span>View Jobs</span>
               <ArrowRight className="w-5 h-5 ml-0.5 stroke-[2.5]" />
             </button>
-            <Link
-              href="/resume"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-blue-700/80 hover:bg-blue-800 text-white border border-white/30 font-bold text-base sm:text-lg px-7 sm:px-9 py-3.5 sm:py-4 min-h-[48px] rounded-xl shadow-md hover:shadow-xl hover:scale-105 transition-all cursor-pointer"
-            >
-              <span>Build ATS Resume</span>
-            </Link>
           </div>
 
           <div className="mt-4">
