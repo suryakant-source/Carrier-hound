@@ -1,5 +1,7 @@
 import { createClient } from "../supabase/client";
 import { DUMMY_JOBS } from "@/data/jobs";
+import { CandidateProfile } from "../resume/types";
+import { computeFitDiagnostics, FitDiagnosticsResult } from "../matcher/scoring";
 
 export interface LiveJob {
   id: string;
@@ -114,9 +116,9 @@ export async function getLiveJobs(options: GetJobsOptions = {}): Promise<GetJobs
   try {
     const supabase = createClient();
 
-    // For blurred teaser card layout, include company, location, salary_text
+    // Select full details including description and skills
     const selectColumns =
-      "id, title, location, category, remote, remote_scope, remote_eligibility, country_code, job_type, verified, posted_at, created_at, company, salary_text, apply_url";
+      "id, title, location, category, remote, remote_scope, remote_eligibility, country_code, job_type, verified, posted_at, created_at, company, salary_text, apply_url, description, skills";
 
     let query = supabase
       .from("jobs")
@@ -131,11 +133,11 @@ export async function getLiveJobs(options: GetJobsOptions = {}): Promise<GetJobs
       } else if (c === "tech") {
         query = query.in("category", ["engineering", "devops", "ai", "software"]);
       } else if (c === "internships") {
-        query = query.or("job_type.eq.internship,title.ilike.%intern%");
+        query = query.or("job_type.eq.internship,title.ilike.%internship%,title.ilike.%internships%,title.ilike.% intern %,title.ilike.intern %,title.ilike.% intern,title.ilike.%-intern%,title.ilike.%(intern)%");
       } else if (c === "remote") {
         query = query.eq("remote", true);
       } else if (c === "fresher") {
-        query = query.or("title.ilike.%junior%,title.ilike.%entry%,title.ilike.%associate%,title.ilike.%intern%,job_type.eq.internship");
+        query = query.or("title.ilike.%junior%,title.ilike.%entry%,title.ilike.%associate%,title.ilike.%internship%,title.ilike.% intern %,job_type.eq.internship");
       } else if (c === "operations") {
         query = query.or("category.eq.operations,title.ilike.%operation%,title.ilike.%ops%");
       } else if (c === "cyber-security") {
@@ -206,10 +208,13 @@ export async function getLiveJobs(options: GetJobsOptions = {}): Promise<GetJobs
       const jc = (j.category || "").toLowerCase();
       const jt = (j.title || "").toLowerCase();
       if (c === "trending") return ["ai", "engineering", "devops"].includes(jc);
-      if (c === "tech") return ["engineering", "devops", "ai", "software"].includes(jc) || jt.includes("developer");
-      if (c === "internships") return jt.includes("intern") || j.type.toLowerCase().includes("intern");
+      if (c === "internships") {
+        const isInternType = j.type?.toLowerCase() === "internship";
+        const hasInternWord = /\b(intern|internship|internships)\b/i.test(jt);
+        return isInternType || hasInternWord;
+      }
       if (c === "remote") return j.remote;
-      if (c === "fresher") return jt.includes("junior") || jt.includes("entry") || jt.includes("intern");
+      if (c === "fresher") return jt.includes("junior") || jt.includes("entry") || /\b(intern|internship)\b/i.test(jt);
       if (c === "operations") return jc === "operations" || jt.includes("operation") || jt.includes("ops");
       if (c === "cyber-security") return jc === "cyber-security" || jt.includes("security") || jt.includes("cyber");
       if (c === "customer-support") return jc === "customer-support" || jt.includes("support") || jt.includes("customer");
@@ -334,3 +339,125 @@ export async function getLiveJobById(jobId: string, isPro: boolean = false): Pro
 
   return null;
 }
+
+let cachedAllActiveJobs: LiveJob[] | null = null;
+let cacheTimestamp = 0;
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
+/**
+ * Loads the full active live dataset across all pages in parallel chunks.
+ */
+export async function getAllActiveJobs(): Promise<LiveJob[]> {
+  const now = Date.now();
+  if (cachedAllActiveJobs && now - cacheTimestamp < CACHE_TTL_MS) {
+    return cachedAllActiveJobs;
+  }
+
+  try {
+    const supabase = createClient();
+    const { count } = await supabase
+      .from("jobs")
+      .select("id", { count: "exact", head: true })
+      .eq("is_active", true)
+      .eq("status", "active");
+
+    const total = count || 16500;
+    const CHUNK_SIZE = 1000;
+    const numChunks = Math.ceil(total / CHUNK_SIZE);
+
+    const selectColumns =
+      "id, title, location, category, remote, remote_scope, remote_eligibility, country_code, job_type, verified, posted_at, created_at, company, salary_text, apply_url, description, skills";
+
+    const chunkPromises = [];
+    for (let i = 0; i < numChunks; i++) {
+      const from = i * CHUNK_SIZE;
+      const to = from + CHUNK_SIZE - 1;
+      chunkPromises.push(
+        supabase
+          .from("jobs")
+          .select(selectColumns)
+          .eq("is_active", true)
+          .eq("status", "active")
+          .range(from, to)
+      );
+    }
+
+    const results = await Promise.all(chunkPromises);
+    const allRows: any[] = [];
+    for (const res of results) {
+      if (res.data) {
+        allRows.push(...res.data);
+      }
+    }
+
+    if (allRows.length > 0) {
+      const mapped: LiveJob[] = allRows.map((row: any) => ({
+        id: row.id,
+        title: row.title || "Untitled Position",
+        company: row.company || "Verified Company",
+        location: row.location || (row.remote ? "Remote (Worldwide)" : "Remote"),
+        date: formatDate(row.posted_at || row.created_at),
+        salary: row.salary_text || "",
+        category: row.category || "engineering",
+        remote: Boolean(row.remote),
+        remoteScope: row.remote_scope || undefined,
+        remoteEligibility: row.remote_eligibility || undefined,
+        country: row.country_code || "US",
+        type: row.job_type === "internship" ? "Internship" : "Full-time",
+        directSource: Boolean(row.verified),
+        applyUrl: row.apply_url || "",
+        description: row.description || "",
+        skills: row.skills || [],
+        postedAt: row.posted_at || row.created_at,
+      }));
+
+      cachedAllActiveJobs = mapped;
+      cacheTimestamp = now;
+      return mapped;
+    }
+  } catch (err) {
+    console.warn("getAllActiveJobs error, using static fallback:", err);
+  }
+
+  return DUMMY_JOBS;
+}
+
+/**
+ * Computes fit diagnostics across the FULL live dataset (all 16,000+ jobs)
+ * and returns the top 10 ranked jobs for the given candidate profile.
+ */
+export async function getTopRankedJobsForCandidate(
+  candidate: CandidateProfile,
+  limit = 10
+): Promise<{ job: LiveJob; diagnostics: FitDiagnosticsResult }[]> {
+  const allJobs = await getAllActiveJobs();
+
+  // Exclude jobs lacking requirements rather than generating fake or arbitrary scores
+  const eligibleJobs = allJobs.filter((j) => {
+    const hasDesc = Boolean(j.description && j.description.trim().length > 40);
+    const hasSkills = Boolean(Array.isArray(j.skills) && j.skills.length > 0);
+    return hasDesc || hasSkills;
+  });
+
+  const pool = eligibleJobs.length > 0 ? eligibleJobs : allJobs;
+
+  const scored = pool.map((job) => {
+    const diagnostics = computeFitDiagnostics(candidate, {
+      id: job.id,
+      title: job.title,
+      company: job.company,
+      location: job.location,
+      remote_scope: job.remoteScope || (job.remote ? "worldwide" : undefined),
+      category: job.category,
+      skills: job.skills,
+      salary_text: job.salary,
+      description: job.description,
+    });
+
+    return { job, diagnostics };
+  });
+
+  scored.sort((a, b) => b.diagnostics.score - a.diagnostics.score);
+  return scored.slice(0, limit);
+}
+

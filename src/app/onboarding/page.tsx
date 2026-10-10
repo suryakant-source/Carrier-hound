@@ -7,8 +7,12 @@ import BrandIcon from "@/components/BrandIcon";
 import { getValidReturnUrl, getAuthUser, saveUserPreferences, getUserPreferences } from "@/lib/auth/session";
 import { UserPreferences, DEFAULT_USER_PREFERENCES } from "@/lib/auth/types";
 import ResumeUploadAndConfirm from "@/components/resume/ResumeUploadAndConfirm";
+import GuideHeader from "@/components/GuideHeader";
+import Footer from "@/components/Footer";
+import ProUpgradeScreen from "@/components/billing/ProUpgradeScreen";
 import { getCandidateProfile, deleteCandidateProfile } from "@/lib/resume/storage";
 import { CandidateProfile } from "@/lib/resume/types";
+import { getProAccessStatus } from "@/lib/billing/subscription";
 import {
   ArrowLeft,
   ArrowRight,
@@ -47,6 +51,8 @@ function OnboardingPageInner() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [userId, setUserId] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [isPro, setIsPro] = useState(false);
 
   // Step 1: Preferences State
   const [roles, setRoles] = useState<string[]>(["Full-Stack Developer"]);
@@ -67,13 +73,17 @@ function OnboardingPageInner() {
   const [dailyDigestOptIn, setDailyDigestOptIn] = useState(true);
 
   useEffect(() => {
-    getAuthUser().then((user) => {
+    getAuthUser().then(async (user) => {
       if (!user) {
         const returnUrl = rawNext ? `/onboarding?next=${encodeURIComponent(rawNext)}` : "/onboarding";
         router.replace(`/login?next=${encodeURIComponent(returnUrl)}`);
         return;
       }
       setUserId(user.id);
+      const proRes = await getProAccessStatus(user.id);
+      setIsPro(proRes.isPro);
+      setCheckingAuth(false);
+
       getUserPreferences(user.id).then((p) => {
         if (p.roles && p.roles.length > 0) setRoles(p.roles);
         if (p.experienceLevel) setExperienceLevel(p.experienceLevel);
@@ -166,6 +176,37 @@ function OnboardingPageInner() {
     toast.success("Welcome aboard! Displaying matching career page listings.");
     router.push(next);
   };
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col">
+        <GuideHeader />
+        <main className="flex-1 flex items-center justify-center p-6">
+          <div className="text-center space-y-2">
+            <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-xs font-semibold text-slate-500">Checking access...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Signed-in but NOT Pro
+  if (!isPro) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col">
+        <GuideHeader />
+        <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-8">
+          <ProUpgradeScreen
+            title="Unlock CareerMonke Pro"
+            subtitle="The personalized guided setup and job matches are exclusive to CareerMonke Pro members."
+          />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#09090B] flex flex-col">

@@ -64,7 +64,7 @@ export default function HomePage() {
           </h1>
 
           <p className="mt-4 text-white/90 text-sm sm:text-base md:text-lg max-w-xl mx-auto font-normal leading-relaxed">
-            We find jobs posted on company websites. Build an AI ATS-friendly resume and see your AI match score for every job.
+            We find jobs posted on company websites. Access AI-powered resume tools and smart job matching.
           </p>
 
           <div className="mt-4 flex flex-wrap items-center justify-center gap-3 w-full max-w-md sm:max-w-none">
@@ -187,7 +187,7 @@ export default function HomePage() {
                   1
                 </div>
                 <div className="text-sm font-bold text-slate-900">Upload Resume</div>
-                <p className="text-xs text-slate-500 mt-1">PDF or Word (.docx) document parsed without hallucinations</p>
+                <p className="text-xs text-slate-500 mt-1">PDF or Word (.docx) document parsed into structured facts</p>
               </div>
             </div>
             <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">

@@ -260,21 +260,11 @@ export default function PaywallModal({
                 <div className="space-y-3 pt-1">
                   <button
                     type="button"
-                    onClick={handleCheckout}
-                    disabled={isProcessing}
-                    className="w-full min-h-[48px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3.5 rounded-xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                    disabled
+                    className="w-full min-h-[48px] bg-slate-200 text-slate-400 py-3.5 rounded-xl font-bold text-sm sm:text-base cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    {isProcessing ? (
-                      <span>Unlocking Pro Access...</span>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4 text-yellow-300" />
-                        <span>
-                          Upgrade to Pro ({selectedPlanId === "domestic" ? "₹199/mo" : "$9/mo"})
-                        </span>
-                        <ArrowRight className="w-4 h-4" />
-                      </>
-                    )}
+                    <Sparkles className="w-4 h-4 text-slate-400" />
+                    <span>Payments Coming Soon</span>
                   </button>
 
                   <div className="text-center pt-1">
@@ -300,19 +290,11 @@ export default function PaywallModal({
 
                   <button
                     type="button"
-                    onClick={handleCheckout}
-                    disabled={isProcessing}
-                    className="w-full min-h-[48px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white py-3.5 rounded-xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                    disabled
+                    className="w-full min-h-[48px] bg-slate-200 text-slate-400 py-3.5 rounded-xl font-bold text-sm sm:text-base cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    {isProcessing ? (
-                      <span>Unlocking Pro Access...</span>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4 text-yellow-300" />
-                        <span>Payments Coming Soon</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </>
-                    )}
+                    <Sparkles className="w-4 h-4 text-slate-400" />
+                    <span>Payments Coming Soon</span>
                   </button>
                 </div>
               )}

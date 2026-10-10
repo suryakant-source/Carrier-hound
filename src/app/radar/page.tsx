@@ -1,13 +1,13 @@
-import React from "react";
-import dynamic from "next/dynamic";
-import GuideHeader from "@/components/GuideHeader";
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "3D Globe Job Radar | Real-Time Direct Source Jobs",
-  description:
-    "Explore verified direct-source tech jobs globally using an interactive 3D Globe Radar. Instant cinematic fly-to zoom across Bangalore, SF, NYC, London, Berlin and more.",
-};
+import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import GuideHeader from "@/components/GuideHeader";
+import Footer from "@/components/Footer";
+import ProUpgradeScreen from "@/components/billing/ProUpgradeScreen";
+import { getAuthUser } from "@/lib/auth/session";
+import { getProAccessStatus } from "@/lib/billing/subscription";
 
 // Dynamically import JobRadarGlobe with SSR disabled for Mapbox GL JS
 const JobRadarGlobe = dynamic(() => import("@/components/JobRadarGlobe"), {
@@ -34,6 +34,53 @@ const JobRadarGlobe = dynamic(() => import("@/components/JobRadarGlobe"), {
 });
 
 export default function RadarPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [isPro, setIsPro] = useState(false);
+
+  useEffect(() => {
+    getAuthUser().then(async (authUser) => {
+      if (!authUser) {
+        router.replace("/login?next=/radar");
+        return;
+      }
+      const proRes = await getProAccessStatus(authUser.id);
+      setIsPro(proRes.isPro);
+      setLoading(false);
+    });
+  }, [router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col">
+        <GuideHeader />
+        <main className="flex-1 flex items-center justify-center p-6">
+          <div className="text-center space-y-2">
+            <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-xs font-semibold text-slate-500">Checking access...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Signed-in but NOT Pro
+  if (!isPro) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col">
+        <GuideHeader />
+        <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-8">
+          <ProUpgradeScreen
+            title="Unlock 3D Job Radar"
+            subtitle="The interactive 3D Globe Radar is exclusive to CareerMonke Pro members."
+          />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[#040610] text-white flex flex-col overflow-hidden">
       <GuideHeader />

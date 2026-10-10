@@ -163,7 +163,7 @@ export default function ResumePage() {
             <a href="/jobs" className="text-blue-600 font-semibold hover:underline">
               Jobs Feed
             </a>
-            , click <strong>&quot;AI Resume&quot;</strong> or <strong>&quot;Cover Letter&quot;</strong>. All generated content is strictly grounded in your confirmed facts with zero hallucinations.
+            , click <strong>&quot;AI Resume&quot;</strong> or <strong>&quot;Cover Letter&quot;</strong>. All generated content is strictly grounded in your confirmed profile facts.
           </p>
         </section>
       </main>

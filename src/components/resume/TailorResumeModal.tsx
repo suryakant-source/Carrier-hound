@@ -143,7 +143,7 @@ export default function TailorResumeModal({
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                 <Sparkles className="w-3 h-3" /> ATS Skill Highlighting
               </span>
-              <span className="text-xs text-slate-400 font-mono">Zero Hallucinations</span>
+              <span className="text-xs text-slate-400 font-mono">Profile Grounded</span>
             </div>
             <h2 className="text-lg sm:text-xl font-bold text-white line-clamp-1">{job.title}</h2>
             <p className="text-xs sm:text-sm text-slate-300">
@@ -171,7 +171,7 @@ export default function TailorResumeModal({
                 Grounded 100% in your verified resume facts
               </p>
               <p className="text-slate-600">
-                ATS Skill Highlighting prioritizes and reorganizes your verified skills so the core requirements for <strong>{job.company}</strong> appear front and center for applicant tracking parsers. No fake credentials or hallucinations are generated.
+                ATS Skill Highlighting prioritizes and reorganizes your verified skills so the core requirements for <strong>{job.company}</strong> appear front and center for applicant tracking parsers. No unverified skills are added.
               </p>
             </div>
           </div>

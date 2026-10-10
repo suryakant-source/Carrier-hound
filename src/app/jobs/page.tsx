@@ -301,25 +301,22 @@ function JobsPageInner() {
 
             {/* Navigation Tabs: For you / All jobs / Saved */}
             <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-200/70 border border-slate-300/60 self-start sm:self-auto">
-              <button
-                type="button"
-                onClick={() => {
-                  if (!user) {
-                    toast.info("Please sign in or create an account to view your tailored 'For you' jobs.");
-                    router.push(`/login?next=${encodeURIComponent("/jobs")}`);
-                    return;
-                  }
-                  setActiveTab("foryou");
-                  setPage(1);
-                }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                  activeTab === "foryou"
-                    ? "bg-white text-blue-600 shadow-2xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                For you
-              </button>
+              {user && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTab("foryou");
+                    setPage(1);
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                    activeTab === "foryou"
+                      ? "bg-white text-blue-600 shadow-2xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  For you
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => {
@@ -401,9 +398,11 @@ function JobsPageInner() {
                 className="text-xs font-bold py-2 px-3 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-blue-600 cursor-pointer shadow-2xs"
               >
                 <option value="newest">Newest First</option>
-                <option value="match" disabled={!hasConfirmedResume}>
-                  {hasConfirmedResume ? "Highest Fit Match" : "Highest Match (Requires Resume)"}
-                </option>
+                {user && (
+                  <option value="match" disabled={!hasConfirmedResume}>
+                    {hasConfirmedResume ? "Highest Fit Match" : "Highest Match (Requires Resume)"}
+                  </option>
+                )}
               </select>
             </div>
           </div>
@@ -427,7 +426,7 @@ function JobsPageInner() {
             )}
           </span>
 
-          {!hasConfirmedResume && (
+          {user && !hasConfirmedResume && (
             <Link href="/resume" className="text-blue-600 hover:underline font-semibold">
               + Upload resume to unlock match percentages
             </Link>
@@ -555,18 +554,23 @@ function JobsPageInner() {
                             className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 border border-blue-200/60 text-blue-700 text-[11px] font-bold cursor-pointer hover:bg-blue-100 transition"
                             title={!user ? "Sign in to view match score" : "Unlock match score with Pro"}
                           >
-                            <span className="filter blur-[4px] select-none font-mono">92% Match</span>
+                            <span className="filter blur-[4px] select-none font-mono">••% Match</span>
                             <Lock className="w-2.5 h-2.5 text-blue-600 shrink-0 ml-0.5" />
                           </button>
                         )}
                       </div>
 
                       <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 font-medium">
-                        <div className="flex items-center gap-1">
+                        <div
+                          onClick={!isPro ? handleLockedAction : undefined}
+                          className={`flex items-center gap-1 ${!isPro ? "cursor-pointer" : ""}`}
+                          title={!isPro ? (!user ? "Sign in to see company" : "Unlock company with Pro") : undefined}
+                        >
                           <Building className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                          <span className="font-bold text-slate-900">
+                          <span className={`font-bold text-slate-900 ${!isPro ? "filter blur-[4.5px] select-none" : ""}`}>
                             {job.company || "Verified Company"}
                           </span>
+                          {!isPro && <Lock className="w-2.5 h-2.5 text-slate-400 shrink-0" />}
                         </div>
 
                         <span>•</span>
@@ -600,7 +604,7 @@ function JobsPageInner() {
                           </>
                         )}
 
-                        {(job.salary || !isPro) && (
+                        {(Boolean(job.salary) || !isPro) && (
                           <>
                             <span>•</span>
                             <div
@@ -610,7 +614,7 @@ function JobsPageInner() {
                             >
                               <DollarSign className="w-3.5 h-3.5 shrink-0 text-emerald-600" />
                               <span className={!isPro ? "filter blur-[5px] select-none text-emerald-700" : ""}>
-                                {job.salary || "$130,000 - $185,000"}
+                                {job.salary || "••••••••••••••••"}
                               </span>
                               {!isPro && <Lock className="w-2.5 h-2.5 text-emerald-600/70 shrink-0" />}
                             </div>
@@ -618,14 +622,14 @@ function JobsPageInner() {
                         )}
                       </div>
 
-                      {job.description && (
+                      {Boolean(job.description || !isPro) && (
                         <p
                           onClick={!isPro ? handleLockedAction : undefined}
                           className={`text-xs text-slate-500 line-clamp-1 mt-1 ${
                             !isPro ? "filter blur-[4px] select-none cursor-pointer" : ""
                           }`}
                         >
-                          {job.description}
+                          {job.description || "We are seeking a talented professional to join our team for this verified role."}
                         </p>
                       )}
                     </div>

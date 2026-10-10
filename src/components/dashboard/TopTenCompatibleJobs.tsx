@@ -17,7 +17,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { CandidateProfile } from "@/lib/resume/types";
-import { getLiveJobs, LiveJob } from "@/lib/jobs/service";
+import { getLiveJobs, getTopRankedJobsForCandidate, LiveJob } from "@/lib/jobs/service";
 import { computeFitDiagnostics, FitDiagnosticsResult } from "@/lib/matcher/scoring";
 import TailorResumeModal from "@/components/resume/TailorResumeModal";
 import CoverLetterModal from "@/components/resume/CoverLetterModal";
@@ -50,47 +50,15 @@ export default function TopTenCompatibleJobs({
   const loadTopJobs = React.useCallback(async () => {
     setLoading(true);
     try {
-      // 1. Scan the full relevant dataset (up to 200 jobs) rather than a small subset of 50
-      const res = await getLiveJobs({ page: 1, pageSize: 200, isPro });
-
-      // 2. Exclude jobs lacking real requirements rather than generating fake or arbitrary scores
-      const eligibleJobs = res.jobs.filter((j) => {
-        const hasDesc = Boolean(j.description && j.description.trim().length > 40);
-        const hasSkills = Boolean(Array.isArray(j.skills) && j.skills.length > 0);
-        return hasDesc || hasSkills;
-      });
-
-      // 3. Compute fit diagnostics using confirmed facts + alias-normalized skill matching
-      const scored: RankedJobItem[] = eligibleJobs.map((job) => {
-        const diagnostics = computeFitDiagnostics(candidate, {
-          id: job.id,
-          title: job.title,
-          company: job.company,
-          location: job.location,
-          remote_scope: job.remoteScope || (job.remote ? "worldwide" : undefined),
-          category: job.category,
-          skills: job.skills,
-          salary_text: job.salary,
-          description: job.description,
-        });
-
-        return {
-          job,
-          diagnostics,
-        };
-      });
-
-      // 4. Rank by compatibility score descending
-      scored.sort((a, b) => b.diagnostics.score - a.diagnostics.score);
-
-      // 5. Select Top 10
-      setRankedJobs(scored.slice(0, 10));
+      // Fetch and rank across the FULL live dataset (all 16,000+ jobs)
+      const topJobs = await getTopRankedJobsForCandidate(candidate, 10);
+      setRankedJobs(topJobs);
     } catch (err) {
       console.warn("Could not compute Top 10 jobs:", err);
     } finally {
       setLoading(false);
     }
-  }, [candidate, isPro]);
+  }, [candidate]);
 
   useEffect(() => {
     loadTopJobs();

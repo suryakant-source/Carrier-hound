@@ -365,7 +365,7 @@ export default function ResumeUploadAndConfirm({
     <div className="max-w-2xl mx-auto text-center space-y-4">
       <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">
         <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-        <span>Zero-Hallucination Fact Extraction</span>
+        <span>Structured Fact Extraction</span>
       </div>
 
       <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -836,7 +836,7 @@ export default function ResumeUploadAndConfirm({
                 <div className="p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50/80 text-center space-y-1">
                   <p className="text-xs font-medium text-slate-700">No work experience detected in document.</p>
                   <p className="text-[11px] text-slate-500">
-                    If you are a fresher or student, this remains completely empty with zero hallucinations. If you have past roles to include, click &quot;Add Position&quot; above.
+                    If you are a fresher or student, this remains completely empty. If you have past roles to include, click &quot;Add Position&quot; above.
                   </p>
                 </div>
               )}

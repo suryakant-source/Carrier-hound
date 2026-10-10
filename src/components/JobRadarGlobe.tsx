@@ -394,7 +394,7 @@ export default function JobRadarGlobe() {
 
         // Filter 4: Internships Only
         if (internshipFilter) {
-          query = query.or("title.ilike.%intern%,job_type.ilike.%intern%");
+          query = query.or("job_type.eq.internship,title.ilike.%internship%,title.ilike.%internships%,title.ilike.% intern %,title.ilike.intern %,title.ilike.% intern,title.ilike.%-intern%,title.ilike.%(intern)%");
         }
 
         // Verified Only Toggle
@@ -1559,7 +1559,7 @@ export default function JobRadarGlobe() {
                           className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#2563EB]/10 border border-[#2563EB]/30 text-xs font-mono cursor-pointer hover:bg-[#2563EB]/20 transition-all text-blue-300"
                         >
                           <span className="filter blur-[3.5px] select-none text-blue-200">
-                            $165,000 - $210,000
+                            {job.salaryText || "••••••••••••••••"}
                           </span>
                           <Lock className="w-3 h-3 text-[#2563EB]" />
                         </button>

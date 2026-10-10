@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   LogOut,
 } from "lucide-react";
-import { toast } from "react-toastify";
 import { createClient } from "@/lib/supabase/client";
 
 interface ProUpgradeScreenProps {
@@ -24,10 +23,6 @@ export default function ProUpgradeScreen({
   title = "Unlock CareerMonke Pro",
   subtitle = "Complete your membership to access full job details, match scores, and AI application tools.",
 }: ProUpgradeScreenProps) {
-  const handleUpgradeClick = () => {
-    toast.info("Payments coming soon! Subscription billing will be available shortly.");
-  };
-
   const handleSignOut = async () => {
     try {
       const supabase = createClient();
@@ -54,13 +49,13 @@ export default function ProUpgradeScreen({
     },
     {
       icon: FileCheck2,
-      title: "ATS Resume Highlighting",
-      desc: "Reorders verified skills for each opening with zero hallucinations.",
+      title: "AI-Powered Resume Tools",
+      desc: "Highlights and formats relevant skills for each opening.",
     },
     {
       icon: FileText,
       title: "Tailored Cover Letters",
-      desc: "Evidence-validated cover letters grounded in your confirmed facts.",
+      desc: "Generates role-specific cover letters grounded in your profile facts.",
     },
   ];
 
@@ -112,10 +107,10 @@ export default function ProUpgradeScreen({
         <div className="pt-2 space-y-3">
           <button
             type="button"
-            onClick={handleUpgradeClick}
-            className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm shadow-md transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2"
+            disabled
+            className="w-full py-3.5 px-6 rounded-2xl bg-slate-200 text-slate-400 font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2"
           >
-            <Sparkles className="w-4 h-4 text-yellow-300" />
+            <Sparkles className="w-4 h-4 text-slate-400" />
             <span>Payments Coming Soon</span>
           </button>
           <p className="text-[11px] text-slate-400">

@@ -137,12 +137,12 @@ export async function searchJobs(params: SearchJobsParams = {}): Promise<SearchJ
         "Notion",
       ]);
     } else if (categoryTokens.includes("internships")) {
-      query = query.or("title.ilike.%intern%,job_type.ilike.%intern%");
+      query = query.or("job_type.eq.internship,title.ilike.%internship%,title.ilike.%internships%,title.ilike.% intern %,title.ilike.intern %,title.ilike.% intern,title.ilike.%-intern%,title.ilike.%(intern)%");
     } else if (categoryTokens.includes("remote")) {
       query = query.eq("remote_scope", "remote");
     } else if (categoryTokens.includes("fresher")) {
       query = query.or(
-        "title.ilike.%junior%,title.ilike.%entry%,title.ilike.%associate%,title.ilike.%graduate%,title.ilike.%fresher%,title.ilike.%intern%"
+        "title.ilike.%junior%,title.ilike.%entry%,title.ilike.%associate%,title.ilike.%graduate%,title.ilike.%fresher%,title.ilike.%internship%,title.ilike.% intern %,job_type.eq.internship"
       );
     } else {
       const slugs = expandCategoryFilter(categoryTokens);
